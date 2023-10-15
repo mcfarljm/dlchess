@@ -3,12 +3,16 @@
 #include <iostream>
 
 #include "board.h"
+#include "hash.h"
 
 
 using pieces::Piece;
 using pieces::Color;
 
 namespace board {
+
+  // Initialize random hash keys:
+  const Hasher hasher {};
 
   Board Board::from_fen(const std::string_view fen) {
     Board board;
@@ -115,7 +119,7 @@ namespace board {
       board.en_pas = squares::fr_to_sq(file, rank);
     }
 
-    // board.hash = board.get_position_hash();
+    board.hash = board.get_position_hash();
     board.update_lists_and_material();
 
     return board;
@@ -168,6 +172,26 @@ namespace board {
     os << std::endl;
 
     return os;
+  }
+
+  uint64_t Board::get_position_hash() const {
+    uint64_t hash = 0;
+
+    for (Square sq=0; sq<BOARD_SQ_NUM; ++sq) {
+      auto piece = pieces[sq];
+      if (piece.exists())
+        hash ^= hasher.piece_keys[static_cast<int>(piece.value)][sq];
+    }
+
+    if (side == Color::white)
+      hash ^= hasher.side_key;
+
+    if (en_pas != static_cast<Square>(Position::none))
+      hash ^= hasher.piece_keys[static_cast<int>(Piece::none)][en_pas];
+
+    hash ^= hasher.castle_keys[castle_perm.to_ulong()];
+
+    return hash;
   }
 
 };

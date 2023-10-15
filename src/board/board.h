@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 #include <bitset>
+#include <cstdint>
 
 #include "../pieces.h"
 #include "../bitboard.h"
@@ -52,13 +53,16 @@ namespace board {
       /* pub history: Vec<Undo>, */
 
     std::bitset<4> castle_perm;
-      /* hash: u64, */
+
+    uint64_t hash = 0;
 
       /* hash_keys: HashKeys, */
 
     static Board from_fen(const std::string_view);
 
     friend std::ostream& operator<<(std::ostream&, const Board& b);
+
+    uint64_t get_position_hash() const;
 
   private:
     void update_lists_and_material();
