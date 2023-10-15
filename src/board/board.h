@@ -64,6 +64,8 @@ namespace board {
 
     uint64_t get_position_hash() const;
 
+    bool check() const;
+
   private:
     void update_lists_and_material();
   };

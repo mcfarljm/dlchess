@@ -76,8 +76,8 @@ namespace bitboard {
 
     friend std::ostream& operator<<(std::ostream&, const Bitboard& b);
 
-    BitboardIterator begin() { return BitboardIterator(bits); }
-    BitboardIterator end()   { return BitboardIterator(0); }
+    BitboardIterator begin() const { return BitboardIterator(bits); }
+    BitboardIterator end()   const { return BitboardIterator(0); }
 
   };
 

@@ -126,5 +126,6 @@ castle: KQkq
 )";
 
   REQUIRE( ss.str() == s );
+  REQUIRE( b.check() );
 
 }
