@@ -11,6 +11,8 @@ using pieces::Color;
 
 namespace board {
 
+  const std::string_view START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
   // Initialize random hash keys:
   const Hasher hasher {};
 

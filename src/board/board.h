@@ -29,7 +29,7 @@ namespace board {
 
   constexpr int BOARD_SQ_NUM = 64;
 
-  static constexpr std::string_view START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  extern const std::string_view START_FEN;
 
   class Board {
   public:
