@@ -1,6 +1,7 @@
 #ifndef BITBOARD_H_
 #define BITBOARD_H_
 
+#include <cstdint>
 #include <bitset>
 #include <bit>
 
@@ -45,6 +46,14 @@ namespace bitboard {
 
   struct Bitboard {
     std::bitset<64> bits;
+
+    Bitboard() = default;
+    Bitboard(std::bitset<64> bits) : bits(bits) {}
+    Bitboard(uint64_t v) : bits(v) {}
+
+    Bitboard operator|(const Bitboard& lhs) {
+      return Bitboard(bits | lhs.bits);
+    }
 
     bool nonzero() const {
       return bits.any();

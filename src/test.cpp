@@ -8,6 +8,7 @@
 
 #include "bitboard.h"
 #include "board/board.h"
+#include "board/piece_moves.h"
 
 
 TEST_CASE( "Test bb string empty", "[bitboard]" ) {
@@ -128,4 +129,20 @@ castle: KQkq
   REQUIRE( ss.str() == s );
   REQUIRE( b.check() );
 
+}
+
+
+TEST_CASE( "Rook attacks", "[attacks]" ) {
+  Bitboard occ;
+  auto attacks = piece_moves::get_rook_attacks(0, occ);
+  auto vec = std::vector<Square>(attacks.begin(), attacks.end());
+  std::vector<Square> expected = {1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 40, 48, 56};
+  REQUIRE( vec == expected );
+
+  occ.set_bit(4);
+  occ.set_bit(32);
+  attacks = piece_moves::get_rook_attacks(0, occ);
+  vec = std::vector<Square>(attacks.begin(), attacks.end());
+  expected = {1, 2, 3, 4, 8, 16, 24, 32};
+  REQUIRE( vec == expected );
 }
