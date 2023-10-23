@@ -20,5 +20,81 @@ namespace piece_moves {
   Bitboard get_queen_attacks(Square sq, Bitboard occ_bb) {
     return get_rook_attacks(sq, occ_bb) | get_bishop_attacks(sq, occ_bb);
   }
+
+  std::array<Bitboard,64> get_king_moves() {
+    std::array<Bitboard,64> bitboards;
+
+    for (Square sq=0; sq<64; ++sq) {
+      auto rank = sq / 8;
+      auto file = sq % 8;
+
+      // N
+      if (rank<7)
+        bitboards[sq].set_bit(sq+8);
+      // NE
+      if (rank<7 && file<7)
+        bitboards[sq].set_bit(sq+9);
+      // E
+      if (file<7)
+        bitboards[sq].set_bit(sq+1);
+      // SE
+      if (file<7 && rank>0)
+        bitboards[sq].set_bit(sq-7);
+      // S
+      if (rank>0)
+        bitboards[sq].set_bit(sq-8);
+      // SW
+      if (rank>0 && file>0)
+        bitboards[sq].set_bit(sq-9);
+      // W
+      if (file>0)
+        bitboards[sq].set_bit(sq-1);
+      // NW
+      if (file>0 && rank<7)
+        bitboards[sq].set_bit(sq+7);
+    }
+
+    return bitboards;
+  }
+
+  std::array<Bitboard,64> king_moves = get_king_moves();
+
+  std::array<Bitboard,64> get_knight_moves() {
+    std::array<Bitboard,64> bitboards;
+
+    for (Square sq=0; sq<64; ++sq) {
+      auto rank = sq / 8;
+      auto file = sq % 8;
+
+      // NNE
+      if (rank<6 && file<7)
+        bitboards[sq].set_bit(sq+17);
+      // ENE
+      if (rank<7 && file<6)
+        bitboards[sq].set_bit(sq+10);
+      // ESE
+      if (rank>0 && file<6)
+        bitboards[sq].set_bit(sq-6);
+      // SSE
+      if (rank>1 && file<7)
+        bitboards[sq].set_bit(sq-15);
+      // SSW
+      if (rank>1 && file>0)
+          bitboards[sq].set_bit(sq-17);
+      // WSW
+      if (rank>0 && file>1)
+        bitboards[sq].set_bit(sq-10);
+      // WNW
+      if (rank<7 && file>1)
+        bitboards[sq].set_bit(sq+6);
+      // NNW
+      if (rank<6 && file>0)
+        bitboards[sq].set_bit(sq+15);
+    }
+
+    return bitboards;
+  }
+
+  std::array<Bitboard,64> knight_moves = get_knight_moves();
   
 };

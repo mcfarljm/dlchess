@@ -146,3 +146,20 @@ TEST_CASE( "Rook attacks", "[attacks]" ) {
   expected = {1, 2, 3, 4, 8, 16, 24, 32};
   REQUIRE( vec == expected );
 }
+
+TEST_CASE( "King moves", "[attacks]" ) {
+  auto moves = std::vector<Square>(piece_moves::king_moves[9].begin(),
+                                   piece_moves::king_moves[9].end());
+  std::vector<Square> expected = {0, 1, 2, 8, 10, 16, 17, 18};
+  REQUIRE( moves == expected );
+
+  moves = std::vector<Square>(piece_moves::king_moves[0].begin(),
+                              piece_moves::king_moves[0].end());
+  expected = {1, 8, 9};
+  REQUIRE( moves == expected );
+
+  moves = std::vector<Square>(piece_moves::king_moves[63].begin(),
+                              piece_moves::king_moves[63].end());
+  expected = {54, 55, 62};
+  REQUIRE( moves == expected );
+}
