@@ -9,6 +9,7 @@
 #include "bitboard.h"
 #include "board/board.h"
 #include "board/piece_moves.h"
+#include "board/game_moves.h"
 
 
 TEST_CASE( "Test bb string empty", "[bitboard]" ) {
@@ -162,4 +163,14 @@ TEST_CASE( "King moves", "[attacks]" ) {
                               piece_moves::king_moves[63].end());
   expected = {54, 55, 62};
   REQUIRE( moves == expected );
+}
+
+TEST_CASE( "Move string", "[moves]" ) {
+  auto mv = game_moves::Move(static_cast<Square>(squares::Position::C1),
+                             static_cast<Square>(squares::Position::C3),
+                             Piece::none, Piece::WR,
+                             game_moves::MoveFlag::none);
+  std::stringstream ss;
+  ss << mv;
+  REQUIRE( ss.str() == "c1c3r" );
 }

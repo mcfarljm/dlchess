@@ -46,6 +46,18 @@ namespace pieces {
       }
     }
 
+    constexpr bool is_knight() const {
+      return (value == WN || value == BN);
+    }
+
+    constexpr bool is_rook_or_queen() const {
+      return (value == WR || value == BR || value == WQ || value == BQ);
+    }
+
+    constexpr bool is_bishop_or_queen() const {
+      return (value == WB || value == BB || value == WQ || value == BQ);
+    }
+
     constexpr bool is_king() const {
       return (value == WK || value == BK);
     }

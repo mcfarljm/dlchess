@@ -2,6 +2,7 @@
 #define SQUARES_H_
 
 #include <cstdint>
+#include <string>
 
 namespace squares {
 
@@ -42,6 +43,7 @@ namespace squares {
     none,
   };
 
+  std::string square_string(Square sq);
 
 };
 
