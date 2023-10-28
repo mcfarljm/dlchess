@@ -12,6 +12,11 @@ using squares::Square;
 
 namespace bitboard {
 
+  struct Bitboard;
+
+  extern const Bitboard BB_FILE_A;
+  extern const Bitboard BB_FILE_H;
+
   struct BitboardIterator {
 
     using iterator_category = std::input_iterator_tag;

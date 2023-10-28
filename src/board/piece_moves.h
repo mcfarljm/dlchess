@@ -9,6 +9,8 @@ using bitboard::Bitboard;
 namespace piece_moves {
   extern std::array<Bitboard,64> king_moves;
   extern std::array<Bitboard,64> knight_moves;
+  extern std::array<Bitboard,64> white_pawn_attacks;
+  extern std::array<Bitboard,64> black_pawn_attacks;
 
   Bitboard get_rook_attacks(Square sq, Bitboard occ);
   Bitboard get_bishop_attacks(Square sq, Bitboard occ);

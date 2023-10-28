@@ -96,5 +96,36 @@ namespace piece_moves {
   }
 
   std::array<Bitboard,64> knight_moves = get_knight_moves();
+
+  std::array<Bitboard,64> get_white_pawn_attacks() {
+    std::array<Bitboard,64> bitboards;
+    for (Square sq=0; sq<64; ++sq) {
+      // Left captures
+      bitboards[sq].set_bit(sq);
+      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_A) << 7);
+
+      // Right captures
+      bitboards[sq].set_bit(sq);
+      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) << 9);
+    }
+    return bitboards;
+  }
+
+  std::array<Bitboard,64> get_black_pawn_attacks() {
+    std::array<Bitboard,64> bitboards;
+    for (Square sq=0; sq<64; ++sq) {
+      // Left captures
+      bitboards[sq].set_bit(sq);
+      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_A) >> 9);
+
+      // Right captures
+      bitboards[sq].set_bit(sq);
+      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) >> 7);
+    }
+    return bitboards;
+  }
+
+  std::array<Bitboard,64> white_pawn_attacks = get_white_pawn_attacks();
+  std::array<Bitboard,64> black_pawn_attacks = get_black_pawn_attacks();
   
 };
