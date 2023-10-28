@@ -96,13 +96,13 @@ namespace board {
     for (int i=0; i<4; ++i) {
       switch (c) {
       case 'K':
-        board.castle_perm |= castling::WK; break;
+        board.castle_perm.set(castling::WK); break;
       case 'Q':
-        board.castle_perm |= castling::WQ; break;
+        board.castle_perm.set(castling::WQ); break;
       case 'k':
-        board.castle_perm |= castling::BK; break;
+        board.castle_perm.set(castling::BK); break;
       case 'q':
-        board.castle_perm |= castling::BQ; break;
+        board.castle_perm.set(castling::BQ); break;
       case '-':
         break;
       case ' ':
@@ -172,10 +172,10 @@ namespace board {
     os << "enPas: " << b.en_pas << std::endl;
 
     os << "castle: ";
-    os << ((b.castle_perm & castling::WK).any() ? 'K' : '-');
-    os << ((b.castle_perm & castling::WQ).any() ? 'Q' : '-');
-    os << ((b.castle_perm & castling::BK).any() ? 'k' : '-');
-    os << ((b.castle_perm & castling::BQ).any() ? 'q' : '-');
+    os << (b.castle_perm[castling::WK] ? 'K' : '-');
+    os << (b.castle_perm[castling::WQ] ? 'Q' : '-');
+    os << (b.castle_perm[castling::BK] ? 'k' : '-');
+    os << (b.castle_perm[castling::BQ] ? 'q' : '-');
     os << std::endl;
 
     return os;

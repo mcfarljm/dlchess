@@ -19,10 +19,12 @@ using squares::Position;
 
 namespace castling {
 
-  constexpr std::bitset<4> WK(1);
-  constexpr std::bitset<4> WQ(2);
-  constexpr std::bitset<4> BK(4);
-  constexpr std::bitset<4> BQ(8);
+  enum {
+    WK,
+    WQ,
+    BK,
+    BQ,
+  };
 
 };
 
