@@ -43,6 +43,7 @@ add_library(dlchess SHARED
   src/obs_diff.cpp
   src/board/piece_moves.cpp
   src/board/game_moves.cpp
+  src/board/movegen.cpp
 )
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
