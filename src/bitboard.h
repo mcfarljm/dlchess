@@ -44,48 +44,28 @@ namespace bitboard {
   };
 
 
-  struct Bitboard {
-    std::bitset<64> bits;
-
-    Bitboard() = default;
-    Bitboard(std::bitset<64> bits) : bits(bits) {}
-    Bitboard(uint64_t v) : bits(v) {}
-
-    Bitboard operator|(const Bitboard& lhs) {
-      return Bitboard(bits | lhs.bits);
-    }
+  struct Bitboard : public std::bitset<64> {
 
     bool nonzero() const {
-      return bits.any();
+      return any();
     }
 
     void set_bit(Square index) {
-      bits.set(index);
+      set(index);
     }
 
     void clear_bit(Square index) {
-      bits.reset(index);
+      reset(index);
     }
 
-    int count() const {
-      return bits.count();
-    }
-
-    Square pop_bit() {
-      auto val = bits.to_ullong();
-      auto sq = std::countr_zero(val); // Least-significant bit
-
-      // bits.reset(sq); // This is one solution, but is it slower?
-
-      val &= val - 1; // Clear least-significant bit
-      bits = val;
-
-      return sq;
+    // If this is not defined, the type of operator| will be bitset
+    Bitboard operator|(const Bitboard& rhs) const {
+      return *this | rhs;
     }
 
     friend std::ostream& operator<<(std::ostream&, const Bitboard& b);
 
-    BitboardIterator begin() const { return BitboardIterator(bits); }
+    BitboardIterator begin() const { return BitboardIterator(*this); }
     BitboardIterator end()   const { return BitboardIterator(0); }
 
   };

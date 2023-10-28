@@ -9,7 +9,7 @@ namespace bitboard {
     for (auto rank : squares::RANKS_REVERSED) {
       for (auto file : squares::FILES) {
         auto sq = squares::fr_to_sq(file, rank);
-        os << (b.bits[sq] ? "x" : "-");
+        os << (b[sq] ? "x" : "-");
       }
       os << std::endl;
     }

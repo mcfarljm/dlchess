@@ -228,8 +228,8 @@ namespace board {
 
     board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == pieces::Piece::WK);
     board_assert(pieces[king_sq[static_cast<int>(Color::black)]] == pieces::Piece::BK);
-    board_assert(bitboards[static_cast<int>(pieces::Piece::WK)].bits[king_sq[static_cast<int>(Color::white)]]);
-    board_assert(bitboards[static_cast<int>(pieces::Piece::BK)].bits[king_sq[static_cast<int>(Color::black)]]);
+    board_assert(bitboards[static_cast<int>(pieces::Piece::WK)][king_sq[static_cast<int>(Color::white)]]);
+    board_assert(bitboards[static_cast<int>(pieces::Piece::BK)][king_sq[static_cast<int>(Color::black)]]);
 
     // Check side piece bitboards:
 
