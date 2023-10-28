@@ -1,7 +1,13 @@
 #ifndef SQUARES_H_
 #define SQUARES_H_
 
+#include <cstdint>
+
 namespace squares {
+
+  // Todo: There might be a better place to define this.  For now putting it
+  // here for accessibility by other modules.
+  using u64 = uint64_t;
 
   using Square = int;
   using FileRank = Square;

@@ -3,6 +3,8 @@
 
 #include "obs_diff.h"
 
+using squares::u64;
+
 namespace obs_diff {
 
   using squares::Square;
