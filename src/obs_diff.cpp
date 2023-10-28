@@ -12,11 +12,11 @@ namespace obs_diff {
   using ObsDiffArray = std::array<std::array<ObsDiffMask, 64>, 4>;
 
   static u64 rank_mask(Square sq) {
-    return 0xff << (sq & 56);
+    return 0xffLL << (sq & 56);
   }
 
   static u64 file_mask(Square sq) {
-    return 0x0101010101010101 << (sq & 7);
+    return 0x0101010101010101LL << (sq & 7);
   }
 
   static u64 diagonal_mask(Square sq) {
@@ -36,11 +36,11 @@ namespace obs_diff {
   }
 
   static u64 positive_ray(Square sq, u64 line) {
-    return line & (0 - (2 << sq));
+    return line & (0 - (2LL << sq));
   }
 
   static u64 negative_ray(Square sq, u64 line) {
-    return line & ((1 << sq) - 1);
+    return line & ((1ULL << sq) - 1);
   }
 
   struct ObsDiffMask {
@@ -92,7 +92,7 @@ namespace obs_diff {
     auto os_mask = OBS_DIFF_MASKS[direction][sq];
     auto lower = os_mask.lower & occ;
     auto upper = os_mask.upper & occ;
-    auto ms1b = 0x8000000000000000 >> std::countl_zero(lower | 1);
+    auto ms1b = 0x8000000000000000LL >> std::countl_zero(lower | 1);
     auto ls1b = upper & (-upper);
     auto odiff = 2*ls1b - ms1b;
     return os_mask.line_exc & odiff;
