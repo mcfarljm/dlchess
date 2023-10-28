@@ -174,3 +174,21 @@ TEST_CASE( "Move string", "[moves]" ) {
   ss << mv;
   REQUIRE( ss.str() == "c1c3r" );
 }
+
+/// Utility function to check move count for a given FEN string.
+void check_move_count(std::string_view fen, long num_moves) {
+  auto b = board::Board::from_fen(fen);
+
+  auto ml = b.generate_all_moves();
+  REQUIRE( ml.moves.size() == num_moves );
+}
+
+TEST_CASE( "White pawn start", "[movegen]" ) {
+  const auto pawn_moves_w = "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1";
+  check_move_count(pawn_moves_w, 26);
+}
+
+TEST_CASE( "Black pawn start", "[movegen]" ) {
+  const auto pawn_moves_b = "rnbqkbnr/p1p1p3/3p3p/1p1p4/2P1Pp2/8/PP1P1PpP/RNBQKB1R b KQkq e3 0 1";
+  check_move_count(pawn_moves_b, 26);
+}

@@ -16,6 +16,8 @@ namespace bitboard {
 
   extern const Bitboard BB_FILE_A;
   extern const Bitboard BB_FILE_H;
+  extern const Bitboard BB_RANK_4;
+  extern const Bitboard BB_RANK_5;
 
   struct BitboardIterator {
 

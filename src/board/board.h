@@ -8,6 +8,7 @@
 
 #include "../pieces.h"
 #include "../bitboard.h"
+#include "movegen.h"
 
 
 using pieces::Piece;
@@ -67,6 +68,8 @@ namespace board {
     bool check() const;
 
     bool square_attacked(Square sq, Color side) const;
+
+    movegen::MoveList generate_all_moves() const;
 
   private:
     void update_lists_and_material();
