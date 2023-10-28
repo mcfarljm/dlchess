@@ -14,7 +14,7 @@
 using pieces::Piece;
 using pieces::Color;
 using bitboard::Bitboard;
-using squares::Position;
+namespace Position = squares::Position;
 
 
 namespace castling {
@@ -43,11 +43,10 @@ namespace board {
     // White, black, and both-side bitboards for all pieces
     std::array<Bitboard, 3> bb_sides;
 
-    std::array<Square, 2> king_sq = {static_cast<Square>(Position::none),
-                                     static_cast<Square>(Position::none)};
+    std::array<Square, 2> king_sq = {Position::none, Position::none};
 
     Color side = Color::both;
-    Square en_pas = static_cast<Square>(Position::none);
+    Square en_pas = Position::none;
     int fifty_move = 0;
 
       /* ply: u32, */

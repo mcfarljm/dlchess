@@ -193,7 +193,7 @@ namespace board {
     if (side == Color::white)
       hash ^= hasher.side_key;
 
-    if (en_pas != static_cast<Square>(Position::none))
+    if (en_pas != Position::none)
       hash ^= hasher.piece_keys[static_cast<int>(Piece::none)][en_pas];
 
     hash ^= hasher.castle_keys[castle_perm.to_ulong()];
@@ -227,7 +227,7 @@ namespace board {
     board_assert(side == Color::white || side == Color::black);
     board_assert(hash == get_position_hash());
 
-    board_assert(en_pas == static_cast<Square>(Position::none) ||
+    board_assert(en_pas == Position::none ||
                  (en_pas/8 == squares::RANK_6 && side == Color::white) ||
                  (en_pas/8 == squares::RANK_3 && side == Color::black));
 

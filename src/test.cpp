@@ -166,8 +166,8 @@ TEST_CASE( "King moves", "[attacks]" ) {
 }
 
 TEST_CASE( "Move string", "[moves]" ) {
-  auto mv = game_moves::Move(static_cast<Square>(squares::Position::C1),
-                             static_cast<Square>(squares::Position::C3),
+  auto mv = game_moves::Move(squares::Position::C1,
+                             squares::Position::C3,
                              Piece::none, Piece::WR,
                              game_moves::MoveFlag::none);
   std::stringstream ss;

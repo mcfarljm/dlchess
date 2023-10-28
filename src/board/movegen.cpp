@@ -55,7 +55,7 @@ namespace board {
         move_list.add_white_pawn_move(to64 - 9, to64, pieces[to64]);
 
       // En passant captures:
-      if (en_pas != static_cast<Square>(Position::none)) {
+      if (en_pas != Position::none) {
         auto ep_bb = Bitboard(1ULL << en_pas);
         auto ep_to_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_A) << 7) & ep_bb;
         auto ep_to_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_H) << 9) & ep_bb;
@@ -86,7 +86,7 @@ namespace board {
         move_list.add_white_pawn_move(to64 + 7, to64, pieces[to64]);
 
       // En passant captures:
-      if (en_pas != static_cast<Square>(Position::none)) {
+      if (en_pas != Position::none) {
         auto ep_bb = Bitboard(1ULL << en_pas);
         auto ep_to_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_A) >> 9) & ep_bb;
         auto ep_to_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_H) >> 7) & ep_bb;
