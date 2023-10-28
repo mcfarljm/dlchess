@@ -68,12 +68,12 @@ namespace board {
         throw std::runtime_error("FEN error");
       } // End switch
 
-      if (piece.exists()) {
-        for (int i=0; i<count; ++i) {
+      for (int i=0; i<count; ++i) {
+        if (piece.exists()) {
           auto sq = squares::fr_to_sq(file, rank);
           board.pieces[sq] = piece;
-          ++file;
         }
+        ++file;
       }
     }
   exit_loop:
