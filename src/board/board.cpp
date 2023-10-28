@@ -4,10 +4,15 @@
 
 #include "board.h"
 #include "hash.h"
+#include "piece_moves.h"
 
 
 using pieces::Piece;
 using pieces::Color;
+using piece_moves::white_pawn_attacks;
+using piece_moves::black_pawn_attacks;
+using piece_moves::knight_moves;
+using piece_moves::king_moves;
 
 namespace board {
 
@@ -238,6 +243,47 @@ namespace board {
 
     return true;
 
+  }
+
+  bool Board::square_attacked(Square sq, Color side) const {
+
+    // Pawns
+    if (side == Color::white) {
+      if ((bitboards[static_cast<int>(pieces::Piece::WP)] & black_pawn_attacks[sq]).any())
+        return true;
+    }
+    else {
+      if ((bitboards[static_cast<int>(pieces::Piece::BP)] & white_pawn_attacks[sq]).any())
+        return true;
+    }
+
+    // Knights
+    auto knight_piece = (side == Color::white ? Piece::WN : Piece::BN);
+    if ((knight_moves[sq] & bitboards[static_cast<int>(knight_piece)]).any())
+      return true;
+
+    auto occ = bb_sides[static_cast<int>(Color::both)];
+
+    // Bishops or queens
+    auto bishops_queens = (side == Color::white ?
+                           bitboards[static_cast<int>(Piece::WB)] | bitboards[static_cast<int>(Piece::WQ)] :
+                           bitboards[static_cast<int>(Piece::BB)] | bitboards[static_cast<int>(Piece::BQ)]);
+    if ((piece_moves::get_bishop_attacks(sq, occ) & bishops_queens).any())
+      return true;
+
+    // Rooks or queens
+    auto rooks_queens = (side == Color::white ?
+                           bitboards[static_cast<int>(Piece::WR)] | bitboards[static_cast<int>(Piece::WQ)] :
+                           bitboards[static_cast<int>(Piece::BR)] | bitboards[static_cast<int>(Piece::BQ)]);
+    if ((piece_moves::get_rook_attacks(sq, occ) & rooks_queens).any())
+      return true;
+
+    // Kings
+    auto king_piece = (side == Color::white ? Piece::WK : Piece::BK);
+    if ((king_moves[sq] & bitboards[static_cast<int>(king_piece)]).any())
+      return true;
+
+    return false;
   }
 
 };
