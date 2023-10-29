@@ -90,7 +90,7 @@ namespace board {
       auto to_step2 = (to_step1 >> 8) & bitboard::BB_RANK_5 & (~ bb_sides[static_cast<int>(Color::both)]);
 
       for (auto to64 : Bitboard(to_step1))
-        move_list.add_white_pawn_move(to64 + 8, to64, Piece::none);
+        move_list.add_black_pawn_move(to64 + 8, to64, Piece::none);
       for (auto to64 : Bitboard(to_step2))
         move_list.moves.emplace_back(to64 + 2*8, to64, Piece::none, Piece::none, MoveFlag::pawnstart);
 
@@ -98,9 +98,9 @@ namespace board {
       auto to_cap_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_A) >> 9) & bb_sides[static_cast<int>(Color::white)];
       auto to_cap_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_H) >> 7) & bb_sides[static_cast<int>(Color::white)];
       for (auto to64 : Bitboard(to_cap_left))
-        move_list.add_white_pawn_move(to64 + 9, to64, pieces[to64]);
+        move_list.add_black_pawn_move(to64 + 9, to64, pieces[to64]);
       for (auto to64 : Bitboard(to_cap_right))
-        move_list.add_white_pawn_move(to64 + 7, to64, pieces[to64]);
+        move_list.add_black_pawn_move(to64 + 7, to64, pieces[to64]);
 
       // En passant captures:
       if (en_pas != Position::none) {
