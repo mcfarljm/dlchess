@@ -203,9 +203,13 @@ namespace board {
   bool Board::check() const {
     std::array<int, pieces::NUM_PIECE_TYPES_BOTH> piece_count{};
 
-    auto board_assert = [](bool condition) {
-      if (!condition)
-        throw std::runtime_error("board check failure");
+    auto board_assert = [](bool condition, std::string_view msg) {
+      if (!condition) {
+        // std::cout << *this;
+        std::string full_msg = "board check failure: ";
+        full_msg += msg;
+        throw std::runtime_error(full_msg);
+      }
     };
 
     for (Square sq=0; sq<BOARD_SQ_NUM; ++sq) {
@@ -215,25 +219,27 @@ namespace board {
     }
 
     for (auto piece_index=0; piece_index<pieces::NUM_PIECE_TYPES_BOTH; ++piece_index)
-      board_assert(piece_count[piece_index] == bitboards[piece_index].count());
+      board_assert(piece_count[piece_index] == bitboards[piece_index].count(),
+                   "piece count matches bitboard count");
 
     // Check pawn bitboard squares:
     for (auto sq : bitboards[static_cast<int>(pieces::Piece::WP)])
-      board_assert(pieces[sq] == pieces::Piece::WP);
+      board_assert(pieces[sq] == pieces::Piece::WP, "WP bitboard");
     for (auto sq : bitboards[static_cast<int>(pieces::Piece::BP)])
-      board_assert(pieces[sq] == pieces::Piece::BP);
+      board_assert(pieces[sq] == pieces::Piece::BP, "BP bitboard");
 
-    board_assert(side == Color::white || side == Color::black);
-    board_assert(hash == get_position_hash());
+    board_assert(side == Color::white || side == Color::black, "side");
+    board_assert(hash == get_position_hash(), "hash");
 
     board_assert(en_pas == Position::none ||
                  (en_pas/8 == squares::RANK_6 && side == Color::white) ||
-                 (en_pas/8 == squares::RANK_3 && side == Color::black));
+                 (en_pas/8 == squares::RANK_3 && side == Color::black),
+                 "en_pas");
 
-    board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == pieces::Piece::WK);
-    board_assert(pieces[king_sq[static_cast<int>(Color::black)]] == pieces::Piece::BK);
-    board_assert(bitboards[static_cast<int>(pieces::Piece::WK)][king_sq[static_cast<int>(Color::white)]]);
-    board_assert(bitboards[static_cast<int>(pieces::Piece::BK)][king_sq[static_cast<int>(Color::black)]]);
+    board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == pieces::Piece::WK, "WK");
+    board_assert(pieces[king_sq[static_cast<int>(Color::black)]] == pieces::Piece::BK, "BK");
+    board_assert(bitboards[static_cast<int>(pieces::Piece::WK)][king_sq[static_cast<int>(Color::white)]], "WK BB");
+    board_assert(bitboards[static_cast<int>(pieces::Piece::BK)][king_sq[static_cast<int>(Color::black)]], "BK BB");
 
     // Check side piece bitboards:
 
