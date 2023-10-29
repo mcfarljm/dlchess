@@ -6,6 +6,8 @@
 
 namespace squares {
 
+  constexpr int BOARD_SQ_NUM = 64;
+
   // Todo: There might be a better place to define this.  For now putting it
   // here for accessibility by other modules.
   using u64 = uint64_t;

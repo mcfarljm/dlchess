@@ -5,10 +5,13 @@
 #include <random>
 #include <cstdint>
 
+#include "../squares.h"
 #include "../pieces.h"
 
 
 namespace board {
+
+  using squares::BOARD_SQ_NUM;
 
   class Hasher {
   public:

@@ -2,6 +2,17 @@
 
 namespace pieces {
 
+  Color swap_side(Color side) {
+    switch(side) {
+    case Color::white:
+      return Color::black;
+    case Color::black:
+      return Color::white;
+    default:
+      return Color::both;
+    }
+  }
+
   std::ostream& operator<<(std::ostream& os, const Piece& piece) {
     switch (piece.value) {
     case Piece::WP: os << "P"; break;

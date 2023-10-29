@@ -11,6 +11,8 @@ namespace pieces {
     both,
   };
 
+  Color swap_side(Color);
+
   constexpr int NUM_PIECE_TYPES_BOTH = 12;
 
   /// Wrap piece enum in a class to provide methods and encapsulation.
@@ -44,6 +46,10 @@ namespace pieces {
       default:
         return Color::both;
       }
+    }
+
+    constexpr bool is_pawn() const {
+      return (value == WP || value == BP);
     }
 
     constexpr bool is_knight() const {

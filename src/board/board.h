@@ -8,7 +8,9 @@
 
 #include "../pieces.h"
 #include "../bitboard.h"
+#include "hash.h"
 #include "movegen.h"
+#include "game_moves.h"
 
 
 using pieces::Piece;
@@ -30,9 +32,19 @@ namespace castling {
 
 namespace board {
 
-  constexpr int BOARD_SQ_NUM = 64;
+  using squares::BOARD_SQ_NUM;
 
   extern const std::string_view START_FEN;
+
+  extern const Hasher hasher;
+
+  struct Undo {
+    game_moves::Move mv;
+    std::bitset<4> castle_perm;
+    Square en_pas;
+    int fifty_move;
+    uint64_t hash;
+  };
 
   class Board {
   public:
@@ -52,7 +64,7 @@ namespace board {
       /* ply: u32, */
       /* hist_ply: u32, */
 
-      /* pub history: Vec<Undo>, */
+    std::vector<Undo> history;
 
     std::bitset<4> castle_perm;
 
@@ -72,10 +84,23 @@ namespace board {
 
     movegen::MoveList generate_all_moves() const;
 
+    // makemove
+    bool make_move(game_moves::Move mv);
+    void undo_move();
+
   private:
     void update_lists_and_material();
-  };
 
+    // makemove
+    void hash_piece(Piece piece, Square sq);
+    void hash_side();
+    void hash_en_pas();
+    void hash_castle();
+    void clear_piece(Square sq);
+    void add_piece(Piece piece, Square sq);
+    void move_piece(Square from, Square to);
+
+  };
 
 };
 

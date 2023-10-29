@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "board.h"
-#include "hash.h"
 #include "piece_moves.h"
 
 
