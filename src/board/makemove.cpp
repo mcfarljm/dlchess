@@ -147,13 +147,14 @@ namespace board {
     if (pieces[to].is_king())
       king_sq[static_cast<int>(side)] = to;
 
+    auto original_side = side;
     side = swap_side(side);
     hash_side();
 
     assert(check());
 
-    if (square_attacked(king_sq[static_cast<int>(side)], side)) {
-      // todo: undo
+    if (square_attacked(king_sq[static_cast<int>(original_side)], side)) {
+      undo_move();
       return false;
     }
 
