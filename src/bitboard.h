@@ -53,6 +53,11 @@ namespace bitboard {
 
   struct Bitboard : public std::bitset<64> {
 
+    Bitboard() = default;
+
+    Bitboard(const std::bitset<64>& b) :
+      std::bitset<64> {b} {}
+
     bool nonzero() const {
       return any();
     }
@@ -63,11 +68,6 @@ namespace bitboard {
 
     void clear_bit(Square index) {
       reset(index);
-    }
-
-    // If this is not defined, the type of operator| will be bitset
-    Bitboard operator|(const Bitboard& rhs) const {
-      return *this | rhs;
     }
 
     friend std::ostream& operator<<(std::ostream&, const Bitboard& b);
