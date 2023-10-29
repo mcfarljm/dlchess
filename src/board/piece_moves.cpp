@@ -109,7 +109,7 @@ namespace piece_moves {
       // Right captures
       bb.reset();
       bb.set_bit(sq);
-      bb = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) << 9);
+      bb = Bitboard((bb & ~ bitboard::BB_FILE_H) << 9);
       bitboards[sq] |= bb;
     }
     return bitboards;
@@ -121,13 +121,13 @@ namespace piece_moves {
       // Left captures
       Bitboard bb;
       bb.set_bit(sq);
-      bb = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_A) >> 9);
+      bb = Bitboard((bb & ~ bitboard::BB_FILE_A) >> 9);
       bitboards[sq] |= bb;
 
       // Right captures
       bb.reset();
       bb.set_bit(sq);
-      bb = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) >> 7);
+      bb = Bitboard((bb & ~ bitboard::BB_FILE_H) >> 7);
       bitboards[sq] |= bb;
     }
     return bitboards;
