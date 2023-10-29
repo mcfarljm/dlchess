@@ -115,6 +115,9 @@ namespace board {
     castle_perm &= CASTLE_PERM[to];
     en_pas = Position::none;
 
+    // Hash in new state of castling permission
+    hash_castle();
+
     ++fifty_move;
 
     if (mv.is_capture()) {
