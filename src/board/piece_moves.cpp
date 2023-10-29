@@ -101,12 +101,16 @@ namespace piece_moves {
     std::array<Bitboard,64> bitboards;
     for (Square sq=0; sq<64; ++sq) {
       // Left captures
-      bitboards[sq].set_bit(sq);
-      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_A) << 7);
+      Bitboard bb;
+      bb.set_bit(sq);
+      bb = Bitboard((bb & ~ bitboard::BB_FILE_A) << 7);
+      bitboards[sq] |= bb;
 
       // Right captures
-      bitboards[sq].set_bit(sq);
-      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) << 9);
+      bb.reset();
+      bb.set_bit(sq);
+      bb = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) << 9);
+      bitboards[sq] |= bb;
     }
     return bitboards;
   }
@@ -115,12 +119,16 @@ namespace piece_moves {
     std::array<Bitboard,64> bitboards;
     for (Square sq=0; sq<64; ++sq) {
       // Left captures
-      bitboards[sq].set_bit(sq);
-      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_A) >> 9);
+      Bitboard bb;
+      bb.set_bit(sq);
+      bb = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_A) >> 9);
+      bitboards[sq] |= bb;
 
       // Right captures
-      bitboards[sq].set_bit(sq);
-      bitboards[sq] = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) >> 7);
+      bb.reset();
+      bb.set_bit(sq);
+      bb = Bitboard((bitboards[sq] & ~ bitboard::BB_FILE_H) >> 7);
+      bitboards[sq] |= bb;
     }
     return bitboards;
   }
