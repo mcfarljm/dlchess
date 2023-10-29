@@ -69,11 +69,11 @@ namespace pieces {
   };
 
   // SLIDERS[color] produces an array that can be iterated through
-  constexpr Piece SLIDERS[2][3] = {
+  constexpr Piece sliders[2][3] = {
     {Piece::WB, Piece::WR, Piece::WQ},
     {Piece::BB, Piece::BR, Piece::BQ},
   };
-  constexpr Piece NON_SLIDERS[2][2] = {
+  constexpr Piece non_sliders[2][2] = {
     {Piece::WN, Piece::WK},
     {Piece::BN, Piece::BK},
   };

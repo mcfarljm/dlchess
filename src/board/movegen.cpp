@@ -2,6 +2,7 @@
 
 #include "movegen.h"
 #include "board.h"
+#include "piece_moves.h"
 
 using game_moves::MoveFlag;
 
@@ -126,6 +127,51 @@ namespace board {
           if ((! square_attacked(Position::E8, Color::white)) &&
               (! square_attacked(Position::D8, Color::white)))
             move_list.moves.emplace_back(Position::E8, Position::C8, Piece::none, Piece::none, MoveFlag::castle);
+        }
+      }
+    }
+
+    // Sliders
+    for (auto piece : pieces::sliders[static_cast<int>(side)]) {
+      for (auto sq : bitboards[piece.value]) {
+        Bitboard attacks;
+        switch (piece.value) {
+        case Piece::WR: case Piece::BR:
+          attacks = piece_moves::get_rook_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          break;
+        case Piece::WB: case Piece::BB:
+          attacks = piece_moves::get_bishop_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          break;
+        case Piece::WQ: case Piece::BQ:
+          attacks = piece_moves::get_queen_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          break;
+        }
+        attacks &= ~ bb_sides[static_cast<int>(side)];
+        for (auto t_sq : attacks) {
+          auto t_piece = pieces[t_sq];
+          move_list.moves.emplace_back(sq, t_sq, t_piece);
+        }
+      }
+    }
+
+    // Non-sliders
+    for (auto piece : pieces::non_sliders[static_cast<int>(side)]) {
+      for (auto sq : bitboards[piece.value]) {
+        auto bb = [=]() {
+          switch(piece.value) {
+          case Piece::WN: case Piece::BN:
+            return piece_moves::knight_moves[sq];
+          case Piece::WK: case Piece::BK:
+            return piece_moves::king_moves[sq];
+          default:
+            throw std::runtime_error("unreachable");
+          }
+        }();
+        // Take moves bitboard and filter out side's pieces
+        auto iterator = Bitboard(bb & ~ bb_sides[static_cast<int>(side)]);
+        for (auto t_sq : iterator) {
+          auto t_piece = pieces[t_sq];
+          move_list.moves.emplace_back(sq, t_sq, t_piece);
         }
       }
     }

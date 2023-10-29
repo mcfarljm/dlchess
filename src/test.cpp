@@ -184,11 +184,18 @@ void check_move_count(std::string_view fen, long num_moves) {
 }
 
 TEST_CASE( "White pawn start", "[movegen]" ) {
+  // These were originally used in VICE to check pawn moves, of which there are
+  // 26.
   const auto pawn_moves_w = "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1";
-  check_move_count(pawn_moves_w, 26);
+  check_move_count(pawn_moves_w, 42);
 }
 
 TEST_CASE( "Black pawn start", "[movegen]" ) {
   const auto pawn_moves_b = "rnbqkbnr/p1p1p3/3p3p/1p1p4/2P1Pp2/8/PP1P1PpP/RNBQKB1R b KQkq e3 0 1";
-  check_move_count(pawn_moves_b, 26);
+  check_move_count(pawn_moves_b, 42);
+}
+
+TEST_CASE( "Castling", "[movegen]" ) {
+  const auto castle_fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
+  check_move_count(castle_fen, 48);
 }
