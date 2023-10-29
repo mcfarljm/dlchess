@@ -251,6 +251,7 @@ namespace board {
   }
 
   bool Board::square_attacked(Square sq, Color side) const {
+    assert(check());
 
     // Pawns
     if (side == Color::white) {

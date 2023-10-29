@@ -199,3 +199,18 @@ TEST_CASE( "Castling", "[movegen]" ) {
   const auto castle_fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
   check_move_count(castle_fen, 48);
 }
+
+
+TEST_CASE( "Perft init 3", "[perft]" ) {
+  auto b = board::Board::from_fen(board::START_FEN);
+  auto count = b.perft(3);
+  REQUIRE( count == 8902 );
+}
+
+
+TEST_CASE( "Perft fen 2", "[perft]" ) {
+  const auto fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
+  auto b = board::Board::from_fen(fen);
+  auto count = b.perft(2);
+  REQUIRE( count == 2039 );
+}

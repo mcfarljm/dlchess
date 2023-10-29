@@ -88,6 +88,8 @@ namespace board {
     bool make_move(game_moves::Move mv);
     void undo_move();
 
+    long perft(int depth);
+
   private:
     void update_lists_and_material();
 

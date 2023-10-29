@@ -45,6 +45,7 @@ add_library(dlchess SHARED
   src/board/game_moves.cpp
   src/board/movegen.cpp
   src/board/makemove.cpp
+  src/board/perft.cpp
 )
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
