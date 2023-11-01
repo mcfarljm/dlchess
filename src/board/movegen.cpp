@@ -76,7 +76,7 @@ namespace board {
         }
       }
       if (castle_perm[castling::WQ]) {
-        if (pieces[Position::D1] == Piece::none && pieces[Position::C1] == Piece::none) {
+        if (pieces[Position::D1] == Piece::none && pieces[Position::C1] == Piece::none && pieces[Position::B1] == Piece::none) {
           if ((! square_attacked(Position::E1, Color::black)) &&
               (! square_attacked(Position::D1, Color::black)))
             move_list.moves.emplace_back(Position::E1, Position::C1, Piece::none, Piece::none, MoveFlag::castle);
@@ -123,7 +123,7 @@ namespace board {
         }
       }
       if (castle_perm[castling::BQ]) {
-        if (pieces[Position::D8] == Piece::none && pieces[Position::C8] == Piece::none) {
+        if (pieces[Position::D8] == Piece::none && pieces[Position::C8] == Piece::none && pieces[Position::B8] == Piece::none) {
           if ((! square_attacked(Position::E8, Color::white)) &&
               (! square_attacked(Position::D8, Color::white)))
             move_list.moves.emplace_back(Position::E8, Position::C8, Piece::none, Piece::none, MoveFlag::castle);
