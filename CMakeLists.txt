@@ -36,6 +36,7 @@ FetchContent_MakeAvailable(Catch2)
 set( CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_DEBUG} -pg" )
 
 add_library(dlchess SHARED
+  src/utils.cpp
   src/squares.cpp
   src/bitboard.cpp
   src/pieces.cpp

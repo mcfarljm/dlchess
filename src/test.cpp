@@ -2,6 +2,7 @@
 // #include <catch2/benchmark/catch_benchmark.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <algorithm>
@@ -10,6 +11,7 @@
 #include "board/board.h"
 #include "board/piece_moves.h"
 #include "board/game_moves.h"
+#include "utils.h"
 
 
 TEST_CASE( "Test bb string empty", "[bitboard]" ) {
@@ -213,4 +215,56 @@ TEST_CASE( "Perft fen 2", "[perft]" ) {
   auto b = board::Board::from_fen(fen);
   auto count = b.perft(2);
   REQUIRE( count == 2039 );
+}
+
+
+void perft_test_line(const std::string& line, int max_depth) {
+  std::cout << "Testing: " << line << std::endl;
+  auto items = utils::split_string(line, ';');
+  auto fen = items.front();
+  items.erase(items.begin());
+  auto b = board::Board::from_fen(fen);
+
+  for (auto& entry : items) {
+    std::stringstream ss(entry);
+    ss.get(); // Remove the "D" character
+    int depth;
+    long expected;
+    ss >> depth >> expected;
+    if (depth > max_depth)
+      break;
+    std::cout << "Depth: " << depth << ", " << expected << std::endl;
+
+    auto got = b.perft(depth);
+    REQUIRE( got == expected );
+  }
+}
+
+TEST_CASE( "Perft all", "[.perftsuite]" ) {
+  // Largest depth in suite is 6
+  const int max_depth = 6;
+
+  std::ifstream infile("../perftsuite.txt");
+  std::string line;
+  while (std::getline(infile, line)) {
+    perft_test_line(line, max_depth);
+  }
+}
+
+
+// For debugging, this can be used to check counts after individual moves.  The
+// results can be compared against a working program to find a problematic move.
+TEST_CASE( "Debug perft", "[.perftdebug]" ) {
+  auto fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
+  auto b = board::Board::from_fen(fen);
+  const int depth = 3;
+
+  auto move_list = b.generate_all_moves();
+  for (auto& mv : move_list.moves) {
+    if (! b.make_move(mv))
+      continue;
+    auto count = b.perft(depth-1);
+    std::cout << mv << " " << count << std::endl;
+    b.undo_move();
+  }
 }
