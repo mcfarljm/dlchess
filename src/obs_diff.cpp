@@ -36,7 +36,7 @@ namespace obs_diff {
   }
 
   static u64 positive_ray(Square sq, u64 line) {
-    return line & (0 - (2LL << sq));
+    return line & (0LL - (2LL << sq));
   }
 
   static u64 negative_ray(Square sq, u64 line) {
