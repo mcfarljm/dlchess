@@ -292,4 +292,92 @@ namespace board {
     return false;
   }
 
+  int Board::repetition_count() const {
+    int repetitions = 0;
+    for (auto& item : history) {
+      if (item.hash == hash)
+        ++repetitions;
+    }
+    return repetitions;
+  }
+
+  bool Board::is_draw_by_material() const {
+    if (bitboards[static_cast<int>(Piece::WP)].any() ||
+        bitboards[static_cast<int>(Piece::BP)].any())
+      return false;
+    if (bitboards[static_cast<int>(Piece::WQ)].any() ||
+        bitboards[static_cast<int>(Piece::BQ)].any() ||
+        bitboards[static_cast<int>(Piece::WR)].any() ||
+        bitboards[static_cast<int>(Piece::BR)].any())
+      return false;
+    if (bitboards[static_cast<int>(Piece::WB)].count() > 1 ||
+        bitboards[static_cast<int>(Piece::BB)].count() > 1)
+      return false;
+    if (bitboards[static_cast<int>(Piece::WN)].count() > 1 ||
+        bitboards[static_cast<int>(Piece::BN)].count() > 1)
+      return false;
+    if (bitboards[static_cast<int>(Piece::WN)].any() &&
+        bitboards[static_cast<int>(Piece::WB)].any())
+      return false;
+    if (bitboards[static_cast<int>(Piece::BN)].any() &&
+        bitboards[static_cast<int>(Piece::BB)].any())
+      return false;
+
+    // Otherwise, it must be a draw:
+    return true;
+  }
+
+  bool Board::is_over() {
+    // This move count may not be exact (?)
+    if (fifty_move > 100)
+      return true;
+    if (repetition_count() >= 2)
+      return true;
+    if (is_draw_by_material())
+      return true;
+
+    // Check for legal move:
+    bool found = false;
+    auto move_list = generate_all_moves();
+    for (auto& mv : move_list.moves) {
+      if (! make_move(mv))
+        continue;
+      found = true;
+      undo_move();
+      break;
+    }
+    return ! found;
+  }
+
+  std::optional<Color> Board::winner() {
+    // This move count may not be exact (?)
+    if (fifty_move > 100)
+      return Color::both;
+    if (repetition_count() >= 2)
+      return Color::both;
+    if (is_draw_by_material())
+      return Color::both;
+
+    // Check for legal move:
+    bool found = false;
+    auto move_list = generate_all_moves();
+    for (auto& mv : move_list.moves) {
+      if (! make_move(mv))
+        continue;
+      found = true;
+      undo_move();
+      break;
+    }
+    if (found)
+      return std::nullopt;
+
+    bool in_check = square_attacked(king_sq[static_cast<int>(side)], other_side(side));
+    if (in_check) {
+      return other_side(side);
+    }
+    else
+      // Stalemate
+      return Color::both;
+  }
+
 };

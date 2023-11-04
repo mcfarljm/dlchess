@@ -5,6 +5,7 @@
 #include <string>
 #include <bitset>
 #include <cstdint>
+#include <optional>
 
 #include "../pieces.h"
 #include "../bitboard.h"
@@ -84,6 +85,9 @@ namespace board {
 
     movegen::MoveList generate_all_moves() const;
 
+    bool is_over();
+    std::optional<Color> winner();
+
     // makemove
     bool make_move(game_moves::Move mv);
     void undo_move();
@@ -92,6 +96,8 @@ namespace board {
 
   private:
     void update_lists_and_material();
+    int repetition_count() const;
+    bool is_draw_by_material() const;
 
     // makemove
     void hash_piece(Piece piece, Square sq);
