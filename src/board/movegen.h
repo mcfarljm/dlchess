@@ -13,8 +13,6 @@ namespace movegen {
   struct MoveList {
     std::vector<Move> moves;
 
-    // Todo: consider adding reserve(256) to constructor
-
     void add_white_pawn_move(Square from, Square to, Piece capture);
     void add_black_pawn_move(Square from, Square to, Piece capture);
   };

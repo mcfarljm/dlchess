@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-// #include <catch2/benchmark/catch_benchmark.hpp>
+#include <catch2/benchmark/catch_benchmark.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -200,6 +200,14 @@ TEST_CASE( "Black pawn start", "[movegen]" ) {
 TEST_CASE( "Castling", "[movegen]" ) {
   const auto castle_fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
   check_move_count(castle_fen, 48);
+}
+
+TEST_CASE( "Benchmark move generation", "[!benchmark][movegen]" ) {
+  auto b = board::Board::from_fen(board::START_FEN);
+
+  BENCHMARK("movegen") {
+    return b.generate_all_moves();
+  };
 }
 
 

@@ -36,6 +36,7 @@ namespace movegen {
 namespace board {
   movegen::MoveList Board::generate_all_moves() const {
     movegen::MoveList move_list;
+    move_list.moves.reserve(128);
 
     if (side == Color::white) {
       // Pawn non-captures:
