@@ -37,6 +37,7 @@ set( CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_DEBUG} -pg" )
 
 add_library(dlchess SHARED
   src/utils.cpp
+  src/myrand.cpp
   src/squares.cpp
   src/bitboard.cpp
   src/pieces.cpp
@@ -47,6 +48,9 @@ add_library(dlchess SHARED
   src/board/movegen.cpp
   src/board/makemove.cpp
   src/board/perft.cpp
+
+  src/agent_random.cpp
+  src/simulation.cpp
 )
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
@@ -56,8 +60,8 @@ add_library(dlchess SHARED
 add_executable(tests src/test.cpp)
 target_link_libraries(tests PRIVATE dlchess Catch2::Catch2WithMain)
 
-# add_executable(dlgobot src/gtp/gtp_main.cpp)
-# target_link_libraries(dlgobot PRIVATE dlgo cxxopts)
+add_executable(matchup src/matchup.cpp)
+target_link_libraries(matchup PRIVATE dlchess)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
