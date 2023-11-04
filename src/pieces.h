@@ -11,7 +11,7 @@ namespace pieces {
     both,
   };
 
-  Color swap_side(Color);
+  Color other_side(Color);
 
   constexpr int NUM_PIECE_TYPES_BOTH = 12;
 

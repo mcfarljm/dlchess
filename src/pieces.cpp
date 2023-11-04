@@ -2,7 +2,7 @@
 
 namespace pieces {
 
-  Color swap_side(Color side) {
+  Color other_side(Color side) {
     switch(side) {
     case Color::white:
       return Color::black;

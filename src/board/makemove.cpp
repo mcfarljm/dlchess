@@ -151,7 +151,7 @@ namespace board {
       king_sq[static_cast<int>(side)] = to;
 
     auto original_side = side;
-    side = swap_side(side);
+    side = other_side(side);
     hash_side();
 
     assert(check());
@@ -185,7 +185,7 @@ namespace board {
       hash_en_pas();
     hash_castle();
 
-    side = swap_side(side);
+    side = other_side(side);
     hash_side();
 
     if (mv.is_en_pas()) {
