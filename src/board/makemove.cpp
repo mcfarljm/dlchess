@@ -109,7 +109,7 @@ namespace board {
     // Hash out current state
     hash_castle();
 
-    history.emplace_back(mv, castle_perm, en_pas, fifty_move, hash);
+    history.emplace_back(mv, castle_perm, en_pas, fifty_move, prev_hash);
 
     castle_perm &= CASTLE_PERM[from];
     castle_perm &= CASTLE_PERM[to];

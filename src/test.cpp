@@ -276,3 +276,27 @@ TEST_CASE( "Debug perft", "[.perftdebug]" ) {
     b.undo_move();
   }
 }
+
+
+TEST_CASE( "Game not over at start", "[is_over]" ) {
+  auto b = board::Board::from_fen(board::START_FEN);
+  REQUIRE( ! b.is_over() );
+}
+
+
+TEST_CASE( "Draw by repetition", "[is_over]" ) {
+  auto b = board::Board::from_fen(board::START_FEN);
+
+  for (int i=0; i<2; ++i) {
+    b.make_move(game_moves::Move(squares::Position::G1,
+                                 squares::Position::F3));
+    b.make_move(game_moves::Move(squares::Position::B8,
+                                 squares::Position::C6));
+    b.make_move(game_moves::Move(squares::Position::F3,
+                                 squares::Position::G1));
+    b.make_move(game_moves::Move(squares::Position::C6,
+                                 squares::Position::B8));
+  }
+  REQUIRE( b.is_over() );
+  REQUIRE( b.winner().value() == Color::both );
+}
