@@ -3,10 +3,12 @@
 
 #include <cstdint>
 #include <string>
+#include <array>
 
 namespace squares {
 
   constexpr int BOARD_SQ_NUM = 64;
+  constexpr int GRID_SIZE = 8;
 
   // Todo: There might be a better place to define this.  For now putting it
   // here for accessibility by other modules.
@@ -32,6 +34,7 @@ namespace squares {
   constexpr FileRank FILES[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 
   Square fr_to_sq(FileRank file, FileRank rank);
+  std::array<int, 2> sq_to_rf(Square);
 
   namespace Position {
 

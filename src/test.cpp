@@ -12,6 +12,7 @@
 #include "board/piece_moves.h"
 #include "board/game_moves.h"
 #include "utils.h"
+#include "zero/encoder.h"
 
 
 TEST_CASE( "Test bb string empty", "[bitboard]" ) {
@@ -299,4 +300,16 @@ TEST_CASE( "Draw by repetition", "[is_over]" ) {
   }
   REQUIRE( b.is_over() );
   REQUIRE( b.winner().value() == Color::both );
+}
+
+
+TEST_CASE( "Test encoder", "[encoder]" ) {
+  auto b = board::Board::from_fen(board::START_FEN);
+  zero::SimpleEncoder encoder;
+
+  b.make_move(game_moves::Move(squares::Position::G1,
+                               squares::Position::F3));
+
+  auto tensor = encoder.encode(b);
+  // std::cout << tensor << std::endl;
 }

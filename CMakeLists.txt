@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 
 project(dlchess LANGUAGES CXX)
 
+find_package(Torch REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
 set(CMAKE_CXX_STANDARD 20)
 
 # find_package(Torch REQUIRED)
@@ -51,11 +54,13 @@ add_library(dlchess SHARED
 
   src/agent_random.cpp
   src/simulation.cpp
+
+  src/zero/encoder.cpp
 )
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
 
-# target_link_libraries(dlchess "${TORCH_LIBRARIES}")
+target_link_libraries(dlchess "${TORCH_LIBRARIES}")
 
 add_executable(tests src/test.cpp)
 target_link_libraries(tests PRIVATE dlchess Catch2::Catch2WithMain)

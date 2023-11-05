@@ -119,6 +119,7 @@ namespace board {
     hash_castle();
 
     ++fifty_move;
+    ++total_moves;
 
     if (mv.is_capture()) {
       clear_piece(to);
@@ -180,6 +181,8 @@ namespace board {
     castle_perm = undo.castle_perm;
     fifty_move = undo.fifty_move;
     en_pas = undo.en_pas;
+
+    --total_moves;
 
     if (en_pas != Position::none)
       hash_en_pas();

@@ -61,6 +61,7 @@ namespace board {
     Color side = Color::both;
     Square en_pas = Position::none;
     int fifty_move = 0;
+    int total_moves = 0;
 
       /* ply: u32, */
       /* hist_ply: u32, */
@@ -87,6 +88,7 @@ namespace board {
 
     bool is_over();
     std::optional<Color> winner();
+    int repetition_count() const;
 
     // makemove
     bool make_move(game_moves::Move mv);
@@ -96,7 +98,6 @@ namespace board {
 
   private:
     void update_lists_and_material();
-    int repetition_count() const;
     bool is_draw_by_material() const;
 
     // makemove
