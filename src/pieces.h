@@ -64,6 +64,10 @@ namespace pieces {
       return (value == WB || value == BB || value == WQ || value == BQ);
     }
 
+    constexpr bool is_queen() const {
+      return (value == WQ || value == BQ);
+    }
+
     constexpr bool is_king() const {
       return (value == WK || value == BK);
     }

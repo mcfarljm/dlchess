@@ -45,4 +45,122 @@ namespace zero {
     return board_tensor;
   }
 
+  // Given the board state, construct a map from legal moves to coordinates
+  // associated with the tensor encoding.
+  std::unordered_map<game_moves::Move, torch::Tensor, game_moves::MoveHash>
+  decode_legal_moves(const board::Board& b) {
+    constexpr int KNIGHT_BASE_PLANE = 57;
+    constexpr int UNDERPROMOTION_BASE_PLANE = KNIGHT_BASE_PLANE + 8;
+
+    std::unordered_map<game_moves::Move, torch::Tensor, game_moves::MoveHash> move_map;
+
+    auto moves = b.generate_legal_moves();
+    for (auto& mv : moves) {
+      auto from_rank_file = squares::sq_to_rf(mv.from);
+      int plane;
+      auto delta = mv.to - mv.from;
+      if (b.pieces[mv.from].is_knight()) {
+        switch (delta) {
+        case 17:
+          plane = KNIGHT_BASE_PLANE; break;
+        case 10:
+          plane = KNIGHT_BASE_PLANE + 1; break;
+        case -6:
+          plane = KNIGHT_BASE_PLANE + 2; break;
+        case -15:
+          plane = KNIGHT_BASE_PLANE + 3; break;
+        case -17:
+          plane = KNIGHT_BASE_PLANE + 4; break;
+        case -10:
+          plane = KNIGHT_BASE_PLANE + 5; break;
+        case 6:
+          plane = KNIGHT_BASE_PLANE + 6; break;
+        case 15:
+          plane = KNIGHT_BASE_PLANE + 7; break;
+        default:
+          throw std::runtime_error("invalid knight move");
+        }
+      }
+      else {  // not a knight
+        // Find direction and number of squares moved
+        int direction;
+        int amount;
+        if (delta % 8 == 0) {
+          if (delta > 0) {
+            // N
+            direction = 0;
+            amount = delta / 8;
+          } else {
+            // S
+            direction = 1;
+            amount = delta / -8;
+          }
+        }
+        else if (delta % 9 == 0) {
+          if (delta > 0) {
+            // NE
+            direction = 2;
+            amount = delta / 9;
+          } else {
+            // SW
+            direction = 3;
+            amount = delta / -9;
+          }
+        }
+        else if (delta % 7 == 0) {
+          if (delta > 0) {
+            // NW
+            direction = 4;
+            amount = delta / 7;
+          } else {
+            // SE
+            direction = 5;
+            amount = delta / -7;
+          }
+        }
+        else {
+          assert(delta < 8 && delta > -8);
+          if (delta > 0) {
+            // E
+            direction = 6;
+            amount = delta;
+          } else {
+            // W
+            direction = 7;
+            amount = -delta;
+          }
+        }
+        assert(amount > 0 && amount < 8);
+        plane = (direction - 1) * 8 + amount - 1;
+        assert(plane >= 0 && plane < KNIGHT_BASE_PLANE);
+
+        // Check for underpromotion
+        if (mv.promote.exists() && !mv.promote.is_queen()) {
+          // Pick one of 9 planes based on 3 underpromotions in 3 directions
+          int base;
+          if (direction == 0 || direction == 1)
+            base = 0;
+          if (direction == 2 || direction == 3)
+            base = 3;
+          else {
+            assert(direction == 4 || direction == 5);
+            base = 6;
+          }
+          if (mv.promote.is_knight())
+            plane = base;
+          else if (mv.promote.is_bishop_or_queen())
+            plane = base + 1;
+          else {
+            assert(mv.promote.is_rook_or_queen());
+            plane = base + 2;
+          }
+          assert(plane >= UNDERPROMOTION_BASE_PLANE &&
+                 plane < UNDERPROMOTION_BASE_PLANE + 9);
+        }
+      }
+      move_map.emplace(std::make_pair(mv, torch::tensor({from_rank_file[0], from_rank_file[1], plane})));
+    }
+    return move_map;
+  }
+
 };

@@ -1,6 +1,7 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
+#include <unordered_map>
 #include <torch/torch.h>
 
 #include "../board/board.h"
@@ -18,6 +19,9 @@ namespace zero {
     torch::Tensor encode(const board::Board&) const;
     /* Move decode_move_index(int index) const; */
   };
+
+  std::unordered_map<game_moves::Move, torch::Tensor, game_moves::MoveHash>
+  decode_legal_moves(const board::Board&);
 
 };
 

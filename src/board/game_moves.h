@@ -57,8 +57,19 @@ namespace game_moves {
       return flag == MoveFlag::pawnstart;
     }
 
+    bool operator==(const Move& rhs) const {
+      return (from == rhs.from) && (to == rhs.to) && (promote == rhs.promote);
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Move& m);
 
+  };
+
+  class MoveHash {
+  public:
+    std::size_t operator() (const Move& m) const {
+      return std::hash<Square>()(m.from) ^ std::hash<Square>()(m.to) ^ std::hash<int>()(m.promote.value);
+    }
   };
 
 };

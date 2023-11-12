@@ -179,4 +179,18 @@ namespace board {
 
     return move_list;
   }
+
+  std::vector<game_moves::Move> Board::generate_legal_moves() const {
+    auto move_list = generate_all_moves();
+    auto board_copy = *this;
+    std::vector<game_moves::Move> moves;
+    for (auto& mv : move_list.moves) {
+      if (! board_copy.make_move(mv))
+        continue;
+      moves.push_back(mv);
+      board_copy.undo_move();
+    }
+    return moves;
+  }
+
 };

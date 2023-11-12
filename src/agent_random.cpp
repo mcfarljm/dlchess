@@ -6,18 +6,7 @@ using game_moves::Move;
 using board::Board;
 
 Move RandomAgent::select_move(const Board& b) {
-  auto move_list = b.generate_all_moves();
- 
-  auto board_copy = b;
-
-  std::vector<Move> candidates;
-
-  for (auto& mv : move_list.moves) {
-    if (! board_copy.make_move(mv))
-      continue;
-    candidates.push_back(mv);
-    board_copy.undo_move();
-  }
+  auto candidates = b.generate_legal_moves();
 
   if (candidates.empty())
     throw std::runtime_error("No legal moves");

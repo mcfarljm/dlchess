@@ -85,6 +85,7 @@ namespace board {
     bool square_attacked(Square sq, Color side) const;
 
     movegen::MoveList generate_all_moves() const;
+    std::vector<game_moves::Move> generate_legal_moves() const;
 
     bool is_over();
     std::optional<Color> winner();
