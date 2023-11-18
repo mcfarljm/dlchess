@@ -327,7 +327,7 @@ namespace board {
     return true;
   }
 
-  bool Board::is_over() {
+  bool Board::is_over() const {
     // This move count may not be exact (?)
     if (fifty_move > 100)
       return true;
@@ -337,19 +337,20 @@ namespace board {
       return true;
 
     // Check for legal move:
+    auto board_copy = *this;
     bool found = false;
     auto move_list = generate_all_moves();
     for (auto& mv : move_list.moves) {
-      if (! make_move(mv))
+      if (! board_copy.make_move(mv))
         continue;
       found = true;
-      undo_move();
+      board_copy.undo_move();
       break;
     }
     return ! found;
   }
 
-  std::optional<Color> Board::winner() {
+  std::optional<Color> Board::winner() const {
     // This move count may not be exact (?)
     if (fifty_move > 100)
       return Color::both;
@@ -359,13 +360,14 @@ namespace board {
       return Color::both;
 
     // Check for legal move:
+    auto board_copy = *this;
     bool found = false;
     auto move_list = generate_all_moves();
     for (auto& mv : move_list.moves) {
-      if (! make_move(mv))
+      if (! board_copy.make_move(mv))
         continue;
       found = true;
-      undo_move();
+      board_copy.undo_move();
       break;
     }
     if (found)
