@@ -169,6 +169,7 @@ namespace board {
     os << std::endl;
     os << "side: " << side_chars[static_cast<int>(b.side)] << std::endl;
     os << "enPas: " << b.en_pas << std::endl;
+    os << "Fifty: " << b.fifty_move << std::endl;
 
     os << "castle: ";
     os << (b.castle_perm[castling::WK] ? 'K' : '-');

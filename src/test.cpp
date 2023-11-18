@@ -127,6 +127,7 @@ TEST_CASE( "Init board", "[board]" ) {
       a  b  c  d  e  f  g  h  
 side: w
 enPas: 64
+Fifty: 0
 castle: KQkq
 )";
 
