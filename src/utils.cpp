@@ -9,4 +9,22 @@ namespace utils {
     return elems;
   }
 
+  std::string format_seconds(double seconds) {
+    static constexpr int minute = 60;
+    static constexpr int hour = minute * 60;
+    static constexpr int day = hour * 24;
+
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(1);
+    if (seconds < minute)
+      ss << seconds << " s";
+    else if (seconds < hour)
+      ss << seconds / minute << " m";
+    else if (seconds < (hour * 99))
+      ss << seconds / hour << " h";
+    else
+      ss << seconds / day << " d";
+    return ss.str();
+  }
+
 };

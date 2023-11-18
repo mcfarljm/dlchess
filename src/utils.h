@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include <chrono>
 
 namespace utils {
 
@@ -18,6 +19,23 @@ namespace utils {
   }
 
   std::vector<std::string> split_string(const std::string &s, char delim);
+
+  class Timer
+  {
+  public:
+    Timer() : beg_(clock_::now()) {}
+    void reset() { beg_ = clock_::now(); }
+    double elapsed() const {
+      return std::chrono::duration_cast<second_>
+        (clock_::now() - beg_).count(); }
+
+  private:
+    typedef std::chrono::steady_clock clock_;
+    typedef std::chrono::duration<double, std::ratio<1> > second_;
+    std::chrono::time_point<clock_> beg_;
+  };
+
+  std::string format_seconds(double);
 
 };
 
