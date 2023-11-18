@@ -35,6 +35,7 @@ namespace zero {
     board::Board game_board;
 
     std::weak_ptr<ZeroNode> parent;
+    std::optional<Move> last_move;
     std::unordered_map<Move, std::shared_ptr<ZeroNode>, MoveHash> children;
     std::unordered_map<Move, Branch, MoveHash> branches;
     float value;
@@ -44,6 +45,7 @@ namespace zero {
     ZeroNode(const board::Board& game_board, float value,
              std::unordered_map<Move, float, MoveHash> priors,
              std::weak_ptr<ZeroNode> parent,
+             std::optional<Move> last_move,
              bool add_noise);
 
     void add_child(Move move, std::shared_ptr<ZeroNode> child) {
@@ -81,11 +83,11 @@ namespace zero {
 
   public:
     ZeroAgent(torch::jit::script::Module model,
-              // std::shared_ptr<Encoder> encoder,
+              std::shared_ptr<Encoder> encoder,
               int num_rounds,
               bool greedy = true,
               float c_uct = 1.5) :
-      model(model), num_rounds(num_rounds), c_uct(c_uct), greedy(greedy) {}
+      model(model), encoder(encoder), num_rounds(num_rounds), c_uct(c_uct), greedy(greedy) {}
 
     Move select_move(const board::Board&);
 

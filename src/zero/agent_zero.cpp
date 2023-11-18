@@ -9,8 +9,9 @@ namespace zero {
   ZeroNode::ZeroNode(const board::Board& game_board, float value,
                      std::unordered_map<Move, float, MoveHash> priors,
                      std::weak_ptr<ZeroNode> parent,
+                     std::optional<Move> last_move,
                      bool add_noise) :
-    game_board(game_board), value(value), parent(parent),
+    game_board(game_board), value(value), parent(parent), last_move(last_move),
     terminal(game_board.is_over()) {
 
     for (const auto &[move, p] : priors) {
@@ -76,7 +77,7 @@ namespace zero {
 
 
   Move ZeroAgent::select_move(const board::Board& game_board) {
-    // std::cerr << "In select move, prior move count: " << game_state.num_moves << std::endl;
+    // std::cerr << "In select move, prior move count: " << game_board.total_moves << std::endl;
     auto root = create_node(game_board);
 
     for (auto round_number=0; round_number < num_rounds; ++round_number) {
@@ -97,7 +98,8 @@ namespace zero {
       std::optional<Move> move;
       if (! node->terminal) {
         auto new_board = node->game_board;
-        new_board.make_move(next_move);
+        auto legal = new_board.make_move(next_move);
+        assert(legal);
         auto child_node = create_node(std::move(new_board), next_move, node);
         value = -1 * child_node->value;
         move = next_move;
@@ -111,6 +113,7 @@ namespace zero {
           (node->total_visit_count)++;
         else
           node->record_visit(move.value(), value);
+        move = node->last_move; // Will be null at root node
         node = node->parent.lock();
         value = -1 * value;
       }
@@ -180,6 +183,7 @@ namespace zero {
     values.squeeze_();
     priors.squeeze_();
     // std::cout << "priors size: " << at::numel(priors) << std::endl;
+    // std::cout << "prior shape: " << priors.sizes() << std::endl;
     auto value = values.item().toFloat();
 
     auto move_coord_map = decode_legal_moves(game_board);
@@ -192,6 +196,7 @@ namespace zero {
     auto new_node = std::make_shared<ZeroNode>(game_board, value,
                                                std::move(move_priors),
                                                parent,
+                                               move,
                                                ! parent.lock());
     auto parent_shared = parent.lock();
     if (parent_shared) {
