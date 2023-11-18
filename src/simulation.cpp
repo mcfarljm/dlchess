@@ -16,7 +16,9 @@ std::pair<Color, int> simulate_game(Agent* black_agent,
       std::cout << b;
     auto move = agents[static_cast<int>(b.side)]->select_move(b);
     if (verbosity >= 2)
-      std::cout << move << std::endl;
+      std::cout << "Move " << b.total_moves + 1 << ": " << move << std::endl;
+    if (verbosity >= 3)
+      std::cout << std::endl;
     b.make_move(move);
     ++move_count;
   }

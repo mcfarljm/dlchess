@@ -21,13 +21,13 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-# FetchContent_Declare(
-#   cxxopts
-#   GIT_REPOSITORY https://github.com/jarro2783/cxxopts
-#   GIT_TAG        v3.1.1
-# )
+FetchContent_Declare(
+  cxxopts
+  GIT_REPOSITORY https://github.com/jarro2783/cxxopts
+  GIT_TAG        v3.1.1
+)
 
-# FetchContent_MakeAvailable(cxxopts)
+FetchContent_MakeAvailable(cxxopts)
 
 
 # To use:
@@ -68,6 +68,9 @@ target_link_libraries(tests PRIVATE dlchess Catch2::Catch2WithMain)
 
 add_executable(matchup src/matchup.cpp)
 target_link_libraries(matchup PRIVATE dlchess)
+
+add_executable(selfplay src/selfplay.cpp)
+target_link_libraries(selfplay PRIVATE dlchess cxxopts)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
