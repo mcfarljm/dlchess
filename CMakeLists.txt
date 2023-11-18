@@ -56,6 +56,7 @@ add_library(dlchess SHARED
   src/simulation.cpp
 
   src/zero/encoder.cpp
+  src/zero/agent_zero.cpp
 )
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
