@@ -185,7 +185,8 @@ namespace zero {
     auto move_coord_map = decode_legal_moves(game_board);
     std::unordered_map<Move, float, MoveHash> move_priors;
     for (const auto &[mv, coords] : move_coord_map) {
-      move_priors.emplace(mv, priors.index({coords}).item().toFloat());
+      // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
+      move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
 
     auto new_node = std::make_shared<ZeroNode>(game_board, value,

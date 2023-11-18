@@ -47,12 +47,12 @@ namespace zero {
 
   // Given the board state, construct a map from legal moves to coordinates
   // associated with the tensor encoding.
-  std::unordered_map<game_moves::Move, torch::Tensor, game_moves::MoveHash>
+  std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash>
   decode_legal_moves(const board::Board& b) {
-    constexpr int KNIGHT_BASE_PLANE = 57;
+    constexpr int KNIGHT_BASE_PLANE = 56;
     constexpr int UNDERPROMOTION_BASE_PLANE = KNIGHT_BASE_PLANE + 8;
 
-    std::unordered_map<game_moves::Move, torch::Tensor, game_moves::MoveHash> move_map;
+    std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash> move_map;
 
     auto moves = b.generate_legal_moves();
     for (auto& mv : moves) {
@@ -131,20 +131,21 @@ namespace zero {
           }
         }
         assert(amount > 0 && amount < 8);
-        plane = (direction - 1) * 8 + amount - 1;
+        plane = direction * 7 + amount - 1;
+        // std::cout << "dir, amt, plane: " << direction << " " << amount << " " << plane << std::endl;
         assert(plane >= 0 && plane < KNIGHT_BASE_PLANE);
 
         // Check for underpromotion
         if (mv.promote.exists() && !mv.promote.is_queen()) {
           // Pick one of 9 planes based on 3 underpromotions in 3 directions
-          int base;
+          int base = UNDERPROMOTION_BASE_PLANE;
           if (direction == 0 || direction == 1)
-            base = 0;
-          if (direction == 2 || direction == 3)
-            base = 3;
+            base += 0;
+          else if (direction == 2 || direction == 3)
+            base += 3;
           else {
             assert(direction == 4 || direction == 5);
-            base = 6;
+            base += 6;
           }
           if (mv.promote.is_knight())
             plane = base;
@@ -158,7 +159,8 @@ namespace zero {
                  plane < UNDERPROMOTION_BASE_PLANE + 9);
         }
       }
-      move_map.emplace(std::make_pair(mv, torch::tensor({from_rank_file[0], from_rank_file[1], plane})));
+      assert(plane >= 0 && plane < 73);
+      move_map.emplace(std::make_pair(mv, std::array<int,3>({from_rank_file[0], from_rank_file[1], plane})));
     }
     return move_map;
   }

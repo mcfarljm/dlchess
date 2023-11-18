@@ -20,7 +20,7 @@ namespace zero {
     /* Move decode_move_index(int index) const; */
   };
 
-  std::unordered_map<game_moves::Move, torch::Tensor, game_moves::MoveHash>
+  std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash>
   decode_legal_moves(const board::Board&);
 
 };
