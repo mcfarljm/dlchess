@@ -23,11 +23,11 @@ int main(int argc, const char* argv[]) {
 
   options.add_options()
     ("network", "Path to pytorch script file", cxxopts::value<std::string>())
-    // ("o,output-path", "Directory to store output", cxxopts::value<std::string>())
-    // ("l,label", "Label to use within experience directory", cxxopts::value<std::string>()->default_value(""))
+    ("o,output-path", "Directory to store output", cxxopts::value<std::string>())
+    ("l,label", "Label to use within experience directory", cxxopts::value<std::string>()->default_value(""))
     ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("800"))
     ("g,num-games", "Number of games", cxxopts::value<int>()->default_value("1"))
-    // ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
+    ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
     ("h,help", "Print usage")
@@ -60,27 +60,27 @@ int main(int argc, const char* argv[]) {
 
   auto num_rounds = args["rounds"].as<int>();
   auto num_games = args["num-games"].as<int>();
-  // auto save_interval = args["save-every"].as<int>();
+  auto save_interval = args["save-every"].as<int>();
   auto verbosity = args["verbosity"].as<int>();
-  // if (args.count("output-path")) {
-  //   output_path = args["output-path"].as<std::string>();
-  //   store_experience = true;
-  // }
-  // std::string experience_label(args["label"].as<std::string>());
-  // if (experience_label.size()) {
-  //   if (! store_experience) {
-  //     std::cerr << "Error, experience label passed without output path" << std::endl;
-  //     exit(1);
-  //   }
-  //   experience_label.insert(0, "_");
-  // }
+  if (args.count("output-path")) {
+    output_path = args["output-path"].as<std::string>();
+    store_experience = true;
+  }
+  std::string experience_label(args["label"].as<std::string>());
+  if (experience_label.size()) {
+    if (! store_experience) {
+      std::cerr << "Error, experience label passed without output path" << std::endl;
+      exit(1);
+    }
+    experience_label.insert(0, "_");
+  }
 
-  // if (store_experience) {
-  //   if (std::filesystem::exists(output_path) && ! std::filesystem::is_directory(output_path)) {
-  //     std::cerr << "output path exists and is not a directory: " + output_path << std::endl;
-  //     exit(1);
-  //   }
-  // }
+  if (store_experience) {
+    if (std::filesystem::exists(output_path) && ! std::filesystem::is_directory(output_path)) {
+      std::cerr << "output path exists and is not a directory: " + output_path << std::endl;
+      exit(1);
+    }
+  }
     
   if (args.count("num-threads")) {
     std::cout << "setting " << args["num-threads"].as<int>() << " pytorch threads" << std::endl;
@@ -102,14 +102,14 @@ int main(int argc, const char* argv[]) {
 
   auto encoder = std::make_shared<SimpleEncoder>();
 
-  // auto black_collector = std::make_shared<ExperienceCollector>();
-  // auto white_collector = std::make_shared<ExperienceCollector>();
+  auto black_collector = std::make_shared<ExperienceCollector>();
+  auto white_collector = std::make_shared<ExperienceCollector>();
 
   auto black_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, false);
   auto white_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, false);
 
-  // black_agent->set_collector(black_collector);
-  // white_agent->set_collector(white_collector);
+  black_agent->set_collector(black_collector);
+  white_agent->set_collector(white_collector);
 
   int num_white_wins = 0;
   int num_black_wins = 0;
@@ -148,22 +148,22 @@ int main(int argc, const char* argv[]) {
         return 0.0;
     }();
 
-    // black_collector->complete_episode(black_reward);
-    // white_collector->complete_episode(-1.0 * black_reward);
+    white_collector->complete_episode(white_reward);
+    black_collector->complete_episode(-1.0 * white_reward);
 
-    // if (store_experience && (game_num + 1) % save_interval == 0) {
-    //   black_collector->append(*white_collector);
-    //   black_collector->serialize_binary(output_path, experience_label + "_" + std::to_string(save_counter));
-    //   black_collector->reset();
-    //   white_collector->reset();
-    //   ++save_counter;
-    // }
+    if (store_experience && (game_num + 1) % save_interval == 0) {
+      white_collector->append(*black_collector);
+      white_collector->serialize_binary(output_path, experience_label + "_" + std::to_string(save_counter));
+      white_collector->reset();
+      black_collector->reset();
+      ++save_counter;
+    }
   }
 
   std::cout << "Finished: " << total_num_moves << " moves at " << std::setprecision(2) << total_num_moves / cumulative_timer.elapsed() << " moves / second" << std::endl;
 
-  // if (store_experience) {
-  //   black_collector->append(*white_collector);
-  //   black_collector->serialize_binary(output_path, experience_label);
-  // }
+  if (store_experience) {
+    white_collector->append(*black_collector);
+    white_collector->serialize_binary(output_path, experience_label);
+  }
 }

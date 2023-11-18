@@ -22,6 +22,7 @@ namespace zero {
 
   std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash>
   decode_legal_moves(const board::Board&);
+  extern const std::array<int, 3> PRIOR_SHAPE;
 
 };
 

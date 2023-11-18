@@ -7,7 +7,7 @@
 #include <torch/script.h> // One-stop header.
 
 #include "encoder.h"
-/* #include "experience.h" */
+#include "experience.h"
 #include "../agent_base.h"
 
 namespace zero {
@@ -75,7 +75,7 @@ namespace zero {
     int num_rounds;
     float c_uct;
 
-    // std::shared_ptr<ExperienceCollector> collector;
+    std::shared_ptr<ExperienceCollector> collector;
 
     // If True, always select moves that maximize visit count.  Otherwise, initial
     // moves are selected in proportion to visit count.
@@ -91,9 +91,9 @@ namespace zero {
 
     Move select_move(const board::Board&);
 
-    // void set_collector(std::shared_ptr<ExperienceCollector> c) {
-    //   collector = c;
-    // }
+    void set_collector(std::shared_ptr<ExperienceCollector> c) {
+      collector = c;
+    }
 
   private:
     std::shared_ptr<ZeroNode> create_node(const board::Board& b,

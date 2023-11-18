@@ -45,6 +45,8 @@ namespace zero {
     return board_tensor;
   }
 
+  const std::array<int, 3> PRIOR_SHAPE = {8, 8, 73};
+
   // Given the board state, construct a map from legal moves to coordinates
   // associated with the tensor encoding.
   std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash>
