@@ -10,6 +10,8 @@ device = 'cpu'
 
 class ChessNet(nn.Module):
     def __init__(self, in_channels=21, grid_size=8, policy_shape=(8, 8, 73)):
+        self.in_channels = in_channels
+        self.grid_size = grid_size
         policy_size = torch.tensor(policy_shape).prod().item()
         super().__init__()
         self.pb = nn.Sequential(

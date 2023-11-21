@@ -86,7 +86,7 @@ def main(experience, query, batch_size, input_path, output_path, subset, lr, int
 
         # Torchscript
         model.eval()
-        X = torch.rand(1, encoder_channels, grid_size, grid_size)
+        X = torch.rand(1, model.in_channels, model.grid_size, model.grid_size)
         traced_script_module = torch.jit.trace(model, X)
         traced_script_module.save(output_path.replace('.pt', '.ts'))
 
