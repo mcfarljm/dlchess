@@ -67,8 +67,8 @@ target_link_libraries(dlchess "${TORCH_LIBRARIES}")
 add_executable(tests src/test.cpp)
 target_link_libraries(tests PRIVATE dlchess Catch2::Catch2WithMain)
 
-add_executable(matchup src/matchup.cpp)
-target_link_libraries(matchup PRIVATE dlchess)
+add_executable(evaluate src/evaluate.cpp)
+target_link_libraries(evaluate PRIVATE dlchess cxxopts)
 
 add_executable(selfplay src/selfplay.cpp)
 target_link_libraries(selfplay PRIVATE dlchess cxxopts)
