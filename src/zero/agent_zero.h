@@ -80,14 +80,16 @@ namespace zero {
     // If True, always select moves that maximize visit count.  Otherwise, initial
     // moves are selected in proportion to visit count.
     bool greedy;
+    bool add_noise;
 
   public:
     ZeroAgent(torch::jit::script::Module model,
               std::shared_ptr<Encoder> encoder,
               int num_rounds,
               bool greedy = true,
+              bool add_noise = true,
               float c_uct = 1.5) :
-      model(model), encoder(encoder), num_rounds(num_rounds), c_uct(c_uct), greedy(greedy) {}
+      model(model), encoder(encoder), num_rounds(num_rounds),  greedy(greedy), add_noise(add_noise), c_uct(c_uct) {}
 
     Move select_move(const board::Board&);
 

@@ -194,11 +194,12 @@ namespace zero {
       move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
 
+    bool _add_noise = add_noise && (! parent.lock());
     auto new_node = std::make_shared<ZeroNode>(game_board, value,
                                                std::move(move_priors),
                                                parent,
                                                move,
-                                               ! parent.lock());
+                                               _add_noise);
     auto parent_shared = parent.lock();
     if (parent_shared) {
       assert(move);
