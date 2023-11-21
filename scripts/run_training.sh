@@ -5,6 +5,8 @@
 BUILD_DIR=/app/build
 MAJOR_VERSION=0
 RESULTS_DIR=results
+# Flag for whether to retain experience data
+KEEP_EXPERIENCE=0
 
 initial_version=0
 num_iterations=2
@@ -54,6 +56,10 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             --interval 4 \
             --lr 5e-3 \
             > "$output_dir/train.out"
+
+    if [[ $KEEP_EXPERIENCE -eq 0 ]]; then
+        rm -rf $output_dir/experience
+    fi
 
     # Evaluation:
     for i in $(seq $num_tasks); do
