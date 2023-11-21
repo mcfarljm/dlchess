@@ -9,7 +9,8 @@
 /// Simulate game and return (winner, num_moves)
 std::pair<Color, int> simulate_game(Agent* black_agent,
                                     Agent* white_agent,
-                                    int verbosity = 0);
+                                    int verbosity = 0,
+                                    int max_moves = 50000);
 
 
 #endif // SIMULATION_H

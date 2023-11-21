@@ -27,6 +27,7 @@ int main(int argc, const char* argv[]) {
     ("l,label", "Label to use within experience directory", cxxopts::value<std::string>()->default_value(""))
     ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("800"))
     ("g,num-games", "Number of games", cxxopts::value<int>()->default_value("1"))
+    ("m,max-moves", "Maximum moves per game", cxxopts::value<int>()->default_value("10000"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
@@ -60,6 +61,7 @@ int main(int argc, const char* argv[]) {
 
   auto num_rounds = args["rounds"].as<int>();
   auto num_games = args["num-games"].as<int>();
+  auto max_moves = args["max-moves"].as<int>();
   auto save_interval = args["save-every"].as<int>();
   auto verbosity = args["verbosity"].as<int>();
   if (args.count("output-path")) {
@@ -118,7 +120,7 @@ int main(int argc, const char* argv[]) {
   auto cumulative_timer = Timer();
   for (int game_num=0; game_num < num_games; ++game_num) {
     auto timer = Timer();
-    auto [winner, num_moves] = simulate_game(white_agent.get(), black_agent.get(), verbosity);
+    auto [winner, num_moves] = simulate_game(white_agent.get(), black_agent.get(), verbosity, max_moves);
     auto duration = timer.elapsed();
     total_num_moves += num_moves;
     if (num_games <= 5) {

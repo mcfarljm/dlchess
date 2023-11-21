@@ -5,13 +5,14 @@
 
 std::pair<Color, int> simulate_game(Agent* white_agent,
                                     Agent* black_agent,
-                                    int verbosity) {
+                                    int verbosity,
+                                    int max_moves) {
   Agent* agents[2] = {white_agent, black_agent};
   int move_count = 0;
 
   auto b = board::Board::from_fen(board::START_FEN);
 
-  while (! b.is_over()) {
+  while (move_count < max_moves && ! b.is_over()) {
     if (verbosity >= 3)
       std::cout << b;
     auto move = agents[static_cast<int>(b.side)]->select_move(b);
@@ -23,10 +24,20 @@ std::pair<Color, int> simulate_game(Agent* white_agent,
     ++move_count;
   }
 
-  auto winner = b.winner().value();
+  Color winner;
+
+  if (move_count >= max_moves) {
+    // Assign a draw if move count exceeded.
+    winner = Color::both;
+  }
+  else {
+    winner = b.winner().value();
+  }
+
   if (verbosity >= 1) {
     std::cout << move_count << " moves\n";
     std::cout << "Winner: " << static_cast<int>(winner) << std::endl;
   }
+
   return std::make_pair(winner, move_count);
 }
