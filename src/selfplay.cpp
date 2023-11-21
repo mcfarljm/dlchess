@@ -102,14 +102,14 @@ int main(int argc, const char* argv[]) {
 
   auto encoder = std::make_shared<SimpleEncoder>();
 
-  auto black_collector = std::make_shared<ExperienceCollector>();
   auto white_collector = std::make_shared<ExperienceCollector>();
+  auto black_collector = std::make_shared<ExperienceCollector>();
 
-  auto black_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, false);
   auto white_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, false);
+  auto black_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, false);
 
-  black_agent->set_collector(black_collector);
   white_agent->set_collector(white_collector);
+  black_agent->set_collector(black_collector);
 
   int num_white_wins = 0;
   int num_black_wins = 0;
@@ -118,7 +118,7 @@ int main(int argc, const char* argv[]) {
   auto cumulative_timer = Timer();
   for (int game_num=0; game_num < num_games; ++game_num) {
     auto timer = Timer();
-    auto [winner, num_moves] = simulate_game(black_agent.get(), white_agent.get(), verbosity);
+    auto [winner, num_moves] = simulate_game(white_agent.get(), black_agent.get(), verbosity);
     auto duration = timer.elapsed();
     total_num_moves += num_moves;
     if (num_games <= 5) {

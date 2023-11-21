@@ -3,10 +3,10 @@
 #include <iostream>
 
 
-std::pair<Color, int> simulate_game(Agent* black_agent,
-                                    Agent* white_agent,
+std::pair<Color, int> simulate_game(Agent* white_agent,
+                                    Agent* black_agent,
                                     int verbosity) {
-  Agent* agents[2] = {black_agent, white_agent};
+  Agent* agents[2] = {white_agent, black_agent};
   int move_count = 0;
 
   auto b = board::Board::from_fen(board::START_FEN);
