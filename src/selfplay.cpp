@@ -105,8 +105,8 @@ int main(int argc, const char* argv[]) {
   auto white_collector = std::make_shared<ExperienceCollector>();
   auto black_collector = std::make_shared<ExperienceCollector>();
 
-  auto white_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, false);
-  auto black_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, false);
+  auto white_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, 100000);
+  auto black_agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, 100000);
 
   white_agent->set_collector(white_collector);
   black_agent->set_collector(black_collector);

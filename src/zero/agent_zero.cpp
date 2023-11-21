@@ -137,7 +137,7 @@ namespace zero {
       collector->record_decision(root_state_tensor, visit_counts);
     }
 
-    if (greedy) {
+    if (game_board.total_moves >= num_randomized_moves) {
       // Select the move with the highest visit count
       auto max_it = std::max_element(root->branches.begin(), root->branches.end(),
                                      [&root] (const auto& p1, const auto& p2) {

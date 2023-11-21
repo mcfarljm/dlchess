@@ -77,19 +77,20 @@ namespace zero {
 
     std::shared_ptr<ExperienceCollector> collector;
 
-    // If True, always select moves that maximize visit count.  Otherwise, initial
-    // moves are selected in proportion to visit count.
-    bool greedy;
+    // Specify number of initial moves for which move selection is done randomly
+    // baesd on visit count proportion.  Beyond this threshold, moves are
+    // selected greedily.
+    int num_randomized_moves;
     bool add_noise;
 
   public:
     ZeroAgent(torch::jit::script::Module model,
               std::shared_ptr<Encoder> encoder,
               int num_rounds,
-              bool greedy = true,
+              int num_randomized_moves = 0,
               bool add_noise = true,
               float c_uct = 1.5) :
-      model(model), encoder(encoder), num_rounds(num_rounds),  greedy(greedy), add_noise(add_noise), c_uct(c_uct) {}
+      model(model), encoder(encoder), num_rounds(num_rounds), num_randomized_moves(num_randomized_moves), add_noise(add_noise), c_uct(c_uct) {}
 
     Move select_move(const board::Board&);
 
