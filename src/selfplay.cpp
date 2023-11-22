@@ -115,6 +115,7 @@ int main(int argc, const char* argv[]) {
 
   int num_white_wins = 0;
   int num_black_wins = 0;
+  int num_draws = 0;
   int save_counter = 0;
   int total_num_moves = 0;
   auto cumulative_timer = Timer();
@@ -130,12 +131,13 @@ int main(int argc, const char* argv[]) {
 
     if (winner == Color::white) ++num_white_wins;
     if (winner == Color::black) ++num_black_wins;
+    if (winner == Color::both) ++num_draws;
 
     auto total_duration = cumulative_timer.elapsed();
     auto games_per_sec = (game_num + 1) / total_duration;
     auto remaining_sec = (num_games - game_num - 1) / games_per_sec;
     std::cout << game_num + 1 << "/" << num_games;
-    std::cout << std::fixed << std::setprecision(1) << " (" << 100.0 * num_white_wins / (game_num + 1) << "% W, " << 100.0 * num_black_wins / (game_num + 1) << "% B)";
+    std::cout << std::fixed << std::setprecision(1) << ": " << 100.0 * num_white_wins / (game_num + 1) << ", " << 100.0 * num_black_wins / (game_num + 1) << ", " << 100.0 * num_draws / (game_num + 1) << " (%WW,BW,D)";
     std::cout << ", " << total_num_moves / (game_num + 1) << " mpg";
     std::cout << std::defaultfloat << std::setprecision(4);
     std::cout << ", " << total_num_moves / total_duration << " mps";
