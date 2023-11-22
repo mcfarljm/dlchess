@@ -8,9 +8,9 @@ namespace game_moves {
       auto pchar = 'q';
       if (m.promote.is_knight())
         pchar = 'n';
-      else if (m.promote.is_rook_or_queen() && ! m.promote.is_bishop_or_queen())
+      else if (m.promote.is_rook())
         pchar = 'r';
-      else if (m.promote.is_bishop_or_queen() && ! m.promote.is_rook_or_queen())
+      else if (m.promote.is_bishop())
         pchar = 'b';
       os << pchar;
     }

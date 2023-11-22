@@ -151,10 +151,10 @@ namespace zero {
           }
           if (mv.promote.is_knight())
             plane = base;
-          else if (mv.promote.is_bishop_or_queen())
+          else if (mv.promote.is_bishop())
             plane = base + 1;
           else {
-            assert(mv.promote.is_rook_or_queen());
+            assert(mv.promote.is_rook());
             plane = base + 2;
           }
           assert(plane >= UNDERPROMOTION_BASE_PLANE &&
