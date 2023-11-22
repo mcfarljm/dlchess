@@ -72,9 +72,7 @@ namespace board {
 
     uint64_t hash = 0;
 
-      /* hash_keys: HashKeys, */
-
-    static Board from_fen(const std::string_view);
+    Board(const std::string_view = START_FEN);
 
     friend std::ostream& operator<<(std::ostream&, const Board& b);
 
