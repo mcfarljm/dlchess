@@ -10,6 +10,8 @@ namespace {
     std::cout << "id name " << version::PROGRAM_NAME << std::endl;
     std::cout << "id author John McFarland" << std::endl;
     std::cout << "uciok" << std::endl;
+    // std::cout << std::endl;
+    // std::cout << "option name OwnBook type check default true" << std::endl;
   }
 
   void parse_go(std::string_view line, const board::Board& b, Agent* agent) {
@@ -32,11 +34,16 @@ namespace {
         return board::Board();
     }();
 
-    if (slice.find("moves") != slice.npos) {
-      std::string slice_str(slice);
-      auto words = utils::split_string(slice_str, ' ' );
+    auto i = slice.find("moves");
+    if (i != slice.npos) {
+      std::string slice_str(slice.substr(i+6));
+      auto words = utils::split_string(slice_str, ' ');
       for (auto& word : words) {
-        // Todo
+        auto mv = b.parse_move_string(word);
+        if (mv)
+          b.make_move(mv.value());
+        else
+          break;
       }
     }
 

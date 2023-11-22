@@ -95,6 +95,9 @@ namespace board {
 
     long perft(int depth);
 
+    // io
+    std::optional<game_moves::Move> parse_move_string(std::string_view str);
+
   private:
     void update_lists_and_material();
     bool is_draw_by_material() const;

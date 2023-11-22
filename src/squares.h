@@ -36,6 +36,10 @@ namespace squares {
   Square fr_to_sq(FileRank file, FileRank rank);
   std::array<int, 2> sq_to_rf(Square);
 
+  constexpr bool square_on_board(Square sq) {
+    return sq >= 0 && sq <= 63;
+  }
+
   namespace Position {
 
     // Using unscoped enum inside a namespace provides a namsepace scope but

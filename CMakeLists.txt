@@ -52,6 +52,7 @@ add_library(dlchesslib SHARED
   src/board/movegen.cpp
   src/board/makemove.cpp
   src/board/perft.cpp
+  src/board/io.cpp
 
   src/agent_random.cpp
   src/simulation.cpp
