@@ -36,7 +36,8 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
     for i in $(seq $num_tasks); do
         $BUILD_DIR/selfplay \
             $RESULTS_DIR/v$version.ts \
-            -g 500 \
+            -g 400 \
+            -m 150 \
             -e 100 \
             -t 1 \
             -o $output_dir/experience \
@@ -68,6 +69,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             $RESULTS_DIR/v$version.ts \
             -t 1 \
             -g 25 \
+            -m 150 \
             > "$output_dir/eval_$i.out" &
     done
     wait
