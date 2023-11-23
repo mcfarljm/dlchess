@@ -50,9 +50,10 @@ namespace zero {
     if (terminal) {
       // Override the model's value estimate with actual result
       auto winner = game_board.winner().value();
-      if (game_board.side == winner)
+      if (winner == game_board.side)
+        // This is not possible, but we include this case for clarity
         ZeroNode::value = 1.0;
-      else if (game_board.side == Color::both)
+      else if (winner == Color::both)
         ZeroNode::value = 0.0;
       else
         ZeroNode::value = -1.0;
