@@ -10,7 +10,7 @@ std::pair<Color, int> simulate_game(Agent* white_agent,
   Agent* agents[2] = {white_agent, black_agent};
   int move_count = 0;
 
-  auto b = board::Board::from_fen(board::START_FEN);
+  auto b = board::Board();
 
   while (move_count < max_moves && ! b.is_over()) {
     if (verbosity >= 3)

@@ -20,9 +20,7 @@ namespace board {
   // Initialize random hash keys:
   const Hasher hasher {};
 
-  Board Board::from_fen(const std::string_view fen) {
-    Board board;
-
+  Board::Board(const std::string_view fen) {
     auto rank = squares::RANK_8;
     auto file = squares::FILE_A;
     Piece piece;
@@ -70,7 +68,7 @@ namespace board {
       for (int i=0; i<count; ++i) {
         if (piece.exists()) {
           auto sq = squares::fr_to_sq(file, rank);
-          board.pieces[sq] = piece;
+          pieces[sq] = piece;
         }
         ++file;
       }
@@ -80,10 +78,10 @@ namespace board {
     c = *it++;
     switch (c) {
     case 'w':
-      board.side = Color::white;
+      side = Color::white;
       break;
     case 'b':
-      board.side = Color::black;
+      side = Color::black;
       break;
     default:
       throw std::runtime_error("unexpected FEN side color character");
@@ -95,13 +93,13 @@ namespace board {
     for (int i=0; i<4; ++i) {
       switch (c) {
       case 'K':
-        board.castle_perm.set(castling::WK); break;
+        castle_perm.set(castling::WK); break;
       case 'Q':
-        board.castle_perm.set(castling::WQ); break;
+        castle_perm.set(castling::WQ); break;
       case 'k':
-        board.castle_perm.set(castling::BK); break;
+        castle_perm.set(castling::BK); break;
       case 'q':
-        board.castle_perm.set(castling::BQ); break;
+        castle_perm.set(castling::BQ); break;
       case '-':
         break;
       case ' ':
@@ -122,13 +120,11 @@ namespace board {
       rank = c - '1';
       assert(file >= squares::FILE_A && file <= squares::FILE_H);
       assert(rank >= squares::RANK_1 && rank <= squares::RANK_8);
-      board.en_pas = squares::fr_to_sq(file, rank);
+      en_pas = squares::fr_to_sq(file, rank);
     }
 
-    board.hash = board.get_position_hash();
-    board.update_lists_and_material();
-
-    return board;
+    hash = get_position_hash();
+    update_lists_and_material();
   }
 
   void Board::update_lists_and_material() {

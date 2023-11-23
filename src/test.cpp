@@ -106,7 +106,7 @@ TEST_CASE( "bb iter", "[bitboard]" ) {
 }
 
 TEST_CASE( "Init board", "[board]" ) {
-  auto b = board::Board::from_fen(board::START_FEN);
+  auto b = board::Board();
 
   REQUIRE( b.king_sq[0] == 4 );
   REQUIRE( b.king_sq[1] == 60 );
@@ -181,7 +181,7 @@ TEST_CASE( "Move string", "[moves]" ) {
 
 /// Utility function to check move count for a given FEN string.
 void check_move_count(std::string_view fen, long num_moves) {
-  auto b = board::Board::from_fen(fen);
+  auto b = board::Board(fen);
 
   auto ml = b.generate_all_moves();
   REQUIRE( ml.moves.size() == num_moves );
@@ -205,7 +205,7 @@ TEST_CASE( "Castling", "[movegen]" ) {
 }
 
 TEST_CASE( "Benchmark move generation", "[!benchmark][movegen]" ) {
-  auto b = board::Board::from_fen(board::START_FEN);
+  auto b = board::Board();
 
   BENCHMARK("movegen") {
     return b.generate_all_moves();
@@ -214,7 +214,7 @@ TEST_CASE( "Benchmark move generation", "[!benchmark][movegen]" ) {
 
 
 TEST_CASE( "Perft init 3", "[perft]" ) {
-  auto b = board::Board::from_fen(board::START_FEN);
+  auto b = board::Board();
   auto count = b.perft(3);
   REQUIRE( count == 8902 );
 }
@@ -222,7 +222,7 @@ TEST_CASE( "Perft init 3", "[perft]" ) {
 
 TEST_CASE( "Perft fen 2", "[perft]" ) {
   const auto fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
-  auto b = board::Board::from_fen(fen);
+  auto b = board::Board(fen);
   auto count = b.perft(2);
   REQUIRE( count == 2039 );
 }
@@ -233,7 +233,7 @@ void perft_test_line(const std::string& line, int max_depth) {
   auto items = utils::split_string(line, ';');
   auto fen = items.front();
   items.erase(items.begin());
-  auto b = board::Board::from_fen(fen);
+  auto b = board::Board(fen);
 
   for (auto& entry : items) {
     std::stringstream ss(entry);
@@ -266,7 +266,7 @@ TEST_CASE( "Perft all", "[.perftsuite]" ) {
 // results can be compared against a working program to find a problematic move.
 TEST_CASE( "Debug perft", "[.perftdebug]" ) {
   auto fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
-  auto b = board::Board::from_fen(fen);
+  auto b = board::Board(fen);
   const int depth = 3;
 
   auto move_list = b.generate_all_moves();
@@ -281,13 +281,13 @@ TEST_CASE( "Debug perft", "[.perftdebug]" ) {
 
 
 TEST_CASE( "Game not over at start", "[is_over]" ) {
-  auto b = board::Board::from_fen(board::START_FEN);
+  auto b = board::Board();
   REQUIRE( ! b.is_over() );
 }
 
 
 TEST_CASE( "Draw by repetition", "[is_over]" ) {
-  auto b = board::Board::from_fen(board::START_FEN);
+  auto b = board::Board();
 
   for (int i=0; i<2; ++i) {
     b.make_move(game_moves::Move(squares::Position::G1,
@@ -305,7 +305,7 @@ TEST_CASE( "Draw by repetition", "[is_over]" ) {
 
 
 TEST_CASE( "Test encoder", "[encoder]" ) {
-  auto b = board::Board::from_fen(board::START_FEN);
+  auto b = board::Board();
   zero::SimpleEncoder encoder;
 
   b.make_move(game_moves::Move(squares::Position::G1,

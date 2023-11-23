@@ -38,8 +38,9 @@ FetchContent_MakeAvailable(cxxopts)
 # The -P is optional but produces only the call graph, which is much easier to use.
 set( CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_DEBUG} -pg" )
 
-add_library(dlchess SHARED
+add_library(dlchesslib SHARED
   src/utils.cpp
+  src/version.cpp
   src/myrand.cpp
   src/squares.cpp
   src/bitboard.cpp
@@ -51,6 +52,7 @@ add_library(dlchess SHARED
   src/board/movegen.cpp
   src/board/makemove.cpp
   src/board/perft.cpp
+  src/board/io.cpp
 
   src/agent_random.cpp
   src/simulation.cpp
@@ -58,20 +60,25 @@ add_library(dlchess SHARED
   src/zero/encoder.cpp
   src/zero/agent_zero.cpp
   src/zero/experience.cpp
+
+  src/io/uci.cpp
 )
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
 
-target_link_libraries(dlchess "${TORCH_LIBRARIES}")
+target_link_libraries(dlchesslib "${TORCH_LIBRARIES}")
 
 add_executable(tests src/test.cpp)
-target_link_libraries(tests PRIVATE dlchess Catch2::Catch2WithMain)
+target_link_libraries(tests PRIVATE dlchesslib Catch2::Catch2WithMain)
 
 add_executable(evaluate src/evaluate.cpp)
-target_link_libraries(evaluate PRIVATE dlchess cxxopts)
+target_link_libraries(evaluate PRIVATE dlchesslib cxxopts)
 
 add_executable(selfplay src/selfplay.cpp)
-target_link_libraries(selfplay PRIVATE dlchess cxxopts)
+target_link_libraries(selfplay PRIVATE dlchesslib cxxopts)
+
+add_executable(dlchess src/main.cpp)
+target_link_libraries(dlchess PRIVATE dlchesslib)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
