@@ -147,7 +147,7 @@ namespace zero {
 
       // for (const auto& [m, b] : root->branches)
       //   std::cerr << "visits: " << m << " " << b.visit_count << std::endl;
-      // std::cerr << "E[V] = " << max_it->second.total_value / max_it->second.visit_count << ", visits = " << max_it->second.visit_count << std::endl;
+      // std::cout << "info string E[V] = " << max_it->second.total_value / max_it->second.visit_count << ", visits = " << max_it->second.visit_count << std::endl;
       return max_it->first;
     }
     else {
