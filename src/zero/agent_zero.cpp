@@ -203,6 +203,13 @@ namespace zero {
       move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
 
+    // Renormalize prior based on legal moves:
+    float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
+                                 [](float value, const std::unordered_map<Move, float, MoveHash>::value_type& p) {return value + p.second;}
+                                 );
+    for (auto &[mv, p] : move_priors)
+      p /= psum;
+
     if (add_noise && (! parent.lock()))
       add_noise_to_priors(move_priors);
     auto new_node = std::make_shared<ZeroNode>(game_board, value,
