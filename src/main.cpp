@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
   }
 
   auto encoder = std::make_shared<zero::SimpleEncoder>();
-  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, num_rounds, 0);
+  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, num_rounds, 16);
 
   std::string input;
   std::cin >> input;
