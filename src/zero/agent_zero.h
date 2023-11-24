@@ -103,6 +103,7 @@ namespace zero {
                                           std::optional<Move> move = std::nullopt,
                                           std::weak_ptr<ZeroNode> parent = std::weak_ptr<ZeroNode>());
     Move select_branch(const ZeroNode& node) const;
+    void debug_select_branch(const ZeroNode& node, int) const;
   };
 
 };

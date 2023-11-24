@@ -84,6 +84,7 @@ namespace zero {
     for (auto round_number=0; round_number < num_rounds; ++round_number) {
       // std::cout << "Round: " << round_number << std::endl;
       auto node = root;
+      // debug_select_branch(*node, round_number);
       auto next_move = select_branch(*node);
       // std::cout << "Selected root move: " << next_move << std::endl;
       // for (auto it = node->children.find(next_move); it != node->children.end();) {
@@ -224,6 +225,19 @@ namespace zero {
                                    });
     assert(max_it != node.branches.end());
     return max_it->first;
+  }
+
+  void ZeroAgent::debug_select_branch(const ZeroNode& node, int round_number) const {
+    // Call this at root node.  Print details about branch scoring.  Figure out
+    // why we're not exploring moves with a flat prior.
+    auto mv = select_branch(node);
+    std::cout << "Select branch root, round " << round_number << ", " << node.branches.size() << " moves: " << mv << std::endl;
+    std::cout << "  total visit count: " << node.total_visit_count << std::endl;
+    // for (const auto& [move, prior] : node.branches) {
+
+    // }
+    std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv) << " " << node.visit_count(mv) << std::endl;
+    std::cout << "  U: " << c_uct * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
   }
 
 };
