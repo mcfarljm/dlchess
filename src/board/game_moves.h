@@ -45,6 +45,10 @@ namespace game_moves {
       return promote.exists();
     }
 
+    bool is_underpromotion() const {
+      return promote.exists() && ! promote.is_queen();
+    }
+
     bool is_en_pas() const {
       return flag == MoveFlag::enpas;
     }

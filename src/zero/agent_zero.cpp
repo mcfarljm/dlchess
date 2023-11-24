@@ -200,6 +200,8 @@ namespace zero {
     std::unordered_map<Move, float, MoveHash> move_priors;
     for (const auto &[mv, coords] : move_coord_map) {
       // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
+      if (disable_underpromotion && mv.is_underpromotion())
+        continue;
       move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
 

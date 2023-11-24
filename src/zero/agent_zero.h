@@ -83,6 +83,7 @@ namespace zero {
     // selected greedily.
     int num_randomized_moves;
     bool add_noise;
+    bool disable_underpromotion;
 
   public:
     ZeroAgent(torch::jit::script::Module model,
@@ -90,8 +91,9 @@ namespace zero {
               int num_rounds,
               int num_randomized_moves = 0,
               bool add_noise = true,
-              float c_uct = 1.5) :
-      model(model), encoder(encoder), num_rounds(num_rounds), num_randomized_moves(num_randomized_moves), add_noise(add_noise), c_uct(c_uct) {}
+              float c_uct = 1.5,
+              bool disable_underpromotion = true) :
+      model(model), encoder(encoder), num_rounds(num_rounds), num_randomized_moves(num_randomized_moves), add_noise(add_noise), c_uct(c_uct), disable_underpromotion(disable_underpromotion) {}
 
     Move select_move(const board::Board&);
 
