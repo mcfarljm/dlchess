@@ -91,7 +91,7 @@ namespace zero {
               int num_rounds,
               int num_randomized_moves = 0,
               bool add_noise = true,
-              float c_uct = 1.5,
+              float c_uct = 2.15,
               bool disable_underpromotion = true) :
       model(model), encoder(encoder), num_rounds(num_rounds), num_randomized_moves(num_randomized_moves), add_noise(add_noise), c_uct(c_uct), disable_underpromotion(disable_underpromotion) {}
 
