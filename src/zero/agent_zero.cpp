@@ -9,8 +9,7 @@ namespace zero {
   ZeroNode::ZeroNode(const board::Board& game_board, float value,
                      std::unordered_map<Move, float, MoveHash> priors,
                      std::weak_ptr<ZeroNode> parent,
-                     std::optional<Move> last_move,
-                     bool add_noise) :
+                     std::optional<Move> last_move) :
     game_board(game_board), value(value), parent(parent), last_move(last_move),
     terminal(game_board.is_over()) {
 
@@ -19,33 +18,6 @@ namespace zero {
     }
 
     assert((! branches.empty()) || terminal);
-
-    if (add_noise && ! branches.empty()) {
-      // std::cout << "Orig prior: ";
-      // for (const auto &[move, p] : priors)
-      //   std::cout << move << " " << p << ", ";
-      // std::cout << std::endl;
-
-      // Sample noise on legal moves:
-      // Adjust concentration based on number of legal moves, following Katago
-      // paper.
-      double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / branches.size();
-      auto dirichlet_dist = DirichletDistribution(branches.size(), alpha);
-      std::vector<double> noise = dirichlet_dist.sample();
-      // std::cout << "Noise: " << noise << std::endl;
-
-      size_t idx = 0;
-      for (auto &[move, prior]: priors) {
-        prior = (1.0 - DIRICHLET_WEIGHT) * prior +
-          DIRICHLET_WEIGHT * noise[idx];
-        ++idx;
-      }
-
-      // std::cout << "Noised prior: ";
-      // for (const auto &[move, p] : priors)
-      //   std::cout << move << " " << p << ", ";
-      // std::cout << std::endl;
-    }
 
     if (terminal) {
       // Override the model's value estimate with actual result
@@ -165,6 +137,41 @@ namespace zero {
   }
 
 
+  /// Add Dirichlet noise to priors, modifying priors in place.
+  ///
+  /// This assumes that priors map is defined only for legal moves.
+  void ZeroAgent::add_noise_to_priors(std::unordered_map<Move, float, MoveHash>& priors) const {
+    if (priors.empty())
+      return;
+
+    // std::cout << "Orig prior: ";
+    // for (const auto &[move, p] : priors)
+    //   std::cout << move << " " << p << ", ";
+    // std::cout << std::endl;
+
+    // Sample noise on legal moves:
+    // Adjust concentration based on number of legal moves, following Katago
+    // paper.
+    double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / priors.size();
+    auto dirichlet_dist = DirichletDistribution(priors.size(), alpha);
+    std::vector<double> noise = dirichlet_dist.sample();
+    // std::cout << "Noise: " << noise << std::endl;
+
+    size_t idx = 0;
+    for (auto &[move, prior]: priors) {
+      prior = (1.0 - DIRICHLET_WEIGHT) * prior +
+        DIRICHLET_WEIGHT * noise[idx];
+      // Force a flat prior for testing:
+      // prior = 1.0 / priors.size();
+      ++idx;
+    }
+
+    // std::cout << "Noised prior: ";
+    // for (const auto &[move, p] : priors)
+    //   std::cout << move << " " << p << ", ";
+    // std::cout << std::endl;
+  }
+
 
   std::shared_ptr<ZeroNode> ZeroAgent::create_node(const board::Board& game_board,
                                                    std::optional<Move> move,
@@ -196,12 +203,12 @@ namespace zero {
       move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
 
-    bool _add_noise = add_noise && (! parent.lock());
+    if (add_noise && (! parent.lock()))
+      add_noise_to_priors(move_priors);
     auto new_node = std::make_shared<ZeroNode>(game_board, value,
                                                std::move(move_priors),
                                                parent,
-                                               move,
-                                               _add_noise);
+                                               move);
     auto parent_shared = parent.lock();
     if (parent_shared) {
       assert(move);
@@ -209,8 +216,6 @@ namespace zero {
     }
     return new_node;
   }
-
-
 
   Move ZeroAgent::select_branch(const ZeroNode& node) const {
     auto score_branch = [&] (Move move) {

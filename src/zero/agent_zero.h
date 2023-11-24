@@ -27,10 +27,6 @@ namespace zero {
 
   class ZeroNode {
 
-    // Concentration parameter for dirichlet noise:
-    constexpr static double DIRICHLET_CONCENTRATION = 0.03;
-    constexpr static float DIRICHLET_WEIGHT = 0.25;
-
   public:
     board::Board game_board;
 
@@ -45,8 +41,7 @@ namespace zero {
     ZeroNode(const board::Board& game_board, float value,
              std::unordered_map<Move, float, MoveHash> priors,
              std::weak_ptr<ZeroNode> parent,
-             std::optional<Move> last_move,
-             bool add_noise);
+             std::optional<Move> last_move);
 
     void add_child(Move move, std::shared_ptr<ZeroNode> child) {
       children.emplace(move, child);
@@ -66,10 +61,16 @@ namespace zero {
         return it->second.visit_count;
       return 0;
     }
+
   };
 
 
   class ZeroAgent : public Agent {
+
+    // Concentration parameter for dirichlet noise:
+    constexpr static double DIRICHLET_CONCENTRATION = 0.03;
+    constexpr static float DIRICHLET_WEIGHT = 0.25;
+
     torch::jit::script::Module model;
     std::shared_ptr<Encoder> encoder;
     int num_rounds;
@@ -102,6 +103,7 @@ namespace zero {
     std::shared_ptr<ZeroNode> create_node(const board::Board& b,
                                           std::optional<Move> move = std::nullopt,
                                           std::weak_ptr<ZeroNode> parent = std::weak_ptr<ZeroNode>());
+    void add_noise_to_priors(std::unordered_map<Move, float, MoveHash>& priors) const;
     Move select_branch(const ZeroNode& node) const;
     void debug_select_branch(const ZeroNode& node, int) const;
   };
