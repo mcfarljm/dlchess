@@ -1,22 +1,62 @@
 #include <string>
 #include <iostream>
 
+#include <cxxopts.hpp>
+
 #include "io/uci.h"
 #include "zero/agent_zero.h"
 
 int main(int argc, char* argv[]) {
 
-  constexpr int num_rounds = 800;
+  cxxopts::Options options("dlchess", "Run dlchess engine");
 
-  if (argc < 2) {
-    std::cerr << "Usage: dlchess <network>" << std::endl;
-    return -1;
+  options.add_options()
+    ("network", "Path to network file", cxxopts::value<std::string>())
+    ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("800"))
+    ("num-random-moves", "Number of randomized moves", cxxopts::value<int>()->default_value("0"))
+    ("noise", "Include Dirichlet noise")
+    // ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
+    ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
+    ("h,help", "Print usage")
+    ;
+
+  options.parse_positional({"network"});
+
+  options.positional_help("<network>");
+
+  cxxopts::ParseResult args;
+  try {
+    args = options.parse(argc, argv);
+  }
+  catch (const cxxopts::exceptions::exception& e) {
+    std::cout << options.help() << std::endl;
+    exit(1);
+  }
+
+  if (args.count("help")) {
+    std::cout << options.help() << std::endl;
+    exit(0);
+  }
+
+  if (! args.count("network")) {
+    std::cout << options.help() << std::endl;
+    exit(1);
+  }
+
+  auto num_rounds = args["rounds"].as<int>();
+  auto num_randomized_moves = args["num-random-moves"].as<int>();
+  auto noise = args["noise"].as<bool>();
+  // auto verbosity = args["verbosity"].as<int>();
+
+  if (args.count("num-threads")) {
+    // std::cout << "setting " << args["num-threads"].as<int>() << " pytorch threads" << std::endl;
+    at::set_num_threads(args["num-threads"].as<int>());
   }
 
   c10::InferenceMode guard;
   torch::jit::script::Module model;
   try {
-    model = torch::jit::load(argv[1]);
+    model = torch::jit::load(args["network"].as<std::string>());
   }
   catch (const c10::Error& e) {
     std::cerr << "Error loading the model: " << argv[1] << std::endl;
@@ -24,7 +64,7 @@ int main(int argc, char* argv[]) {
   }
 
   auto encoder = std::make_shared<zero::SimpleEncoder>();
-  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, num_rounds, 16);
+  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, num_rounds, num_randomized_moves, noise);
 
   std::string input;
   std::cin >> input;

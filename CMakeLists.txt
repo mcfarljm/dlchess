@@ -78,7 +78,7 @@ add_executable(selfplay src/selfplay.cpp)
 target_link_libraries(selfplay PRIVATE dlchesslib cxxopts)
 
 add_executable(dlchess src/main.cpp)
-target_link_libraries(dlchess PRIVATE dlchesslib)
+target_link_libraries(dlchess PRIVATE dlchesslib cxxopts)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
