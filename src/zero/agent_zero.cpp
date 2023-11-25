@@ -44,7 +44,7 @@ namespace zero {
   float ZeroNode::expected_value(Move m) const {
     auto branch = branches.find(m)->second;
     if (branch.visit_count == 0)
-      return 0.0;
+      return -1.0;
     return branch.total_value / branch.visit_count;
   }
 
