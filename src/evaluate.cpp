@@ -35,7 +35,7 @@ std::unique_ptr<Agent> load_zero_agent(const std::string network_path,
   std::cout << "Loaded: " << network_path << std::endl;
 
   auto encoder = std::make_shared<SimpleEncoder>();
-  auto agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, num_randomized_moves, false);
+  auto agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, num_randomized_moves, true);
   return agent;
 }
 
