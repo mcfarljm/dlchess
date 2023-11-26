@@ -72,6 +72,8 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
     #         -g 25 \
     #         -m 150 \
     #         > "$output_dir/eval_$i.out" &
+    # done
+    # wait
 
     cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.ts arg=-t arg=1 name=v$new_version \
                   -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$version.ts arg=-t arg=1 name=v$version \
@@ -80,8 +82,6 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
                   -rounds 100 -games 2 -maxmoves 100 \
                   -openings file=openings/openings-6ply-1000.pgn policy=round -repeat \
                   -pgnout $RESULTS_DIR/eval_$new_version.pgn > $RESULTS_DIR/eval_$new_version.out
-    done
-    wait
 
 done
 
