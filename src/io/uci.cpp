@@ -59,6 +59,8 @@ namespace {
   /// Parse command of form "setoption name <name> value <value>".
   void parse_setoption(const std::string& line, zero::ZeroAgent* agent) {
     auto words = utils::split_string(line, ' ');
+    if (words.size() < 5)
+      return;
     if (words[2] == "playouts") {
       try {
         agent->info.num_rounds = stoi(words[4]);
