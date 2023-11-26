@@ -3,7 +3,7 @@
 # The script (or docker process) should be launched with nohup
 
 BUILD_DIR=/app/build
-MAJOR_VERSION=2
+MAJOR_VERSION=3
 RESULTS_DIR=results
 # Flag for whether to retain experience data
 KEEP_EXPERIENCE=0
