@@ -64,6 +64,22 @@ namespace zero {
 
   };
 
+  enum class GameMode {
+    uci,
+    none,
+  };
+
+  struct SearchInfo {
+    int num_rounds = 800;
+    // Specify number of initial moves for which move selection is done randomly
+    // baesd on visit count proportion.  Beyond this threshold, moves are
+    // selected greedily.
+    int num_randomized_moves = 0;
+    bool add_noise = true;
+    float c_uct = 2.15;
+    bool disable_underpromotion = true;
+    GameMode game_mode = GameMode::none;
+  };
 
   class ZeroAgent : public Agent {
 
@@ -73,27 +89,17 @@ namespace zero {
 
     torch::jit::script::Module model;
     std::shared_ptr<Encoder> encoder;
-    int num_rounds;
-    float c_uct;
 
     std::shared_ptr<ExperienceCollector> collector;
 
-    // Specify number of initial moves for which move selection is done randomly
-    // baesd on visit count proportion.  Beyond this threshold, moves are
-    // selected greedily.
-    int num_randomized_moves;
-    bool add_noise;
-    bool disable_underpromotion;
+  public:
+    SearchInfo info;
 
   public:
     ZeroAgent(torch::jit::script::Module model,
               std::shared_ptr<Encoder> encoder,
-              int num_rounds,
-              int num_randomized_moves = 0,
-              bool add_noise = true,
-              float c_uct = 2.15,
-              bool disable_underpromotion = true) :
-      model(model), encoder(encoder), num_rounds(num_rounds), num_randomized_moves(num_randomized_moves), add_noise(add_noise), c_uct(c_uct), disable_underpromotion(disable_underpromotion) {}
+              SearchInfo info = SearchInfo()) :
+      model(model), encoder(encoder), info(info) {}
 
     Move select_move(const board::Board&);
 

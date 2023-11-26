@@ -55,8 +55,10 @@ namespace {
 
 namespace uci {
 
-  void uci_loop(Agent* agent) {
+  void uci_loop(zero::ZeroAgent* agent) {
     auto b = board::Board();
+
+    agent->info.game_mode = zero::GameMode::uci;
 
     uci_ok();
 

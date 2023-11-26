@@ -19,8 +19,7 @@ using namespace utils;
 
 
 std::unique_ptr<Agent> load_zero_agent(const std::string network_path,
-                                       int num_rounds,
-                                       int num_randomized_moves) {
+                                       SearchInfo info) {
   c10::InferenceMode guard;
   torch::jit::script::Module model;
   try {
@@ -35,7 +34,7 @@ std::unique_ptr<Agent> load_zero_agent(const std::string network_path,
   std::cout << "Loaded: " << network_path << std::endl;
 
   auto encoder = std::make_shared<SimpleEncoder>();
-  auto agent = std::make_unique<ZeroAgent>(model, encoder, num_rounds, num_randomized_moves, true);
+  auto agent = std::make_unique<ZeroAgent>(model, encoder, info);
   return agent;
 }
 
@@ -89,8 +88,13 @@ int main(int argc, const char* argv[]) {
     at::set_num_threads(args["num-threads"].as<int>());
   }
 
-  auto agent1 = load_zero_agent(args["agent1"].as<std::string>(), num_rounds, num_randomized_moves);
-  auto agent2 = load_zero_agent(args["agent1"].as<std::string>(), num_rounds, num_randomized_moves);
+  zero::SearchInfo info;
+  info.num_rounds = num_rounds;
+  info.num_randomized_moves = num_randomized_moves;
+  info.add_noise = true;
+
+  auto agent1 = load_zero_agent(args["agent1"].as<std::string>(), info);
+  auto agent2 = load_zero_agent(args["agent1"].as<std::string>(), info);
 
   if (! agent1 || ! agent2)
     return -1;

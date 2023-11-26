@@ -64,7 +64,11 @@ int main(int argc, char* argv[]) {
   }
 
   auto encoder = std::make_shared<zero::SimpleEncoder>();
-  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, num_rounds, num_randomized_moves, noise);
+  zero::SearchInfo info;
+  info.num_rounds = num_rounds;
+  info.num_randomized_moves = num_randomized_moves;
+  info.add_noise = noise;
+  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, info);
 
   std::string input;
   std::cin >> input;

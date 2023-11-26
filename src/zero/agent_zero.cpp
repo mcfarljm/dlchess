@@ -53,7 +53,7 @@ namespace zero {
     // std::cerr << "In select move, prior move count: " << game_board.total_moves << std::endl;
     auto root = create_node(game_board);
 
-    for (auto round_number=0; round_number < num_rounds; ++round_number) {
+    for (auto round_number=0; round_number < info.num_rounds; ++round_number) {
       // std::cout << "Round: " << round_number << std::endl;
       auto node = root;
       // debug_select_branch(*node, round_number);
@@ -111,7 +111,7 @@ namespace zero {
       collector->record_decision(root_state_tensor, visit_counts);
     }
 
-    if (game_board.total_moves >= num_randomized_moves) {
+    if (game_board.total_moves >= info.num_randomized_moves) {
       // Select the move with the highest visit count
       auto max_it = std::max_element(root->branches.begin(), root->branches.end(),
                                      [&root] (const auto& p1, const auto& p2) {
@@ -200,7 +200,7 @@ namespace zero {
     std::unordered_map<Move, float, MoveHash> move_priors;
     for (const auto &[mv, coords] : move_coord_map) {
       // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
-      if (disable_underpromotion && mv.is_underpromotion())
+      if (info.disable_underpromotion && mv.is_underpromotion())
         continue;
       move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
@@ -212,7 +212,7 @@ namespace zero {
     for (auto &[mv, p] : move_priors)
       p /= psum;
 
-    if (add_noise && (! parent.lock()))
+    if (info.add_noise && (! parent.lock()))
       add_noise_to_priors(move_priors);
     auto new_node = std::make_shared<ZeroNode>(game_board, value,
                                                std::move(move_priors),
@@ -231,7 +231,7 @@ namespace zero {
       auto q = node.expected_value(move);
       auto p = node.prior(move);
       auto n = node.visit_count(move);
-      return q + c_uct * p * sqrt(node.total_visit_count) / (n + 1);
+      return q + info.c_uct * p * sqrt(node.total_visit_count) / (n + 1);
     };
     auto max_it = std::max_element(node.branches.begin(), node.branches.end(),
                                    [score_branch] (const auto& p1, const auto& p2) {
@@ -251,7 +251,7 @@ namespace zero {
 
     // }
     std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv) << " " << node.visit_count(mv) << std::endl;
-    std::cout << "  U: " << c_uct * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
+    std::cout << "  U: " << info.c_uct * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
   }
 
 };
