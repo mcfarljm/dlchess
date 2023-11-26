@@ -1,10 +1,16 @@
 #include <algorithm>
+#include <cmath>
 
 #include "agent_zero.h"
 #include "../myrand.h"
+#include "../utils.h"
 
 
 namespace zero {
+
+  float value_to_centipawns(float value) {
+    return 111.714640912 * tan(1.5620688421 * value);
+  }
 
   ZeroNode::ZeroNode(const board::Board& game_board, float value,
                      std::unordered_map<Move, float, MoveHash> priors,
@@ -43,21 +49,24 @@ namespace zero {
 
   float ZeroNode::expected_value(Move m) const {
     auto branch = branches.find(m)->second;
-    if (branch.visit_count == 0)
-      return -1.0;
-    return branch.total_value / branch.visit_count;
+    return branch.expected_value();
   }
 
 
   Move ZeroAgent::select_move(const board::Board& game_board) {
+    utils::Timer timer; // Could be moved into SearchInfo to expand access.
+
     // std::cerr << "In select move, prior move count: " << game_board.total_moves << std::endl;
     auto root = create_node(game_board);
 
+    int max_depth = 0;
     for (auto round_number=0; round_number < info.num_rounds; ++round_number) {
       // std::cout << "Round: " << round_number << std::endl;
+      int depth = 0;
       auto node = root;
       // debug_select_branch(*node, round_number);
       auto next_move = select_branch(*node);
+      ++depth;
       // std::cout << "Selected root move: " << next_move << std::endl;
       // for (auto it = node->children.find(next_move); it != node->children.end();) {
       for (std::unordered_map<Move, std::shared_ptr<ZeroNode>, MoveHash>::const_iterator it;
@@ -66,7 +75,9 @@ namespace zero {
         if (node->terminal)
           break;
         next_move = select_branch(*node);
+        ++depth;
       }
+      max_depth = std::max(max_depth, depth);
 
       float value;
       std::optional<Move> move;
@@ -111,29 +122,39 @@ namespace zero {
       collector->record_decision(root_state_tensor, visit_counts);
     }
 
-    if (game_board.total_moves >= info.num_randomized_moves) {
-      // Select the move with the highest visit count
-      auto max_it = std::max_element(root->branches.begin(), root->branches.end(),
-                                     [&root] (const auto& p1, const auto& p2) {
-                                       return root->visit_count(p1.first) < root->visit_count(p2.first);
-                                     });
+    auto best_move = [&](){
+      if (game_board.total_moves >= info.num_randomized_moves) {
+        // Select the move with the highest visit count
+        auto max_it = std::max_element(root->branches.begin(), root->branches.end(),
+                                       [&root] (const auto& p1, const auto& p2) {
+                                         return root->visit_count(p1.first) < root->visit_count(p2.first);
+                                       });
 
-      // for (const auto& [m, b] : root->branches)
-      //   std::cout << "info string visits: " << m << " " << b.visit_count << std::endl;
-      // std::cout << "info string move " << game_board.total_moves/2 + 1 << ": E[V] = " << max_it->second.total_value / max_it->second.visit_count << ", visits = " << max_it->second.visit_count << std::endl;
-      return max_it->first;
-    }
-    else {
-      // Select move randomly in proportion to visit counts
-      std::vector<Move> moves;
-      std::vector<int> visit_counts;
-      for (const auto& [move, branch] : root->branches) {
-        moves.push_back(move);
-        visit_counts.push_back(root->visit_count(move));
+        // for (const auto& [m, b] : root->branches)
+        //   std::cout << "info string visits: " << m << " " << b.visit_count << std::endl;
+        // std::cout << "info string move " << game_board.total_moves/2 + 1 << ": E[V] = " << max_it->second.total_value / max_it->second.visit_count << ", visits = " << max_it->second.visit_count << std::endl;
+        return max_it->first;
       }
-      std::discrete_distribution<> dist(visit_counts.begin(), visit_counts.end());
-      return moves[dist(rng)];
+      else {
+        // Select move randomly in proportion to visit counts
+        std::vector<Move> moves;
+        std::vector<int> visit_counts;
+        for (const auto& [move, branch] : root->branches) {
+          moves.push_back(move);
+          visit_counts.push_back(root->visit_count(move));
+        }
+        std::discrete_distribution<> dist(visit_counts.begin(), visit_counts.end());
+        return moves[dist(rng)];
+      }
+    }();
+
+    if (info.game_mode == GameMode::uci) {
+      std::cout << "info score cp " << root->branches.at(best_move).value_in_centipawns();
+      std::cout << " depth " << max_depth << " nodes " << info.num_rounds;
+      std::cout << " time " << static_cast<int>(timer.elapsed() * 1000) << std::endl;
     }
+
+    return best_move;
   }
 
 

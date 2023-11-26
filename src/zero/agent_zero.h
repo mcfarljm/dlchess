@@ -14,6 +14,8 @@ namespace zero {
 
   using namespace game_moves;
 
+  float value_to_centipawns(float val);
+
   class Branch {
   public:
     float prior;
@@ -22,6 +24,16 @@ namespace zero {
 
   public:
     Branch(float prior) : prior(prior) {}
+
+    float expected_value() {
+      if (visit_count == 0)
+        return -1.0;
+      return total_value / visit_count;
+    }
+
+    int value_in_centipawns() {
+      return static_cast<int>(value_to_centipawns(expected_value()));
+    }
   };
 
 
