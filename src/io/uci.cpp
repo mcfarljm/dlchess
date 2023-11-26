@@ -13,6 +13,7 @@ namespace {
     // std::cout << std::endl;
     // std::cout << "option name OwnBook type check default true" << std::endl;
     std::cout << "option name playouts type spin default 800 min 1 max 100000" << std::endl;
+    std::cout << "option name noise type check default false" << std::endl;
 
     std::cout << "uciok" << std::endl;
   }
@@ -62,6 +63,12 @@ namespace {
       try {
         agent->info.num_rounds = stoi(words[4]);
       } catch (const std::invalid_argument& e) {}
+    }
+    else if (words[2] == "noise") {
+      if (words[4] == "true")
+        agent->info.add_noise = true;
+      else if (words[4] == "false")
+        agent->info.add_noise = false;
     }
   }
 };
