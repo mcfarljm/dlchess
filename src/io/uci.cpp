@@ -9,9 +9,12 @@ namespace {
   void uci_ok() {
     std::cout << "id name " << version::PROGRAM_NAME << std::endl;
     std::cout << "id author John McFarland" << std::endl;
-    std::cout << "uciok" << std::endl;
+
     // std::cout << std::endl;
     // std::cout << "option name OwnBook type check default true" << std::endl;
+    std::cout << "option name playouts type spin default 800 min 1 max 100000" << std::endl;
+
+    std::cout << "uciok" << std::endl;
   }
 
   void parse_go(std::string_view line, const board::Board& b, Agent* agent) {
@@ -51,6 +54,16 @@ namespace {
     
     return b;
   }
+
+  /// Parse command of form "setoption name <name> value <value>".
+  void parse_setoption(const std::string& line, zero::ZeroAgent* agent) {
+    auto words = utils::split_string(line, ' ');
+    if (words[2] == "playouts") {
+      try {
+        agent->info.num_rounds = stoi(words[4]);
+      } catch (const std::invalid_argument& e) {}
+    }
+  }
 };
 
 namespace uci {
@@ -71,16 +84,18 @@ namespace uci {
 
       if (input[0] == '\n')
         continue;
+      else if (input.rfind("uci", 0) == 0)
+        uci_ok();
       else if (input.rfind("isready", 0) == 0)
         std::cout << "readyok" << std::endl;
       else if (input.rfind("position", 0) == 0)
         b = parse_pos(input);
       else if (input.rfind("ucinewgame", 0) == 0)
         b = parse_pos("position startpos\n");
+      else if (input.rfind("setoption", 0) == 0)
+        parse_setoption(input, agent);
       else if (input.rfind("go", 0) == 0)
         parse_go(input, b, agent);
-      else if (input.rfind("uci", 0) == 0)
-        uci_ok();
       else if (input.rfind("quit", 0) == 0)
         break;
     }
