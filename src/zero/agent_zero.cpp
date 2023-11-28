@@ -131,7 +131,7 @@ namespace zero {
                                        });
 
         // for (const auto& [m, b] : root->branches)
-        //   std::cout << "info string visits: " << m << " " << b.visit_count << std::endl;
+        //   std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
         // std::cout << "info string move " << game_board.total_moves/2 + 1 << ": E[V] = " << max_it->second.total_value / max_it->second.visit_count << ", visits = " << max_it->second.visit_count << std::endl;
         return max_it->first;
       }
