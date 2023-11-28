@@ -25,13 +25,13 @@ namespace zero {
   public:
     Branch(float prior) : prior(prior) {}
 
-    float expected_value() {
+    float expected_value() const {
       if (visit_count == 0)
         return -1.0;
       return total_value / visit_count;
     }
 
-    int value_in_centipawns() {
+    int value_in_centipawns() const {
       return static_cast<int>(value_to_centipawns(expected_value()));
     }
   };
