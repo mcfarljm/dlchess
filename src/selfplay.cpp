@@ -28,6 +28,9 @@ int main(int argc, const char* argv[]) {
     ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("800"))
     ("g,num-games", "Number of games", cxxopts::value<int>()->default_value("1"))
     ("m,max-moves", "Maximum moves per game", cxxopts::value<int>()->default_value("10000"))
+    // Careful, this only works with --noise=false, and "--noise false" will not
+    // work and will not raise an error.
+    ("noise", "Include Dirichlet noise", cxxopts::value<bool>()->default_value("true"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
@@ -64,6 +67,7 @@ int main(int argc, const char* argv[]) {
   auto max_moves = args["max-moves"].as<int>();
   auto save_interval = args["save-every"].as<int>();
   auto verbosity = args["verbosity"].as<int>();
+  auto add_noise = args["noise"].as<bool>();
   if (args.count("output-path")) {
     output_path = args["output-path"].as<std::string>();
     store_experience = true;
@@ -105,7 +109,7 @@ int main(int argc, const char* argv[]) {
   zero::SearchInfo info;
   info.num_rounds = num_rounds;
   info.num_randomized_moves = 30;
-  info.add_noise = true;
+  info.add_noise = add_noise;
 
   auto encoder = std::make_shared<SimpleEncoder>();
 
