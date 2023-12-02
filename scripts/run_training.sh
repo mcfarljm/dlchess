@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# The script (or docker process) should be launched with nohup
+# Suggested use is to launch as a script with nohup or to run with docker in
+# detached mode (-d).
 
 BUILD_DIR=/app/build
 MAJOR_VERSION=3
@@ -11,6 +12,8 @@ KEEP_EXPERIENCE=0
 initial_version=0
 num_iterations=2
 num_tasks=8
+
+timestamp=`date +%Y%m%dT%H%M`
 
 mkdir -p $RESULTS_DIR
 
@@ -41,7 +44,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             -e 100 \
             -t 1 \
             -o $output_dir/experience \
-            -l "$i" \
+            -l "$timestamp_$i" \
             > "$output_dir/sim_$i.out" &
     done
     wait
