@@ -41,7 +41,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             $RESULTS_DIR/v$version.ts \
             -g 400 \
             -m 150 \
-            -e 100 \
+            -e 50 \
             -t 1 \
             -o $output_dir/experience \
             -l "$timestamp_$i" \
