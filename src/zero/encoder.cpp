@@ -45,7 +45,7 @@ namespace zero {
     return board_tensor;
   }
 
-  const std::array<int, 3> PRIOR_SHAPE = {8, 8, 73};
+  const std::array<int, 3> PRIOR_SHAPE = {73, 8, 8};
 
   // Given the board state, construct a map from legal moves to coordinates
   // associated with the tensor encoding.
@@ -162,7 +162,7 @@ namespace zero {
         }
       }
       assert(plane >= 0 && plane < 73);
-      move_map.emplace(std::make_pair(mv, std::array<int,3>({from_rank_file[0], from_rank_file[1], plane})));
+      move_map.emplace(std::make_pair(mv, std::array<int,3>({plane, from_rank_file[0], from_rank_file[1]})));
     }
     return move_map;
   }
