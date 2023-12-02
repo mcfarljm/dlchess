@@ -20,14 +20,16 @@ def train(dataloader, model, optimizer, output_interval):
     mse_loss_fn = torch.nn.MSELoss()
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
+    softmax = torch.nn.Softmax(1)
     model.train()
     for batch_num, (states, rewards, visit_counts) in enumerate(dataloader):
 
         # Compute prediction error
-        policies, values = model(states)
+        policy_raw, values = model(states)
+        policy_probs = softmax(policy_raw.view(x.shape[0], -1)).view_as(policy_raw)
 
         mse_loss = mse_loss_fn(values.squeeze(), rewards)
-        cross_entropy_loss = cross_entropy_loss_fn(policies, visit_counts)
+        cross_entropy_loss = cross_entropy_loss_fn(policy_probs, visit_counts)
 
         loss = mse_loss + cross_entropy_loss
 
