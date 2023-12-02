@@ -15,25 +15,25 @@ class ChessNet(nn.Module):
         policy_size = torch.tensor(policy_shape).prod().item()
         super().__init__()
         self.pb = nn.Sequential(
-            nn.Conv2d(in_channels, 64, 3, padding='same'),
+            nn.Conv2d(in_channels, 64, 3, padding='same', bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Conv2d(64, 64, 3, padding='same'),
+            nn.Conv2d(64, 64, 3, padding='same', bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Conv2d(64, 64, 3, padding='same'),
+            nn.Conv2d(64, 64, 3, padding='same', bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Conv2d(64, 64, 3, padding='same'),
+            nn.Conv2d(64, 64, 3, padding='same', bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
         )
 
         self.policy_stack = nn.Sequential(
-            nn.Conv2d(64, 2, 1),
+            nn.Conv2d(64, 2, 1, bias=False),
             nn.BatchNorm2d(2),
             nn.ReLU(),
 
@@ -44,7 +44,7 @@ class ChessNet(nn.Module):
         )
 
         self.value_stack = nn.Sequential(
-            nn.Conv2d(64, 1, 1),
+            nn.Conv2d(64, 1, 1, bias=False),
             nn.BatchNorm2d(1),
             nn.ReLU(),
 
