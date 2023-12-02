@@ -210,10 +210,10 @@ namespace zero {
 
     std::vector<torch::jit::IValue> input({state_tensor});
     auto output = model.forward(input);
-    auto priors = output.toTuple()->elements()[0].toTensor(); // Shape: (1, 8, 8, 73)
+    auto priors = output.toTuple()->elements()[0].toTensor(); // Shape: (1, 73, 8, 8)
     auto values = output.toTuple()->elements()[1].toTensor();
 
-    // std::cout << "priors from nn: " << priors << std::endl;
+    // std::cout << "raw priors from nn: " << priors << std::endl;
 
     values.squeeze_();
     priors.squeeze_();
@@ -229,6 +229,21 @@ namespace zero {
         continue;
       move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
+
+    // Apply softmax
+    using move_priors_valtype = decltype(move_priors)::value_type;
+    // Following LC0, subtract off the maximum.  This shouldn't change the
+    // result, but maybe it helps conditioning.
+    auto pmax = std::max_element
+      (
+       std::begin(move_priors), std::end(move_priors),
+       [] (const move_priors_valtype& pair1, const move_priors_valtype& pair2) {
+         return pair1.second < pair2.second;
+       }
+       )->second;
+
+    for (auto &[mv, p]: move_priors)
+      p = exp((p - pmax) / info.policy_softmax_temp);
 
     // Renormalize prior based on legal moves:
     float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
