@@ -274,7 +274,7 @@ namespace zero {
       auto q = node.expected_value(move);
       auto p = node.prior(move);
       auto n = node.visit_count(move);
-      return q + info.c_uct * p * sqrt(node.total_visit_count) / (n + 1);
+      return q + info.cpuct * p * sqrt(node.total_visit_count) / (n + 1);
     };
     auto max_it = std::max_element(node.branches.begin(), node.branches.end(),
                                    [score_branch] (const auto& p1, const auto& p2) {
@@ -294,7 +294,7 @@ namespace zero {
 
     // }
     std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv) << " " << node.visit_count(mv) << std::endl;
-    std::cout << "  U: " << info.c_uct * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
+    std::cout << "  U: " << info.cpuct * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
   }
 
 };
