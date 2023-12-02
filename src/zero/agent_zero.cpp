@@ -230,30 +230,33 @@ namespace zero {
       move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
     }
 
-    // Apply softmax
-    using move_priors_valtype = decltype(move_priors)::value_type;
-    // Following LC0, subtract off the maximum.  This shouldn't change the
-    // result, but maybe it helps conditioning.
-    auto pmax = std::max_element
-      (
-       std::begin(move_priors), std::end(move_priors),
-       [] (const move_priors_valtype& pair1, const move_priors_valtype& pair2) {
-         return pair1.second < pair2.second;
-       }
-       )->second;
+    if (! move_priors.empty()) {
+      // Apply softmax
+      using move_priors_valtype = decltype(move_priors)::value_type;
+      // Following LC0, subtract off the maximum.  This shouldn't change the
+      // result, but maybe it helps conditioning.
+      auto pmax = std::max_element
+        (
+         std::begin(move_priors), std::end(move_priors),
+         [] (const move_priors_valtype& pair1, const move_priors_valtype& pair2) {
+           return pair1.second < pair2.second;
+         }
+         )->second;
 
-    for (auto &[mv, p]: move_priors)
-      p = exp((p - pmax) / info.policy_softmax_temp);
+      for (auto &[mv, p]: move_priors)
+        p = exp((p - pmax) / info.policy_softmax_temp);
 
-    // Renormalize prior based on legal moves:
-    float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
-                                 [](float value, const std::unordered_map<Move, float, MoveHash>::value_type& p) {return value + p.second;}
-                                 );
-    for (auto &[mv, p] : move_priors)
-      p /= psum;
+      // Renormalize prior based on legal moves:
+      float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
+                                   [](float value, const std::unordered_map<Move, float, MoveHash>::value_type& p) {return value + p.second;}
+                                   );
+      for (auto &[mv, p] : move_priors)
+        p /= psum;
 
-    if (info.add_noise && (! parent.lock()))
-      add_noise_to_priors(move_priors);
+      if (info.add_noise && (! parent.lock()))
+        add_noise_to_priors(move_priors);
+    }
+
     auto new_node = std::make_shared<ZeroNode>(game_board, value,
                                                std::move(move_priors),
                                                parent,
