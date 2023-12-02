@@ -32,6 +32,7 @@ int main(int argc, const char* argv[]) {
     // work and will not raise an error.
     ("noise", "Include Dirichlet noise", cxxopts::value<bool>()->default_value("true"))
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("2.0"))
+    ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.5"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
@@ -70,6 +71,7 @@ int main(int argc, const char* argv[]) {
   auto verbosity = args["verbosity"].as<int>();
   auto add_noise = args["noise"].as<bool>();
   auto policy_softmax_temp = args["policy-softmax-temp"].as<float>();
+  auto cpuct = args["cpuct"].as<float>();
   if (args.count("output-path")) {
     output_path = args["output-path"].as<std::string>();
     store_experience = true;
@@ -113,6 +115,7 @@ int main(int argc, const char* argv[]) {
   info.num_randomized_moves = 30;
   info.add_noise = add_noise;
   info.policy_softmax_temp = policy_softmax_temp;
+  info.cpuct = cpuct;
 
   auto encoder = std::make_shared<SimpleEncoder>();
 
