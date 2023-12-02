@@ -40,7 +40,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
         $BUILD_DIR/selfplay \
             $RESULTS_DIR/v$version.ts \
             -g 400 \
-            -m 150 \
+            -m 256 \
             -e 50 \
             -t 1 \
             -o $output_dir/experience \
