@@ -88,7 +88,7 @@ namespace zero {
     // selected greedily.
     int num_randomized_moves = 0;
     bool add_noise = true;
-    float c_uct = 2.15;
+    float c_uct = 3.0;
     bool disable_underpromotion = true;
     GameMode game_mode = GameMode::none;
   };
