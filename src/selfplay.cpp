@@ -32,7 +32,7 @@ int main(int argc, const char* argv[]) {
     // work and will not raise an error.
     ("noise", "Include Dirichlet noise", cxxopts::value<bool>()->default_value("true"))
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("1.0"))
-    ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.5"))
+    ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("3.0"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
