@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("1.0"))
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.5"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
+    ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("h,help", "Print usage")
     ;
 
@@ -51,6 +52,7 @@ int main(int argc, char* argv[]) {
   // auto verbosity = args["verbosity"].as<int>();
   auto policy_softmax_temp = args["policy-softmax-temp"].as<float>();
   auto cpuct = args["cpuct"].as<float>();
+  auto debug = args["debug"].as<int>();
 
   if (args.count("num-threads")) {
     // std::cout << "setting " << args["num-threads"].as<int>() << " pytorch threads" << std::endl;
@@ -74,6 +76,7 @@ int main(int argc, char* argv[]) {
   info.add_noise = noise;
   info.policy_softmax_temp = policy_softmax_temp;
   info.cpuct = cpuct;
+  info.debug = debug;
   auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, info);
 
   std::string input;

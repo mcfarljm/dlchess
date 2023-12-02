@@ -130,8 +130,10 @@ namespace zero {
                                          return root->visit_count(p1.first) < root->visit_count(p2.first);
                                        });
 
-        // for (const auto& [m, b] : root->branches)
-        //   std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
+        if (info.debug > 0) {
+          for (const auto& [m, b] : root->branches)
+            std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
+        }
         // // Depth-2 debugging:
         // for (const auto& [m, b] : root->children.at(max_it->first)->branches)
         //   std::cout << "info string visits:   " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;

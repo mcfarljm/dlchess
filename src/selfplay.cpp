@@ -31,10 +31,11 @@ int main(int argc, const char* argv[]) {
     // Careful, this only works with --noise=false, and "--noise false" will not
     // work and will not raise an error.
     ("noise", "Include Dirichlet noise", cxxopts::value<bool>()->default_value("true"))
-    ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("2.0"))
+    ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("1.0"))
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.5"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
+    ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
     ("h,help", "Print usage")
     ;
@@ -69,6 +70,7 @@ int main(int argc, const char* argv[]) {
   auto max_moves = args["max-moves"].as<int>();
   auto save_interval = args["save-every"].as<int>();
   auto verbosity = args["verbosity"].as<int>();
+  auto debug = args["debug"].as<int>();
   auto add_noise = args["noise"].as<bool>();
   auto policy_softmax_temp = args["policy-softmax-temp"].as<float>();
   auto cpuct = args["cpuct"].as<float>();
@@ -116,6 +118,7 @@ int main(int argc, const char* argv[]) {
   info.add_noise = add_noise;
   info.policy_softmax_temp = policy_softmax_temp;
   info.cpuct = cpuct;
+  info.debug = debug;
 
   auto encoder = std::make_shared<SimpleEncoder>();
 

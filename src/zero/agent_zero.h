@@ -92,6 +92,7 @@ namespace zero {
     float policy_softmax_temp = 1.0;
 
     bool disable_underpromotion = true;
+    int debug = 0;
 
     GameMode game_mode = GameMode::none;
   };
