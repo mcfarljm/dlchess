@@ -9,10 +9,9 @@ device = 'cpu'
 
 
 class ChessNet(nn.Module):
-    def __init__(self, in_channels=21, grid_size=8, policy_shape=(8, 8, 73)):
+    def __init__(self, in_channels=21, grid_size=8):
         self.in_channels = in_channels
         self.grid_size = grid_size
-        policy_size = torch.tensor(policy_shape).prod().item()
         super().__init__()
         self.pb = nn.Sequential(
             nn.Conv2d(in_channels, 64, 3, padding='same', bias=False),
@@ -33,14 +32,11 @@ class ChessNet(nn.Module):
         )
 
         self.policy_stack = nn.Sequential(
-            nn.Conv2d(64, 2, 1, bias=False),
-            nn.BatchNorm2d(2),
+            nn.Conv2d(64, 64, 3, padding='same', bias=False),
+            nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Flatten(),
-            nn.Linear(2*grid_size**2, policy_size),
-            nn.Softmax(1),
-            nn.Unflatten(1, torch.Size(policy_shape)),
+            nn.Conv2d(64, 73, 3, padding='same'),
         )
 
         self.value_stack = nn.Sequential(
