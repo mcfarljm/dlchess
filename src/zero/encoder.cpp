@@ -30,8 +30,9 @@ namespace zero {
     if (b.side == Color::black)
       board_tensor.index_put_({14, Ellipsis}, 1.0);
 
-    // Total move count
-    board_tensor.index_put_({15, Ellipsis}, b.total_moves);
+    // Constant plane, to help with edge detection.  Was originally used for
+    // total move count.
+    board_tensor.index_put_({15, Ellipsis}, 1.0);
 
     // Castling
     board_tensor.index_put_({16, Ellipsis}, b.castle_perm[castling::WK]);
