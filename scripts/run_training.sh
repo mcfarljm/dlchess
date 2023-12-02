@@ -4,10 +4,10 @@
 # detached mode (-d).
 
 BUILD_DIR=/app/build
-MAJOR_VERSION=3
+MAJOR_VERSION=4
 RESULTS_DIR=results
 # Flag for whether to retain experience data
-KEEP_EXPERIENCE=0
+KEEP_EXPERIENCE=1
 
 initial_version=0
 num_iterations=2
