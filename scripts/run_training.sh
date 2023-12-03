@@ -44,7 +44,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             -e 50 \
             -t 1 \
             -o $output_dir/experience \
-            -l "$timestamp_$i" \
+            -l "${timestamp}_$i" \
             > "$output_dir/sim_$i.out" &
     done
     wait
