@@ -26,7 +26,7 @@ def train(dataloader, model, optimizer, output_interval):
 
         # Compute prediction error
         policy_raw, values = model(states)
-        policy_probs = softmax(policy_raw.view(x.shape[0], -1)).view_as(policy_raw)
+        policy_probs = softmax(policy_raw.view(policy_raw.shape[0], -1)).view_as(policy_raw)
 
         mse_loss = mse_loss_fn(values.squeeze(), rewards)
         cross_entropy_loss = cross_entropy_loss_fn(policy_probs, visit_counts)
