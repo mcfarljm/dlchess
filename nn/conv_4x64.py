@@ -107,6 +107,7 @@ def main(output, force):
         X = torch.rand(1, encoder_channels, grid_size, grid_size, device=device)
         traced_script_module = torch.jit.trace(model, X)
         traced_script_module.save(output.replace('.pt', '.ts'))
+        torch.onnx.export(model, X, output.replace('.pt', '.onnx'))
 
 
 if __name__ == '__main__':
