@@ -7,6 +7,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 set(CMAKE_CXX_STANDARD 20)
 
+
+option(ONNXRUNTIME_ROOTDIR "onnxruntime root dir")
+
+include_directories("${ONNXRUNTIME_ROOTDIR}/include"                           # Pre-built package
+                    "${ONNXRUNTIME_ROOTDIR}/include/onnxruntime"               # Linux local install to /usr/local
+                    "${ONNXRUNTIME_ROOTDIR}/include/onnxruntime/core/session") # Windows local install
+
+link_directories("${ONNXRUNTIME_ROOTDIR}/lib")
+
+
+
 # find_package(Torch REQUIRED)
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
@@ -66,7 +77,7 @@ add_library(dlchesslib SHARED
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
 
-target_link_libraries(dlchesslib "${TORCH_LIBRARIES}")
+target_link_libraries(dlchesslib "${TORCH_LIBRARIES}" onnxruntime)
 
 add_executable(tests src/test.cpp)
 target_link_libraries(tests PRIVATE dlchesslib Catch2::Catch2WithMain)
