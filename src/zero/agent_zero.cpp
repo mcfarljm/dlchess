@@ -154,9 +154,14 @@ namespace zero {
       }
     }();
 
-    if (info.game_mode == GameMode::uci) {
+    // Disable regular score output when debugging, as in xboard this prevents
+    // it from showing the debug output.
+    if (info.debug == 0 && info.game_mode == GameMode::uci) {
       std::cout << "info score cp " << root->branches.at(best_move).value_in_centipawns();
-      std::cout << " depth " << max_depth << " nodes " << info.num_rounds;
+      // std::cout << " depth " << max_depth << " nodes " << info.num_rounds;
+      // Todo: this is a hack that gets the output to show up with xboard.
+      std::cout << " depth " << 1 << " nodes " << info.num_rounds;
+      std::cout << " pv " << best_move;
       std::cout << " time " << static_cast<int>(timer.elapsed() * 1000) << std::endl;
     }
 
