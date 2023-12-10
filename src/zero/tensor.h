@@ -33,6 +33,10 @@ namespace zero {
       }
     }
 
+    int dim() const {
+      return shape.size();
+    }
+
     // void clear() {
     //   data.clear();
     //   shape[0] = 0;
