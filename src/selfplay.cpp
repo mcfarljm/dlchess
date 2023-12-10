@@ -94,21 +94,13 @@ int main(int argc, const char* argv[]) {
     }
   }
     
+  std::optional<int> num_threads_option;
   if (args.count("num-threads")) {
-    std::cout << "setting " << args["num-threads"].as<int>() << " pytorch threads" << std::endl;
-    at::set_num_threads(args["num-threads"].as<int>());
+    std::cout << "setting " << args["num-threads"].as<int>() << " inference threads" << std::endl;
+    num_threads_option = args["num-threads"].as<int>();
   }
 
-  c10::InferenceMode guard;
-  torch::jit::script::Module model;
-  try {
-    // Deserialize the ScriptModule from a file using torch::jit::load().
-    model = torch::jit::load(args["network"].as<std::string>());
-  }
-  catch (const c10::Error& e) {
-    std::cerr << "error loading the model\n";
-    return -1;
-  }
+  auto model = std::make_shared<InferenceModel>(args["network"].as<std::string>().c_str(), num_threads_option);
 
   std::cout << "Model loaded\n";
 
@@ -174,7 +166,7 @@ int main(int argc, const char* argv[]) {
     black_collector->complete_episode(-1.0 * white_reward);
 
     if (store_experience && (game_num + 1) % save_interval == 0) {
-      white_collector->append(*black_collector);
+      white_collector->append(std::move(*black_collector));
       white_collector->serialize_binary(output_path, experience_label + "_" + std::to_string(save_counter));
       white_collector->reset();
       black_collector->reset();
@@ -185,7 +177,7 @@ int main(int argc, const char* argv[]) {
   std::cout << "Finished: " << total_num_moves << " moves at " << std::setprecision(2) << total_num_moves / cumulative_timer.elapsed() << " moves / second" << std::endl;
 
   if (store_experience) {
-    white_collector->append(*black_collector);
+    white_collector->append(std::move(*black_collector));
     white_collector->serialize_binary(output_path, experience_label);
   }
 }

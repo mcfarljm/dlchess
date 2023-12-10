@@ -54,20 +54,13 @@ int main(int argc, char* argv[]) {
   auto cpuct = args["cpuct"].as<float>();
   auto debug = args["debug"].as<int>();
 
+  std::optional<int> num_threads_option;
   if (args.count("num-threads")) {
-    // std::cout << "setting " << args["num-threads"].as<int>() << " pytorch threads" << std::endl;
-    at::set_num_threads(args["num-threads"].as<int>());
+    std::cout << "setting " << args["num-threads"].as<int>() << " inference threads" << std::endl;
+    num_threads_option = args["num-threads"].as<int>();
   }
 
-  c10::InferenceMode guard;
-  torch::jit::script::Module model;
-  try {
-    model = torch::jit::load(args["network"].as<std::string>());
-  }
-  catch (const c10::Error& e) {
-    std::cerr << "Error loading the model: " << argv[1] << std::endl;
-    return -1;
-  }
+  auto model = std::make_shared<zero::InferenceModel>(args["network"].as<std::string>().c_str(), num_threads_option);
 
   auto encoder = std::make_shared<zero::SimpleEncoder>();
   zero::SearchInfo info;
@@ -77,7 +70,7 @@ int main(int argc, char* argv[]) {
   info.policy_softmax_temp = policy_softmax_temp;
   info.cpuct = cpuct;
   info.debug = debug;
-  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, info);
+  auto agent = std::make_unique<zero::ZeroAgent>(std::move(model), encoder, info);
 
   std::string input;
   std::cin >> input;

@@ -19,17 +19,10 @@ using namespace utils;
 
 
 std::unique_ptr<Agent> load_zero_agent(const std::string network_path,
+                                       std::optional<int> num_threads_option,
                                        SearchInfo info) {
-  c10::InferenceMode guard;
-  torch::jit::script::Module model;
-  try {
-    model = torch::jit::load(network_path);
-  }
-  catch (const c10::Error& e) {
-    std::cerr << "Error loading model: " << network_path << std::endl;
-    // Return emptpy pointer
-    return std::unique_ptr<Agent>();
-  }
+
+  auto model = std::make_shared<InferenceModel>(network_path.c_str(), num_threads_option);
 
   std::cout << "Loaded: " << network_path << std::endl;
 
@@ -83,9 +76,10 @@ int main(int argc, const char* argv[]) {
   auto max_moves = args["max-moves"].as<int>();
   auto verbosity = args["verbosity"].as<int>();
 
+  std::optional<int> num_threads_option;
   if (args.count("num-threads")) {
-    std::cout << "setting " << args["num-threads"].as<int>() << " pytorch threads" << std::endl;
-    at::set_num_threads(args["num-threads"].as<int>());
+    std::cout << "setting " << args["num-threads"].as<int>() << " inference threads" << std::endl;
+    num_threads_option = args["num-threads"].as<int>();
   }
 
   zero::SearchInfo info;
@@ -93,8 +87,8 @@ int main(int argc, const char* argv[]) {
   info.num_randomized_moves = num_randomized_moves;
   info.add_noise = true;
 
-  auto agent1 = load_zero_agent(args["agent1"].as<std::string>(), info);
-  auto agent2 = load_zero_agent(args["agent1"].as<std::string>(), info);
+  auto agent1 = load_zero_agent(args["agent1"].as<std::string>(), num_threads_option, info);
+  auto agent2 = load_zero_agent(args["agent1"].as<std::string>(), num_threads_option, info);
 
   if (! agent1 || ! agent2)
     return -1;

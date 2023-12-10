@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(dlchess LANGUAGES CXX)
 
-find_package(Torch REQUIRED)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -16,11 +14,6 @@ include_directories("${ONNXRUNTIME_ROOTDIR}/include"                           #
 
 link_directories("${ONNXRUNTIME_ROOTDIR}/lib")
 
-
-
-# find_package(Torch REQUIRED)
-
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 Include(FetchContent)
 
@@ -77,7 +70,7 @@ add_library(dlchesslib SHARED
 
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
 
-target_link_libraries(dlchesslib "${TORCH_LIBRARIES}" onnxruntime)
+target_link_libraries(dlchesslib onnxruntime)
 
 add_executable(tests src/test.cpp)
 target_link_libraries(tests PRIVATE dlchesslib Catch2::Catch2WithMain)

@@ -104,7 +104,7 @@ namespace zero {
     constexpr static double DIRICHLET_CONCENTRATION = 0.03;
     constexpr static float DIRICHLET_WEIGHT = 0.25;
 
-    InferenceModel model;
+    std::shared_ptr<InferenceModel> model;
 
     std::shared_ptr<Encoder> encoder;
 
@@ -114,7 +114,7 @@ namespace zero {
     SearchInfo info;
 
   public:
-    ZeroAgent(InferenceModel&& model,
+    ZeroAgent(std::shared_ptr<InferenceModel> model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
       model(std::move(model)), encoder(encoder), info(info) {}

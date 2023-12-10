@@ -212,7 +212,7 @@ namespace zero {
 
     auto state_tensor = encoder->encode(game_board);
 
-    auto outputs = model(state_tensor);
+    auto outputs = model->operator()(state_tensor);
 
     auto priors = &outputs[0]; // Shape: (1, 73, 8, 8)
     auto values = &outputs[1]; // Shape: (1, 1)
