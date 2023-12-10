@@ -17,7 +17,8 @@ RUN mkdir build && cd build && cmake .. && make -j 4 && make install
 RUN pip3 install --no-cache-dir click && \
     pip3 install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
-# Install ONNX Runtime
+# Install ONNX Runtime and Python support
+RUN pip3 install --no-cache-dir onnx
 WORKDIR /opt
 RUN wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.16.3/onnxruntime-linux-x64-1.16.3.tgz && \
     tar -xvf onnxruntime-linux-x64-1.16.3.tgz
