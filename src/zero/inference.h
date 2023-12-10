@@ -2,7 +2,7 @@
 #define INFERENCE_H
 
 #include <optional>
-#include <vector>
+#include <array>
 
 #include <onnxruntime_cxx_api.h>
 
@@ -48,12 +48,38 @@ namespace zero {
 
     }
 
-    std::vector<Ort::Value> operator() (Tensor<float>& input_tensor) {
+    std::array<Tensor<float>, 2> operator() (Tensor<float>& input_tensor) {
       auto ort_input_value = Ort::Value::CreateTensor<float>(memory_info,
                                                           input_tensor.data.data(), input_tensor.data.size(),
                                                           input_tensor.shape.data(), input_tensor.shape.size());
-      return session.Run(Ort::RunOptions{nullptr}, input_names_char.data(), &ort_input_value, 1,
-                         output_names_char.data(), output_names.size());
+
+      std::vector<int64_t> policy_shape = {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
+      std::vector<int64_t> value_shape = {1, 1};
+      // Pre-allocate the memory for the results:
+      std::array<Tensor<float>, 2> output_tensors = {
+        Tensor<float>(policy_shape),
+        Tensor<float>(value_shape),
+      };
+
+      Ort::Value ort_outputs[] = {
+        Ort::Value::CreateTensor<float>(memory_info,
+                                        output_tensors[0].data.data(), output_tensors[0].data.size(),
+                                        output_tensors[0].shape.data(), output_tensors[0].shape.size()),
+        Ort::Value::CreateTensor<float>(memory_info,
+                                        output_tensors[1].data.data(), output_tensors[1].data.size(),
+                                        output_tensors[1].shape.data(), output_tensors[1].shape.size()),
+      };
+
+      session.Run(Ort::RunOptions{nullptr}, input_names_char.data(), &ort_input_value, 1,
+                  output_names_char.data(), ort_outputs, output_names.size());
+      return output_tensors;
+
+
+      // A simpler alternative was to return ORT allocated vector of outputs,
+      // but then they are ORT Value tensors, so we don't get to use our wrapper
+      // for accessing them.
+      // return session.Run(Ort::RunOptions{nullptr}, input_names_char.data(), &ort_input_value, 1,
+      //                    output_names_char.data(), output_names.size());
     }
 
   };

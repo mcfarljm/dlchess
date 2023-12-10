@@ -212,22 +212,12 @@ namespace zero {
 
     auto state_tensor = encoder->encode(game_board);
 
-    // std::vector<torch::jit::IValue> input({state_tensor});
-    // auto output = model.forward(input);
-    // auto priors = output.toTuple()->elements()[0].toTensor(); // Shape: (1, 73, 8, 8)
-    // auto values = output.toTuple()->elements()[1].toTensor();
+    auto outputs = model(state_tensor);
 
-    // std::cout << "raw priors from nn: " << priors << std::endl;
+    auto priors = &outputs[0]; // Shape: (1, 73, 8, 8)
+    auto values = &outputs[1]; // Shape: (1, 1)
 
-    // std::cout << "priors size: " << at::numel(priors) << std::endl;
-    // std::cout << "prior shape: " << priors.sizes() << std::endl;
-    // auto value = values.item().toFloat();
-
-
-    // Todo: implement model inference
-    std::vector<int64_t> priors_shape = {1, 73, 8, 8};
-    Tensor<float> priors(priors_shape);
-    float value;
+    float value = values->at({0, 0});
 
     auto move_coord_map = decode_legal_moves(game_board);
     std::unordered_map<Move, float, MoveHash> move_priors;
@@ -235,7 +225,7 @@ namespace zero {
       // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
       if (info.disable_underpromotion && mv.is_underpromotion())
         continue;
-      move_priors.emplace(mv, priors.at({0, coords[0], coords[1], coords[2]}));
+      move_priors.emplace(mv, priors->at({0, coords[0], coords[1], coords[2]}));
     }
 
     if (! move_priors.empty()) {
