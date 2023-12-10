@@ -4,7 +4,8 @@
 #include <memory>
 #include <optional>
 #include <unordered_map>
-#include <torch/script.h> // One-stop header.
+
+#include <onnxruntime_cxx_api.h>
 
 #include "encoder.h"
 #include "experience.h"
@@ -103,7 +104,7 @@ namespace zero {
     constexpr static double DIRICHLET_CONCENTRATION = 0.03;
     constexpr static float DIRICHLET_WEIGHT = 0.25;
 
-    torch::jit::script::Module model;
+    Ort::Session session;
     std::shared_ptr<Encoder> encoder;
 
     std::shared_ptr<ExperienceCollector> collector;
@@ -112,10 +113,10 @@ namespace zero {
     SearchInfo info;
 
   public:
-    ZeroAgent(torch::jit::script::Module model,
+    ZeroAgent(Ort::Session&& session,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      model(model), encoder(encoder), info(info) {}
+      session(std::move(session)), encoder(encoder), info(info) {}
 
     Move select_move(const board::Board&);
 
