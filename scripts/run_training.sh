@@ -38,7 +38,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
     # Selfplay:
     for i in $(seq $num_tasks); do
         $BUILD_DIR/selfplay \
-            $RESULTS_DIR/v$version.ts \
+            $RESULTS_DIR/v$version.onnx \
             -g 400 \
             -m 256 \
             -e 50 \
@@ -69,8 +69,8 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
 
     # for i in $(seq $num_tasks); do
     #     $BUILD_DIR/evaluate \
-    #         $RESULTS_DIR/v$new_version.ts \
-    #         $RESULTS_DIR/v$version.ts \
+    #         $RESULTS_DIR/v$new_version.onnx \
+    #         $RESULTS_DIR/v$version.onnx \
     #         -t 1 \
     #         -g 25 \
     #         -m 150 \
@@ -78,8 +78,8 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
     # done
     # wait
 
-    cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.ts arg=-t arg=1 name=v$new_version \
-                  -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$version.ts arg=-t arg=1 name=v$version \
+    cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.onnx arg=-t arg=1 name=v$new_version \
+                  -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$version.onnx arg=-t arg=1 name=v$version \
                   -each proto=uci tc=inf \
                   -concurrency $num_tasks \
                   -rounds 100 -games 2 -maxmoves 100 \
