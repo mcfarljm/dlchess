@@ -89,11 +89,15 @@ def main(experience, query, batch_size, input_path, output_path, subset, lr, int
     if output_path:
         torch.save(model.state_dict(), output_path)
 
-        # Torchscript
+        # Export ONNX model
         model.eval()
-        X = torch.rand(1, model.in_channels, model.grid_size, model.grid_size)
-        traced_script_module = torch.jit.trace(model, X)
-        traced_script_module.save(output_path.replace('.pt', '.ts'))
+        X = torch.rand(1, model.in_channels, model.grid_size, model.grid_size,
+                       requires_grad=True)
+        torch.onnx.export(model, X,
+                          output_path.replace('.pt', '.onnx'),
+                          input_names=['state'],
+                          output_names=['policy', 'value'],
+                          )
 
 
 if __name__ == '__main__':
