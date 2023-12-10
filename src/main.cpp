@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
   info.policy_softmax_temp = policy_softmax_temp;
   info.cpuct = cpuct;
   info.debug = debug;
-  auto agent = std::make_unique<zero::ZeroAgent>(std::move(model), encoder, info);
+  auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, info);
 
   std::string input;
   std::cin >> input;
