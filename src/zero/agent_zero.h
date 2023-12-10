@@ -4,11 +4,11 @@
 #include <memory>
 #include <optional>
 #include <unordered_map>
-
-#include <onnxruntime_cxx_api.h>
+#include <algorithm>
 
 #include "encoder.h"
 #include "experience.h"
+#include "inference.h"
 #include "../agent_base.h"
 
 namespace zero {
@@ -104,7 +104,8 @@ namespace zero {
     constexpr static double DIRICHLET_CONCENTRATION = 0.03;
     constexpr static float DIRICHLET_WEIGHT = 0.25;
 
-    Ort::Session session;
+    InferenceModel model;
+
     std::shared_ptr<Encoder> encoder;
 
     std::shared_ptr<ExperienceCollector> collector;
@@ -113,10 +114,10 @@ namespace zero {
     SearchInfo info;
 
   public:
-    ZeroAgent(Ort::Session&& session,
+    ZeroAgent(InferenceModel&& model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      session(std::move(session)), encoder(encoder), info(info) {}
+      model(std::move(model)), encoder(encoder), info(info) {}
 
     Move select_move(const board::Board&);
 
