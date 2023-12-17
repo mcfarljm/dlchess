@@ -106,7 +106,8 @@ namespace zero {
 
     if (collector) {
       auto root_state_tensor = encoder->encode(game_board);
-      auto visit_counts = torch::zeros({PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]});
+      std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
+      Tensor<float> visit_counts(visit_counts_shape);
       auto get_visit_count = [&](Move mv) {
         auto it = root->branches.find(mv);
         if (it != root->branches.end())
@@ -116,10 +117,10 @@ namespace zero {
       };
       auto move_coord_map = decode_legal_moves(game_board);
       for (const auto &[mv, coords] : move_coord_map) {
-        visit_counts.index_put_({coords[0], coords[1], coords[2]},
-                                static_cast<float>(get_visit_count(mv)));
+        visit_counts.at({0, coords[0], coords[1], coords[2]}) =
+          static_cast<float>(get_visit_count(mv));
       }
-      collector->record_decision(root_state_tensor, visit_counts);
+      collector->record_decision(std::move(root_state_tensor), std::move(visit_counts));
     }
 
     auto best_move = [&](){
@@ -209,24 +210,14 @@ namespace zero {
                                                    std::optional<Move> move,
                                                    std::weak_ptr<ZeroNode> parent) {
 
-    // Note: also want to place this prior to loading jit model as well
-    c10::InferenceMode guard;
-
     auto state_tensor = encoder->encode(game_board);
-    state_tensor.unsqueeze_(0);
 
-    std::vector<torch::jit::IValue> input({state_tensor});
-    auto output = model.forward(input);
-    auto priors = output.toTuple()->elements()[0].toTensor(); // Shape: (1, 73, 8, 8)
-    auto values = output.toTuple()->elements()[1].toTensor();
+    auto outputs = model->operator()(state_tensor);
 
-    // std::cout << "raw priors from nn: " << priors << std::endl;
+    auto priors = &outputs[0]; // Shape: (1, 73, 8, 8)
+    auto values = &outputs[1]; // Shape: (1, 1)
 
-    values.squeeze_();
-    priors.squeeze_();
-    // std::cout << "priors size: " << at::numel(priors) << std::endl;
-    // std::cout << "prior shape: " << priors.sizes() << std::endl;
-    auto value = values.item().toFloat();
+    float value = values->at({0, 0});
 
     auto move_coord_map = decode_legal_moves(game_board);
     std::unordered_map<Move, float, MoveHash> move_priors;
@@ -234,7 +225,7 @@ namespace zero {
       // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
       if (info.disable_underpromotion && mv.is_underpromotion())
         continue;
-      move_priors.emplace(mv, priors.index({coords[0], coords[1], coords[2]}).item().toFloat());
+      move_priors.emplace(mv, priors->at({0, coords[0], coords[1], coords[2]}));
     }
 
     if (! move_priors.empty()) {

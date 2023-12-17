@@ -4,10 +4,11 @@
 #include <memory>
 #include <optional>
 #include <unordered_map>
-#include <torch/script.h> // One-stop header.
+#include <algorithm>
 
 #include "encoder.h"
 #include "experience.h"
+#include "inference.h"
 #include "../agent_base.h"
 
 namespace zero {
@@ -103,7 +104,8 @@ namespace zero {
     constexpr static double DIRICHLET_CONCENTRATION = 0.03;
     constexpr static float DIRICHLET_WEIGHT = 0.25;
 
-    torch::jit::script::Module model;
+    std::shared_ptr<InferenceModel> model;
+
     std::shared_ptr<Encoder> encoder;
 
     std::shared_ptr<ExperienceCollector> collector;
@@ -112,10 +114,10 @@ namespace zero {
     SearchInfo info;
 
   public:
-    ZeroAgent(torch::jit::script::Module model,
+    ZeroAgent(std::shared_ptr<InferenceModel> model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      model(model), encoder(encoder), info(info) {}
+      model(std::move(model)), encoder(encoder), info(info) {}
 
     Move select_move(const board::Board&);
 

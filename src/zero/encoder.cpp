@@ -1,19 +1,19 @@
 #include "encoder.h"
 
 using squares::GRID_SIZE;
-using namespace torch::indexing;
 
 
 namespace zero {
   
-  torch::Tensor SimpleEncoder::encode(const board::Board& b) const {
-    auto board_tensor = torch::zeros({21, GRID_SIZE, GRID_SIZE});
+  Tensor<float> SimpleEncoder::encode(const board::Board& b) const {
+    std::vector<int64_t> board_tensor_shape = {1, 21, GRID_SIZE, GRID_SIZE};
+    auto board_tensor = Tensor<float>(board_tensor_shape);
 
     // First 12 planes encode piece occupation
     for (int piece_idx=0; piece_idx<pieces::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
       for (auto sq : b.bitboards[static_cast<int>(piece_idx)]) {
         auto coords = squares::sq_to_rf(sq);
-        board_tensor.index_put_({piece_idx, coords[0], coords[1]}, 1.0);
+        board_tensor.at({0, piece_idx, coords[0], coords[1]}) = 1.0;
       }
     }
 
@@ -22,26 +22,26 @@ namespace zero {
     // numerical constant, they show two planes for this).
     auto repetitions = b.repetition_count();
     if (repetitions >= 1)
-      board_tensor.index_put_({12, Ellipsis}, 1.0);
+      board_tensor.fill_channel(0, 12, 1.0);
     if (repetitions >= 2)
-      board_tensor.index_put_({13, Ellipsis}, 1.0);
+      board_tensor.fill_channel(0, 13, 1.0);
 
     // Color of side to move
     if (b.side == Color::black)
-      board_tensor.index_put_({14, Ellipsis}, 1.0);
+      board_tensor.fill_channel(0, 14, 1.0);
 
     // Constant plane, to help with edge detection.  Was originally used for
     // total move count.
-    board_tensor.index_put_({15, Ellipsis}, 1.0);
+    board_tensor.fill_channel(0, 15, 1.0);
 
     // Castling
-    board_tensor.index_put_({16, Ellipsis}, b.castle_perm[castling::WK]);
-    board_tensor.index_put_({17, Ellipsis}, b.castle_perm[castling::WQ]);
-    board_tensor.index_put_({18, Ellipsis}, b.castle_perm[castling::BK]);
-    board_tensor.index_put_({19, Ellipsis}, b.castle_perm[castling::BQ]);
+    board_tensor.fill_channel(0, 16, b.castle_perm[castling::WK]);
+    board_tensor.fill_channel(0, 17, b.castle_perm[castling::WQ]);
+    board_tensor.fill_channel(0, 18, b.castle_perm[castling::BK]);
+    board_tensor.fill_channel(0, 19, b.castle_perm[castling::BQ]);
 
     // No progress count
-    board_tensor.index_put_({20, Ellipsis}, b.fifty_move);
+    board_tensor.fill_channel(0, 20, b.fifty_move);
 
     return board_tensor;
   }

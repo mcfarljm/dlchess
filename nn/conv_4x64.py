@@ -14,29 +14,29 @@ class ChessNet(nn.Module):
         self.grid_size = grid_size
         super().__init__()
         self.pb = nn.Sequential(
-            nn.Conv2d(in_channels, 64, 3, padding='same', bias=False),
+            nn.Conv2d(in_channels, 64, 3, padding=1, bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Conv2d(64, 64, 3, padding='same', bias=False),
+            nn.Conv2d(64, 64, 3, padding=1, bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Conv2d(64, 64, 3, padding='same', bias=False),
+            nn.Conv2d(64, 64, 3, padding=1, bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Conv2d(64, 64, 3, padding='same', bias=False),
+            nn.Conv2d(64, 64, 3, padding=1, bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
         )
 
         self.policy_stack = nn.Sequential(
-            nn.Conv2d(64, 64, 3, padding='same', bias=False),
+            nn.Conv2d(64, 64, 3, padding=1, bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(),
 
-            nn.Conv2d(64, 73, 3, padding='same'),
+            nn.Conv2d(64, 73, 3, padding=1),
         )
 
         self.value_stack = nn.Sequential(
@@ -92,21 +92,44 @@ def count_parameters(model):
 @click.command()
 @click.option('-o', '--output', default='conv_4x64.pt')
 @click.option('-f', '--force', is_flag=True, help='overwrite')
-def main(output, force):
+@click.option('-i', '--input', help='input file with model state')
+def main(output, force, input):
     if not output.endswith('.pt'):
         output += '.pt'
-    if not force and (os.path.exists(output) or os.path.exists(output.replace('.pt', '.ts'))):
-        raise ValueError('output exists')
-    with torch.no_grad():
-        grid_size = 8
-        encoder_channels = 21
-        model = ChessNet(in_channels=encoder_channels)
-        model.eval()
+    if not force:
+        if input is None and (os.path.exists(output) or os.path.exists(output.replace('.pt', '.onnx'))):
+            raise ValueError('output exists')
+        elif input is not None and (os.path.exists(output.replace('.pt', '.onnx'))):
+            raise ValueError('.onnx output exists')
 
+    grid_size = 8
+    encoder_channels = 21
+    model = ChessNet(in_channels=encoder_channels)
+    if input is not None:
+        model.load_state_dict(torch.load(input))
+    else:
         torch.save(model.state_dict(), output)
-        X = torch.rand(1, encoder_channels, grid_size, grid_size, device=device)
-        traced_script_module = torch.jit.trace(model, X)
-        traced_script_module.save(output.replace('.pt', '.ts'))
+    model.eval()
+
+    with torch.no_grad():
+        # Noting that online examples with ONNX export do set requires_grad=True
+        # on the sample input, but not sure if it is necessary.
+        X = torch.rand(1, encoder_channels, grid_size, grid_size,
+                       requires_grad=True, device=device)
+        # Note that the exported model has fixed shapes for input and output.
+        # This should be OK as long as inference is done in batches of 1.  If
+        # needed, we can add a dynamic_axes option to make the first axis (of
+        # input and outputs) dynamic.
+        torch.onnx.export(model, X,
+                          output.replace('.pt', '.onnx'),
+                          input_names=['state'],
+                          output_names=['policy', 'value'],
+                          )
+        # print(torch.onnx.export_to_pretty_string(
+        #     model, X,
+        #     input_names=['state'],
+        #     output_names=['policy', 'value'],
+        # ))
 
 
 if __name__ == '__main__':

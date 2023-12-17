@@ -2,20 +2,28 @@
 #define EXPERIENCE_H
 
 #include <vector>
+#include <iterator>
 
-#include <torch/torch.h>
+#include "tensor.h"
 
 namespace zero {
 
+  /// Two possible implementations:
+  /// 1. Use a tensor that grows in first dimension with an append function
+  /// 2. Use a vector<tensor>, and preferably std::move tensors into the vector
+  /// when appending.
+  ///
+  /// The second method avoids needing to reallocate each time to keep the
+  /// memory contiguous.
   class ExperienceCollector {
   public:
-    std::vector<torch::Tensor> states;
-    std::vector<torch::Tensor> visit_counts;
+    std::vector<Tensor<float>> states;
+    std::vector<Tensor<float>> visit_counts;
     std::vector<float> rewards;
 
   private:
-    std::vector<torch::Tensor> current_episode_states;
-    std::vector<torch::Tensor> current_episode_visit_counts;
+    std::vector<Tensor<float>> current_episode_states;
+    std::vector<Tensor<float>> current_episode_visit_counts;
   
   public:
 
@@ -24,15 +32,18 @@ namespace zero {
       current_episode_visit_counts.clear();
     }
 
-    void record_decision(torch::Tensor state, torch::Tensor visit_counts) {
-      // Unsqueeze so that we get expected shape when concatenating
-      current_episode_states.push_back(state.unsqueeze(0));
-      current_episode_visit_counts.push_back(visit_counts.unsqueeze(0));
+    void record_decision(Tensor<float>&& state, Tensor<float>&& visit_counts) {
+      current_episode_states.push_back(std::move(state));
+      current_episode_visit_counts.push_back(std::move(visit_counts));
     }
 
     void complete_episode(float reward) {
-      states.insert(states.end(), current_episode_states.begin(), current_episode_states.end());
-      visit_counts.insert(visit_counts.end(), current_episode_visit_counts.begin(), current_episode_visit_counts.end());
+      states.insert(states.end(),
+                    std::make_move_iterator(current_episode_states.begin()),
+                    std::make_move_iterator(current_episode_states.end()));
+      visit_counts.insert(visit_counts.end(),
+                          std::make_move_iterator(current_episode_visit_counts.begin()),
+                          std::make_move_iterator(current_episode_visit_counts.end()));
       rewards.insert(rewards.end(), current_episode_states.size(), reward);
 
       // Clear current episode containers.
@@ -41,12 +52,13 @@ namespace zero {
     }
 
     /// Append data from other.
-    // Todo: could consider using a std::make_move_iterator and moving the data
-    // from other.  Not sure how much difference it would make, as the Tensors
-    // being moved seem to be smart pointers.
-    void append(ExperienceCollector& other) {
-      states.insert(states.end(), other.states.begin(), other.states.end());
-      visit_counts.insert(visit_counts.end(), other.visit_counts.begin(), other.visit_counts.end());
+    void append(ExperienceCollector&& other) {
+      states.insert(states.end(),
+                    std::make_move_iterator(other.states.begin()),
+                    std::make_move_iterator(other.states.end()));
+      visit_counts.insert(visit_counts.end(),
+                          std::make_move_iterator(other.visit_counts.begin()),
+                          std::make_move_iterator(other.visit_counts.end()));
       rewards.insert(rewards.end(), other.rewards.begin(), other.rewards.end());
     }
 
