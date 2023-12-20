@@ -296,6 +296,7 @@ namespace zero {
 
     // }
     std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv) << " " << node.visit_count(mv) << std::endl;
+    std::cout << "  c_puct: " << info.compute_cpuct(node.total_visit_count) << std::endl;
     std::cout << "  U: " << info.compute_cpuct(node.total_visit_count) * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
   }
 
