@@ -82,7 +82,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
                   -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$version.onnx arg=-t arg=1 name=v$version \
                   -each proto=uci tc=inf \
                   -concurrency $num_tasks \
-                  -rounds 100 -games 2 -maxmoves 100 \
+                  -rounds 100 -games 2 -maxmoves 150 \
                   -openings file=openings/openings-6ply-1000.pgn policy=round -repeat \
                   -pgnout $RESULTS_DIR/eval_$new_version.pgn > $RESULTS_DIR/eval_$new_version.out
 
