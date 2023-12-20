@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("2.0"))
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("3.5"))
     ("cpuct-base", "c_puct base for growth", cxxopts::value<float>()->default_value("25000.0"))
-    ("cpuct-factor", "c_puct multiplier for growth", cxxopts::value<float>()->default_value("3.5"))
+    ("cpuct-factor", "c_puct multiplier for growth", cxxopts::value<float>()->default_value("0.0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("h,help", "Print usage")
