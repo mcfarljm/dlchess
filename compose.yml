@@ -1,0 +1,14 @@
+# To set up user permissions for files created by docker, create .env with
+# USERID or run scripts/prepare_docker_env_file.sh
+
+services:
+  app:
+    image: dlchess
+    build: .
+    volumes:
+      - type: bind
+        source: .
+        target: /workdir
+    user: ${USERID}
+    working_dir: /workdir
+    command: ./scripts/run_training.sh
