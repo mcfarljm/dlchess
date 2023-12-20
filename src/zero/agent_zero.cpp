@@ -8,6 +8,10 @@
 
 namespace zero {
 
+  float SearchInfo::compute_cpuct(int N) const {
+    return cpuct + (cpuct_factor ? cpuct_factor * std::log((N + cpuct_base) / cpuct_base) : 0.0);
+  }
+
   float value_to_centipawns(float value) {
     return 111.714640912 * tan(1.5620688421 * value);
   }
@@ -272,7 +276,7 @@ namespace zero {
       auto q = node.expected_value(move);
       auto p = node.prior(move);
       auto n = node.visit_count(move);
-      return q + info.cpuct * p * sqrt(node.total_visit_count) / (n + 1);
+      return q + info.compute_cpuct(node.total_visit_count) * p * sqrt(node.total_visit_count) / (n + 1);
     };
     auto max_it = std::max_element(node.branches.begin(), node.branches.end(),
                                    [score_branch] (const auto& p1, const auto& p2) {
@@ -292,7 +296,7 @@ namespace zero {
 
     // }
     std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv) << " " << node.visit_count(mv) << std::endl;
-    std::cout << "  U: " << info.cpuct * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
+    std::cout << "  U: " << info.compute_cpuct(node.total_visit_count) * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
   }
 
 };

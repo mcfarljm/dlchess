@@ -89,13 +89,18 @@ namespace zero {
     // selected greedily.
     int num_randomized_moves = 0;
     bool add_noise = true;
-    float cpuct = 2.0;
     float policy_softmax_temp = 1.0;
+
+    float cpuct = 2.0;
+    float cpuct_base = 25000.0;
+    float cpuct_factor = 0.0;
 
     bool disable_underpromotion = true;
     int debug = 0;
 
     GameMode game_mode = GameMode::none;
+
+    float compute_cpuct(int N) const;
   };
 
   class ZeroAgent : public Agent {
