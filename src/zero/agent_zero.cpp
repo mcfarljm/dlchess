@@ -12,6 +12,33 @@ namespace zero {
     return cpuct + (cpuct_factor ? cpuct_factor * std::log((N + cpuct_base) / cpuct_base) : 0.0);
   }
 
+  /// Set search time and start count.
+  ///
+  /// move_time_ms: Fixed move time (ms).  This overrides calculation based on remaining
+  /// time and increment.
+  void SearchInfo::set_search_time(std::optional<int> move_time_ms,
+                                  std::optional<int> time_left_ms,
+                                  std::optional<int> inc_ms) {
+    if (!time_manager_enabled)
+      return;
+
+    float duration_ms;
+
+    if (move_time_ms)
+      duration_ms = move_time_ms.value();
+    else if (time_left_ms) {
+      duration_ms = 0.05 * time_left_ms.value();
+    }
+    else {
+      // Don't have any time settings, so just make sure the time limit is not set
+      have_time_limit = false;
+      return;
+    }
+
+    start_search_timer(duration_ms);
+  }
+
+
   float value_to_centipawns(float value) {
     return 111.714640912 * tan(1.5620688421 * value);
   }
@@ -64,7 +91,8 @@ namespace zero {
     auto root = create_node(game_board);
 
     int max_depth = 0;
-    for (auto round_number=0; round_number < info.num_rounds; ++round_number) {
+    int round_number = 0;
+    for (;;) {
       // std::cout << "Round: " << round_number << std::endl;
       int depth = 0;
       auto node = root;
@@ -106,6 +134,13 @@ namespace zero {
         node = node->parent.lock();
         value = -1 * value;
       }
+
+      ++round_number;
+      if (info.have_time_limit) {
+        if (info.timer.elapsed() * 1000 > info.time_limit_ms)
+          break;
+      } else if (round_number >= info.num_rounds)
+        break;
     }
 
     if (collector) {
@@ -165,7 +200,7 @@ namespace zero {
       std::cout << "info score cp " << root->branches.at(best_move).value_in_centipawns();
       // std::cout << " depth " << max_depth << " nodes " << info.num_rounds;
       // Todo: this is a hack that gets the output to show up with xboard.
-      std::cout << " depth " << 1 << " nodes " << info.num_rounds;
+      std::cout << " depth " << 1 << " nodes " << round_number;
       std::cout << " pv " << best_move;
       std::cout << " time " << static_cast<int>(timer.elapsed() * 1000) << std::endl;
     }
