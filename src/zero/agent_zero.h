@@ -112,7 +112,8 @@ namespace zero {
     /// Set search time and start counting.
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
-                         std::optional<int> inc_ms);
+                         std::optional<int> inc_ms,
+                         const board::Board& b);
 
   private:
     /// Assign the time limit and start the search timer.
@@ -149,8 +150,9 @@ namespace zero {
 
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
-                         std::optional<int> inc_ms) {
-      info.set_search_time(move_time_ms, time_left_ms, inc_ms);
+                         std::optional<int> inc_ms,
+                         const board::Board& b) {
+      info.set_search_time(move_time_ms, time_left_ms, inc_ms, b);
     }
 
     void set_collector(std::shared_ptr<ExperienceCollector> c) {

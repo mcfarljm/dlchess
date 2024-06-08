@@ -46,7 +46,7 @@ namespace {
       // else if (words[i] == "depth") {
       // }
     }
-    agent->set_search_time(move_time_ms, time_left_ms, inc_ms);
+    agent->set_search_time(move_time_ms, time_left_ms, inc_ms, b);
     auto mv = agent->select_move(b);
     std::cout << "bestmove " << mv << std::endl;
   }

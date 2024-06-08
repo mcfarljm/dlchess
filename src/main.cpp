@@ -80,7 +80,8 @@ int main(int argc, char* argv[]) {
   info.cpuct_factor = cpuct_factor;
   info.debug = debug;
   if (time_manager) {
-    auto the_time_manager = std::make_shared<AlphaZeroTimeManager>();
+    // auto the_time_manager = std::make_shared<AlphaZeroTimeManager>();
+    auto the_time_manager = std::make_shared<SimpleTimeManager>();
     info.time_manager = the_time_manager;
   }
   auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, info);

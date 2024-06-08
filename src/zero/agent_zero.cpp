@@ -17,8 +17,9 @@ namespace zero {
   /// move_time_ms: Fixed move time (ms).  This overrides calculation based on remaining
   /// time and increment.
   void SearchInfo::set_search_time(std::optional<int> move_time_ms,
-                                  std::optional<int> time_left_ms,
-                                  std::optional<int> inc_ms) {
+                                   std::optional<int> time_left_ms,
+                                   std::optional<int> inc_ms,
+                                   const board::Board& b) {
     if (!time_manager)
       return;
 
@@ -27,7 +28,7 @@ namespace zero {
     if (move_time_ms)
       duration_ms = move_time_ms.value();
     else if (time_left_ms) {
-      duration_ms = time_manager->budget_ms(*time_left_ms, inc_ms);
+      duration_ms = time_manager->budget_ms(*time_left_ms, inc_ms, b);
     }
     else {
       // Don't have any time settings, so just make sure the time limit is not set
