@@ -11,6 +11,7 @@
 #include "inference.h"
 #include "../agent_base.h"
 #include "../utils.h"
+#include "../time_management.h"
 
 namespace zero {
 
@@ -103,8 +104,7 @@ namespace zero {
 
     float compute_cpuct(int N) const;
 
-    // Whether search time is enabled, as opposed to fixed playouts:
-    bool time_manager_enabled = false;
+    std::shared_ptr<TimeManager> time_manager;
     utils::Timer timer;
     bool have_time_limit = false;
     float time_limit_ms;

@@ -78,8 +78,11 @@ int main(int argc, char* argv[]) {
   info.cpuct = cpuct;
   info.cpuct_base = cpuct_base;
   info.cpuct_factor = cpuct_factor;
-  info.time_manager_enabled = time_manager;
   info.debug = debug;
+  if (time_manager) {
+    auto the_time_manager = std::make_shared<AlphaZeroTimeManager>();
+    info.time_manager = the_time_manager;
+  }
   auto agent = std::make_unique<zero::ZeroAgent>(model, encoder, info);
 
   std::string input;

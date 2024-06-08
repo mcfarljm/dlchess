@@ -19,7 +19,7 @@ namespace zero {
   void SearchInfo::set_search_time(std::optional<int> move_time_ms,
                                   std::optional<int> time_left_ms,
                                   std::optional<int> inc_ms) {
-    if (!time_manager_enabled)
+    if (!time_manager)
       return;
 
     float duration_ms;
@@ -27,7 +27,7 @@ namespace zero {
     if (move_time_ms)
       duration_ms = move_time_ms.value();
     else if (time_left_ms) {
-      duration_ms = 0.05 * time_left_ms.value();
+      duration_ms = time_manager->budget_ms(*time_left_ms, inc_ms);
     }
     else {
       // Don't have any time settings, so just make sure the time limit is not set
