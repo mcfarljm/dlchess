@@ -79,7 +79,7 @@ namespace {
       }
     }
 
-    std::cout << b;
+    // std::cout << b;
     
     return b;
   }
