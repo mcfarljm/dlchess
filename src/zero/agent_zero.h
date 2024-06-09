@@ -104,8 +104,8 @@ namespace zero {
     float cpuct_base = 25000.0;
     float cpuct_factor = 0.0;
 
-    bool fpu_absolute = true;
-    float fpu_value = -1.0;
+    bool fpu_absolute = false;
+    float fpu_value = 0.44;
 
     bool disable_underpromotion = true;
     int debug = 0;
