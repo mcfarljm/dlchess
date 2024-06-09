@@ -51,10 +51,11 @@ namespace zero {
     std::optional<Move> last_move;
     std::unordered_map<Move, std::shared_ptr<ZeroNode>, MoveHash> children;
     std::unordered_map<Move, Branch, MoveHash> branches;
-    /// Value from neural net, or true terminal value.
+    // Value from neural net, or true terminal value.
     float value;
     int total_visit_count = 1;
-    float total_value = 0.0;
+    // Running average of expected value of child branches.
+    float expected_value_ = 0.0;
     bool terminal;
 
     ZeroNode(const board::Board& game_board, float value,
@@ -112,6 +113,7 @@ namespace zero {
     GameMode game_mode = GameMode::none;
 
     float compute_cpuct(int N) const;
+    float get_fpu(const ZeroNode& node) const;
 
     std::shared_ptr<TimeManager> time_manager;
     utils::Timer timer;
@@ -175,7 +177,6 @@ namespace zero {
     void add_noise_to_priors(std::unordered_map<Move, float, MoveHash>& priors) const;
     Move select_branch(const ZeroNode& node) const;
     void debug_select_branch(const ZeroNode& node, int) const;
-    float get_fpu(const ZeroNode& node) const;
   };
 
 };

@@ -39,6 +39,32 @@ namespace zero {
     start_search_timer(duration_ms);
   }
 
+  /// Get FPU at node.
+  float SearchInfo::get_fpu(const ZeroNode& node) const {
+    if (fpu_absolute)
+      return fpu_value;
+
+    // For reduction strategy, use node expected value, less the reduction amount
+    // multiplied by the cumulative policy of visited nodes.  See LC0, GetFpu function
+    // in search.cc.
+
+    // Below calculation using branches is for verification.
+    // float base_value = 0.0;
+    // int branch_visit_count = 0;
+    // for (const auto& [m, b] : node.branches) {
+    //   base_value += b.total_value;
+      // branch_visit_count += b.visit_count;
+    // }
+    // Note that node visit count is one greater than sum of its branch visit counts.
+    // std::cout << "visits: " << branch_visit_count << " " << node.total_visit_count << std::endl;
+    // assert(branch_visit_count + 1 == node.total_visit_count);
+    // if (node.total_visit_count > 1)
+    //   base_value /= (node.total_visit_count - 1);
+    // std::cout << "EV: " << base_value << " " << node.expected_value_ << std::endl;
+    return node.expected_value_ - fpu_value * std::sqrt(node.get_visited_policy());
+  }
+
+
 
   float value_to_centipawns(float value) {
     return 111.714640912 * tan(1.5620688421 * value);
@@ -71,7 +97,12 @@ namespace zero {
   }
 
   void ZeroNode::record_visit(Move move, float value) {
+    // Running average of node expected value is based on:
+    // M_{k} = M_{k-1} + (x_k - M_{k-1}) / k
+    // Note that k is number of child visits, which is (total_visit_count - 1)
+    expected_value_ += (value - expected_value_) / total_visit_count;
     ++total_visit_count;
+
     auto it = branches.find(move);
     assert(it != branches.end());
     (it->second.visit_count)++;
@@ -90,29 +121,6 @@ namespace zero {
     return sum;
   }
 
-
-  /// Get FPU at node.
-  float ZeroAgent::get_fpu(const ZeroNode& node) const {
-    if (info.fpu_absolute)
-      return info.fpu_value;
-
-    // For reduction strategy, use node expected value, less the reduction amount
-    // multiplied by the cumulative policy of visited nodes.  See LC0, GetFpu function
-    // in search.cc.
-    float base_value = 0.0;
-    int branch_visit_count = 0;
-    // Todo: This recalculation could be replaced by tracking a total_value in the Node.
-    for (const auto& [m, b] : node.branches) {
-      base_value += b.total_value;
-      branch_visit_count += b.visit_count;
-    }
-    // std::cout << "visits: " << branch_visit_count << " " << node.total_visit_count << std::endl;
-    // Todo: review this discrepancy...
-    // assert(branch_visit_count == node.total_visit_count);
-    if (branch_visit_count)
-      base_value /= branch_visit_count;
-    return base_value - info.fpu_value * std::sqrt(node.get_visited_policy());
-  }
 
   Move ZeroAgent::select_move(const board::Board& game_board) {
     utils::Timer timer; // Could be moved into SearchInfo to expand access.
@@ -201,7 +209,7 @@ namespace zero {
                                        });
 
         if (info.debug > 0) {
-          auto fpu = get_fpu(*root);
+          auto fpu = info.get_fpu(*root);
           for (const auto& [m, b] : root->branches)
             std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value(fpu) << std::endl;
         }
@@ -338,7 +346,7 @@ namespace zero {
   }
 
   Move ZeroAgent::select_branch(const ZeroNode& node) const {
-    auto fpu = get_fpu(node);
+    auto fpu = info.get_fpu(node);
     auto score_branch = [&] (Move move) {
       auto q = node.expected_value(move, fpu);
       auto p = node.prior(move);
@@ -362,7 +370,7 @@ namespace zero {
     // for (const auto& [move, prior] : node.branches) {
 
     // }
-    auto fpu = get_fpu(node);
+    auto fpu = info.get_fpu(node);
     std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv, fpu) << " " << node.visit_count(mv) << std::endl;
     std::cout << "  c_puct: " << info.compute_cpuct(node.total_visit_count) << std::endl;
     std::cout << "  U: " << info.compute_cpuct(node.total_visit_count) * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
