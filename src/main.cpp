@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("3.5"))
     ("cpuct-base", "c_puct base for growth", cxxopts::value<float>()->default_value("25000.0"))
     ("cpuct-factor", "c_puct multiplier for growth", cxxopts::value<float>()->default_value("0.0"))
+    ("fpu-value", "First play urgency value", cxxopts::value<float>()->default_value("-1.0"))
     // Note: Disabling bool must be done via --opt=false
     ("time-manager", "Use time manager", cxxopts::value<bool>()->default_value("true"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
@@ -58,6 +59,7 @@ int main(int argc, char* argv[]) {
   auto cpuct = args["cpuct"].as<float>();
   auto cpuct_base = args["cpuct-base"].as<float>();
   auto cpuct_factor = args["cpuct-factor"].as<float>();
+  auto fpu_value = args["fpu-value"].as<float>();
   auto time_manager = args["time-manager"].as<bool>();
   auto debug = args["debug"].as<int>();
 
@@ -78,6 +80,7 @@ int main(int argc, char* argv[]) {
   info.cpuct = cpuct;
   info.cpuct_base = cpuct_base;
   info.cpuct_factor = cpuct_factor;
+  info.fpu_value = fpu_value;
   info.debug = debug;
   if (time_manager) {
     // auto the_time_manager = std::make_shared<AlphaZeroTimeManager>();

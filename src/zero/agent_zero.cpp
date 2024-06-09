@@ -78,12 +78,17 @@ namespace zero {
     (it->second.total_value) += value;
   }
 
-
-  float ZeroNode::expected_value(Move m) const {
+  float ZeroNode::expected_value(Move m, float fpu) const {
     auto branch = branches.find(m)->second;
-    return branch.expected_value();
+    return branch.expected_value(fpu);
   }
 
+
+  /// Get FPU at node.
+  /// Todo: The "reduction" strategy will make use of the node argument.
+  float ZeroAgent::get_fpu(const ZeroNode& node) const {
+    return info.fpu_value;
+  }
 
   Move ZeroAgent::select_move(const board::Board& game_board) {
     utils::Timer timer; // Could be moved into SearchInfo to expand access.
@@ -172,8 +177,9 @@ namespace zero {
                                        });
 
         if (info.debug > 0) {
+          auto fpu = get_fpu(*root);
           for (const auto& [m, b] : root->branches)
-            std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
+            std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value(fpu) << std::endl;
         }
         // // Depth-2 debugging:
         // for (const auto& [m, b] : root->children.at(max_it->first)->branches)
@@ -198,7 +204,7 @@ namespace zero {
     // Disable regular score output when debugging, as in xboard this prevents
     // it from showing the debug output.
     if (info.debug == 0 && info.game_mode == GameMode::uci) {
-      std::cout << "info score cp " << root->branches.at(best_move).value_in_centipawns();
+      std::cout << "info score cp " << root->branches.at(best_move).value_in_centipawns(info.fpu_value);
       // std::cout << " depth " << max_depth << " nodes " << info.num_rounds;
       // Todo: this is a hack that gets the output to show up with xboard.
       std::cout << " depth " << 1 << " nodes " << round_number;
@@ -308,8 +314,9 @@ namespace zero {
   }
 
   Move ZeroAgent::select_branch(const ZeroNode& node) const {
+    auto fpu = get_fpu(node);
     auto score_branch = [&] (Move move) {
-      auto q = node.expected_value(move);
+      auto q = node.expected_value(move, fpu);
       auto p = node.prior(move);
       auto n = node.visit_count(move);
       return q + info.compute_cpuct(node.total_visit_count) * p * sqrt(node.total_visit_count) / (n + 1);
@@ -331,7 +338,8 @@ namespace zero {
     // for (const auto& [move, prior] : node.branches) {
 
     // }
-    std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv) << " " << node.visit_count(mv) << std::endl;
+    auto fpu = get_fpu(node);
+    std::cout << "  prior, EV, n: " << node.prior(mv) << " " << node.expected_value(mv, fpu) << " " << node.visit_count(mv) << std::endl;
     std::cout << "  c_puct: " << info.compute_cpuct(node.total_visit_count) << std::endl;
     std::cout << "  U: " << info.compute_cpuct(node.total_visit_count) * node.prior(mv) * sqrt(node.total_visit_count) / (node.visit_count(mv) + 1) << std::endl;
   }

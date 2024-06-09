@@ -28,14 +28,14 @@ namespace zero {
   public:
     Branch(float prior) : prior(prior) {}
 
-    float expected_value() const {
+    float expected_value(float fpu) const {
       if (visit_count == 0)
-        return -1.0;
+        return fpu;
       return total_value / visit_count;
     }
 
-    int value_in_centipawns() const {
-      return static_cast<int>(value_to_centipawns(expected_value()));
+    int value_in_centipawns(float fpu) const {
+      return static_cast<int>(value_to_centipawns(expected_value(fpu)));
     }
   };
 
@@ -64,7 +64,8 @@ namespace zero {
 
     void record_visit(Move m, float val);
 
-    float expected_value(Move m) const;
+    float get_fpu() const;
+    float expected_value(Move m, float fpu) const;
 
     float prior(Move m) const {
       return branches.find(m)->second.prior;
@@ -96,6 +97,9 @@ namespace zero {
     float cpuct = 2.0;
     float cpuct_base = 25000.0;
     float cpuct_factor = 0.0;
+
+    // bool fpu_absolute = true;
+    float fpu_value = -1.0;
 
     bool disable_underpromotion = true;
     int debug = 0;
@@ -166,6 +170,7 @@ namespace zero {
     void add_noise_to_priors(std::unordered_map<Move, float, MoveHash>& priors) const;
     Move select_branch(const ZeroNode& node) const;
     void debug_select_branch(const ZeroNode& node, int) const;
+    float get_fpu(const ZeroNode& node) const;
   };
 
 };
