@@ -29,8 +29,10 @@ namespace zero {
     Branch(float prior) : prior(prior) {}
 
     float expected_value(float fpu) const {
-      if (visit_count == 0)
+      if (visit_count == 0) {
+        // if (fpu != 0) std::cout << "FPU: " << fpu << "\n";
         return fpu;
+      }
       return total_value / visit_count;
     }
 
@@ -49,8 +51,10 @@ namespace zero {
     std::optional<Move> last_move;
     std::unordered_map<Move, std::shared_ptr<ZeroNode>, MoveHash> children;
     std::unordered_map<Move, Branch, MoveHash> branches;
+    /// Value from neural net, or true terminal value.
     float value;
     int total_visit_count = 1;
+    float total_value = 0.0;
     bool terminal;
 
     ZeroNode(const board::Board& game_board, float value,
@@ -66,6 +70,7 @@ namespace zero {
 
     float get_fpu() const;
     float expected_value(Move m, float fpu) const;
+    float get_visited_policy() const;
 
     float prior(Move m) const {
       return branches.find(m)->second.prior;
@@ -98,7 +103,7 @@ namespace zero {
     float cpuct_base = 25000.0;
     float cpuct_factor = 0.0;
 
-    // bool fpu_absolute = true;
+    bool fpu_absolute = true;
     float fpu_value = -1.0;
 
     bool disable_underpromotion = true;

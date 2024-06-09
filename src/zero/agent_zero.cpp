@@ -83,11 +83,35 @@ namespace zero {
     return branch.expected_value(fpu);
   }
 
+  float ZeroNode::get_visited_policy() const {
+    float sum = 0.0;
+    for (const auto& [m, b] : branches)
+      if (b.visit_count) sum += b.prior;
+    return sum;
+  }
+
 
   /// Get FPU at node.
-  /// Todo: The "reduction" strategy will make use of the node argument.
   float ZeroAgent::get_fpu(const ZeroNode& node) const {
-    return info.fpu_value;
+    if (info.fpu_absolute)
+      return info.fpu_value;
+
+    // For reduction strategy, use node expected value, less the reduction amount
+    // multiplied by the cumulative policy of visited nodes.  See LC0, GetFpu function
+    // in search.cc.
+    float base_value = 0.0;
+    int branch_visit_count = 0;
+    // Todo: This recalculation could be replaced by tracking a total_value in the Node.
+    for (const auto& [m, b] : node.branches) {
+      base_value += b.total_value;
+      branch_visit_count += b.visit_count;
+    }
+    // std::cout << "visits: " << branch_visit_count << " " << node.total_visit_count << std::endl;
+    // Todo: review this discrepancy...
+    // assert(branch_visit_count == node.total_visit_count);
+    if (branch_visit_count)
+      base_value /= branch_visit_count;
+    return base_value - info.fpu_value * std::sqrt(node.get_visited_policy());
   }
 
   Move ZeroAgent::select_move(const board::Board& game_board) {
