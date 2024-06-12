@@ -129,6 +129,7 @@ namespace zero {
     auto root = create_node(game_board);
 
     int max_depth = 0;
+    long long cumulative_depth = 0;
     int round_number = 0;
     for (;;) {
       // std::cout << "Round: " << round_number << std::endl;
@@ -148,6 +149,7 @@ namespace zero {
         ++depth;
       }
       max_depth = std::max(max_depth, depth);
+      cumulative_depth += depth;
 
       float value;
       std::optional<Move> move;
@@ -234,14 +236,16 @@ namespace zero {
     }();
 
     // Disable regular score output when debugging, as in xboard this prevents
-    // it from showing the debug output.
-    if (info.debug == 0 && info.game_mode == GameMode::uci) {
-      std::cout << "info score cp " << root->branches.at(best_move).value_in_centipawns(info.fpu_value);
-      // std::cout << " depth " << max_depth << " nodes " << info.num_rounds;
-      // Todo: this is a hack that gets the output to show up with xboard.
-      std::cout << " depth " << 1 << " nodes " << round_number;
+    // it from showing the debug output.  Is limiting to debug==0 still needed?
+    if (info.game_mode == GameMode::uci) {
+      std::cout << "info";
+      std::cout << " depth " << static_cast<int>(cumulative_depth / round_number);
+      std::cout << " seldepth " << max_depth;
+      std::cout << " time " << static_cast<int>(timer.elapsed() * 1000);
+      std::cout << " nodes " << round_number;
+      std::cout << " score cp " << root->branches.at(best_move).value_in_centipawns(0.0);
       std::cout << " pv " << best_move;
-      std::cout << " time " << static_cast<int>(timer.elapsed() * 1000) << std::endl;
+      std::cout << std::endl;
     }
 
     return best_move;
