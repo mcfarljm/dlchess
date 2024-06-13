@@ -5,6 +5,7 @@
 #include <iterator>
 
 #include "tensor.h"
+#include "../pieces.h"
 
 namespace zero {
 
@@ -24,31 +25,37 @@ namespace zero {
   private:
     std::vector<Tensor<float>> current_episode_states;
     std::vector<Tensor<float>> current_episode_visit_counts;
+    std::vector<pieces::Color> current_episode_sides;
   
   public:
 
     void begin_episode() {
       current_episode_states.clear();
       current_episode_visit_counts.clear();
+      current_episode_sides.clear();
     }
 
-    void record_decision(Tensor<float>&& state, Tensor<float>&& visit_counts) {
+    void record_decision(Tensor<float>&& state, Tensor<float>&& visit_counts, pieces::Color side) {
       current_episode_states.push_back(std::move(state));
       current_episode_visit_counts.push_back(std::move(visit_counts));
+      current_episode_sides.push_back(side);
     }
 
-    void complete_episode(float reward) {
+    void complete_episode(float white_reward) {
       states.insert(states.end(),
                     std::make_move_iterator(current_episode_states.begin()),
                     std::make_move_iterator(current_episode_states.end()));
       visit_counts.insert(visit_counts.end(),
                           std::make_move_iterator(current_episode_visit_counts.begin()),
                           std::make_move_iterator(current_episode_visit_counts.end()));
-      rewards.insert(rewards.end(), current_episode_states.size(), reward);
+      assert(current_episode_states.size() == current_episode_sides.size());
+      for (const auto& side : current_episode_sides)
+        rewards.push_back(side == pieces::Color::white ? white_reward : -white_reward);
 
       // Clear current episode containers.
       current_episode_states.clear();
       current_episode_visit_counts.clear();
+      current_episode_sides.clear();
     }
 
     /// Append data from other.
@@ -72,6 +79,7 @@ namespace zero {
       // Should be redundant if complete_episode has been called...
       current_episode_states.clear();
       current_episode_visit_counts.clear();
+      current_episode_sides.clear();
     }
 
 

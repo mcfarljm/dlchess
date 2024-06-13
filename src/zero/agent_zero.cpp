@@ -199,7 +199,7 @@ namespace zero {
         visit_counts.at({0, coords[0], coords[1], coords[2]}) =
           static_cast<float>(get_visit_count(mv));
       }
-      collector->record_decision(std::move(root_state_tensor), std::move(visit_counts));
+      collector->record_decision(std::move(root_state_tensor), std::move(visit_counts), game_board.side);
     }
 
     auto best_move = [&](){

@@ -163,7 +163,7 @@ int main(int argc, const char* argv[]) {
     }();
 
     white_collector->complete_episode(white_reward);
-    black_collector->complete_episode(-1.0 * white_reward);
+    black_collector->complete_episode(white_reward);
 
     if (store_experience && (game_num + 1) % save_interval == 0) {
       white_collector->append(std::move(*black_collector));
