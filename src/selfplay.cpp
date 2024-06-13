@@ -114,14 +114,11 @@ int main(int argc, const char* argv[]) {
 
   auto encoder = std::make_shared<SimpleEncoder>();
 
-  auto white_collector = std::make_shared<ExperienceCollector>();
-  auto black_collector = std::make_shared<ExperienceCollector>();
+  auto collector = std::make_shared<ExperienceCollector>();
 
-  auto white_agent = std::make_unique<ZeroAgent>(model, encoder, info);
-  auto black_agent = std::make_unique<ZeroAgent>(model, encoder, info);
+  auto agent = std::make_unique<ZeroAgent>(model, encoder, info);
 
-  white_agent->set_collector(white_collector);
-  black_agent->set_collector(black_collector);
+  agent->set_collector(collector);
 
   int num_white_wins = 0;
   int num_black_wins = 0;
@@ -131,7 +128,7 @@ int main(int argc, const char* argv[]) {
   auto cumulative_timer = Timer();
   for (int game_num=0; game_num < num_games; ++game_num) {
     auto timer = Timer();
-    auto [winner, num_moves] = simulate_game(white_agent.get(), black_agent.get(), verbosity, max_moves);
+    auto [winner, num_moves] = simulate_game(agent.get(), agent.get(), verbosity, max_moves);
     auto duration = timer.elapsed();
     total_num_moves += num_moves;
     if (num_games <= 5) {
@@ -162,14 +159,11 @@ int main(int argc, const char* argv[]) {
         return 0.0;
     }();
 
-    white_collector->complete_episode(white_reward);
-    black_collector->complete_episode(white_reward);
+    collector->complete_episode(white_reward);
 
     if (store_experience && (game_num + 1) % save_interval == 0) {
-      white_collector->append(std::move(*black_collector));
-      white_collector->serialize_binary(output_path, experience_label + "_" + std::to_string(save_counter));
-      white_collector->reset();
-      black_collector->reset();
+      collector->serialize_binary(output_path, experience_label + "_" + std::to_string(save_counter));
+      collector->reset();
       ++save_counter;
     }
   }
@@ -177,7 +171,6 @@ int main(int argc, const char* argv[]) {
   std::cout << "Finished: " << total_num_moves << " moves at " << std::setprecision(2) << total_num_moves / cumulative_timer.elapsed() << " moves / second" << std::endl;
 
   if (store_experience) {
-    white_collector->append(std::move(*black_collector));
-    white_collector->serialize_binary(output_path, experience_label);
+    collector->serialize_binary(output_path, experience_label);
   }
 }
