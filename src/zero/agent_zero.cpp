@@ -351,15 +351,15 @@ namespace zero {
 
   Move ZeroAgent::select_branch(const ZeroNode& node) const {
     auto fpu = info.get_fpu(node);
-    auto score_branch = [&] (Move move) {
-      auto q = node.expected_value(move, fpu);
-      auto p = node.prior(move);
-      auto n = node.visit_count(move);
+    auto score_branch = [&] (Branch branch) {
+      auto q = branch.expected_value(fpu);
+      auto p = branch.prior;
+      auto n = branch.visit_count;
       return q + info.compute_cpuct(node.total_visit_count) * p * sqrt(node.total_visit_count) / (n + 1);
     };
     auto max_it = std::max_element(node.branches.begin(), node.branches.end(),
                                    [score_branch] (const auto& p1, const auto& p2) {
-                                     return score_branch(p1.first) < score_branch(p2.first);
+                                     return score_branch(p1.second) < score_branch(p2.second);
                                    });
     assert(max_it != node.branches.end());
     return max_it->first;
