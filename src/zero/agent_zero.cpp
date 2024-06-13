@@ -207,7 +207,7 @@ namespace zero {
         // Select the move with the highest visit count
         auto max_it = std::max_element(root->branches.begin(), root->branches.end(),
                                        [&root] (const auto& p1, const auto& p2) {
-                                         return root->visit_count(p1.first) < root->visit_count(p2.first);
+                                         return p1.second.visit_count < p2.second.visit_count;
                                        });
 
         if (info.debug > 0) {
@@ -228,7 +228,7 @@ namespace zero {
         std::vector<int> visit_counts;
         for (const auto& [move, branch] : root->branches) {
           moves.push_back(move);
-          visit_counts.push_back(root->visit_count(move));
+          visit_counts.push_back(branch.visit_count);
         }
         std::discrete_distribution<> dist(visit_counts.begin(), visit_counts.end());
         return moves[dist(rng)];
