@@ -18,7 +18,35 @@ namespace {
     std::cout << "uciok" << std::endl;
   }
 
-  void parse_go(std::string_view line, const board::Board& b, Agent* agent) {
+  void parse_go(std::string& line, const board::Board& b, Agent* agent) {
+    std::optional<int> move_time_ms;
+    std::optional<int> time_left_ms;
+    std::optional<int> inc_ms;
+
+    auto words = utils::split_string(line, ' ');
+    for (auto i=0; i<words.size(); ++i) {
+      // std::cout << "parse_go: " << words[i] << "\n";
+      if (words[i] == "winc" && b.side == Color::white) {
+        inc_ms = std::stoi(words[i+1]);
+      }
+      else if (words[i] == "binc" && b.side == Color::black) {
+        inc_ms = std::stoi(words[i+1]);
+      }
+      else if (words[i] == "wtime" && b.side == Color::white) {
+        time_left_ms = std::stoi(words[i+1]);
+      }
+      else if (words[i] == "btime" && b.side == Color::black) {
+        time_left_ms = std::stoi(words[i+1]);
+      }
+      // else if (words[i] == "movestogo") {
+      // }
+      else if (words[i] == "movetime") {
+        move_time_ms = std::stoi(words[i+1]);
+      }
+      // else if (words[i] == "depth") {
+      // }
+    }
+    agent->set_search_time(move_time_ms, time_left_ms, inc_ms, b);
     auto mv = agent->select_move(b);
     std::cout << "bestmove " << mv << std::endl;
   }
@@ -51,7 +79,7 @@ namespace {
       }
     }
 
-    std::cout << b;
+    // std::cout << b;
     
     return b;
   }

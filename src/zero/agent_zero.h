@@ -10,6 +10,8 @@
 #include "experience.h"
 #include "inference.h"
 #include "../agent_base.h"
+#include "../utils.h"
+#include "../time_management.h"
 
 namespace zero {
 
@@ -101,6 +103,26 @@ namespace zero {
     GameMode game_mode = GameMode::none;
 
     float compute_cpuct(int N) const;
+
+    std::shared_ptr<TimeManager> time_manager;
+    utils::Timer timer;
+    bool have_time_limit = false;
+    float time_limit_ms;
+
+    /// Set search time and start counting.
+    void set_search_time(std::optional<int> move_time_ms,
+                         std::optional<int> time_left_ms,
+                         std::optional<int> inc_ms,
+                         const board::Board& b);
+
+  private:
+    /// Assign the time limit and start the search timer.
+    void start_search_timer(float duration_ms) {
+      time_limit_ms = duration_ms;
+      have_time_limit = true;
+      // std::cout << "Starting search timer for " << time_limit_ms << " ms\n";
+      timer.reset();
+    }
   };
 
   class ZeroAgent : public Agent {
@@ -125,6 +147,13 @@ namespace zero {
       model(std::move(model)), encoder(encoder), info(info) {}
 
     Move select_move(const board::Board&);
+
+    void set_search_time(std::optional<int> move_time_ms,
+                         std::optional<int> time_left_ms,
+                         std::optional<int> inc_ms,
+                         const board::Board& b) {
+      info.set_search_time(move_time_ms, time_left_ms, inc_ms, b);
+    }
 
     void set_collector(std::shared_ptr<ExperienceCollector> c) {
       collector = c;
