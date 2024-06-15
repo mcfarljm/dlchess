@@ -140,7 +140,7 @@ namespace zero {
         // Check for match at depth one (last move).  This will occur when the agent is
         // playing both sides (self play).
         auto child_it = root_->children.find(game_board.history.back().mv);
-        if (child_it != root_->children.end()) {
+        if (child_it != root_->children.end() && child_it->second->game_board.hash == game_board.hash) {
           if (info.debug > 0)
             std::cout << "info string tree hit at depth 1: " << child_it->second->total_visit_count << std::endl;
           root_ = child_it->second;
