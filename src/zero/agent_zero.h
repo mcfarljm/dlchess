@@ -84,6 +84,11 @@ namespace zero {
       return 0;
     }
 
+    int get_children_visits() const {
+      assert(total_visit_count > 0);
+      return total_visit_count - 1;
+    }
+
   };
 
   enum class GameMode {
@@ -147,6 +152,9 @@ namespace zero {
     std::shared_ptr<Encoder> encoder;
 
     std::shared_ptr<ExperienceCollector> collector;
+
+    // Store pointer to tree root so that the tree can be re-used across moves.
+    std::shared_ptr<ZeroNode> root_;
 
   public:
     SearchInfo info;

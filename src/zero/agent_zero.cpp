@@ -126,7 +126,34 @@ namespace zero {
     utils::Timer timer; // Could be moved into SearchInfo to expand access.
 
     // std::cerr << "In select move, prior move count: " << game_board.total_moves << std::endl;
-    auto root = create_node(game_board);
+
+    // First define tree root.  Check for re-use possibilities in shallow history.
+
+    if (root_) {
+      // Check for matching tree at current state (depth 0).
+      if (root_->game_board.hash == game_board.hash) {
+        // Keep root_ pointer as is.
+        if (info.debug > 0)
+          std::cout << "info string tree hit at depth 0: " << root_->get_children_visits() << std::endl;
+      } else
+        // No match.
+        root_ = create_node(game_board);
+    } else
+      // No existing tree.
+      root_ = create_node(game_board);
+
+    // if (info.debug > 0 && root_ && game_board.history.size()) {
+    //   // Check for a tree hit on last move.  Hits at depth one (last move) will only
+    //   // occur when the agent is playing both sides (self play).  We could also check at
+    //   // depth two with a little bit of added complexity, but the number of visits that
+    //   // carry over will decrease at higher depths.
+
+    //   std::cout << "info string checking tree hit for " << game_board.history.back().mv << std::endl;
+    //   auto child_it = root_->children.find(game_board.history.back().mv);
+    //   std::cout << "info root children: " << root_->children.size() << std::endl;
+    //   if (child_it != root_->children.end())
+    //     std::cout << "info string tree hit: " << child_it->second->total_visit_count << std::endl;
+    // }
 
     int max_depth = 0;
     long long cumulative_depth = 0;
@@ -134,7 +161,7 @@ namespace zero {
     for (;;) {
       // std::cout << "Round: " << round_number << std::endl;
       int depth = 0;
-      auto node = root;
+      auto node = root_;
       // debug_select_branch(*node, round_number);
       auto next_move = select_branch(*node);
       ++depth;
@@ -188,8 +215,8 @@ namespace zero {
       std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
       Tensor<float> visit_counts(visit_counts_shape);
       auto get_visit_count = [&](Move mv) {
-        auto it = root->branches.find(mv);
-        if (it != root->branches.end())
+        auto it = root_->branches.find(mv);
+        if (it != root_->branches.end())
           return it->second.visit_count;
         else
           return 0;
@@ -205,18 +232,18 @@ namespace zero {
     auto best_move = [&](){
       if (game_board.total_moves >= info.num_randomized_moves) {
         // Select the move with the highest visit count
-        auto max_it = std::max_element(root->branches.begin(), root->branches.end(),
-                                       [&root] (const auto& p1, const auto& p2) {
+        auto max_it = std::max_element(root_->branches.begin(), root_->branches.end(),
+                                       [](const auto& p1, const auto& p2) {
                                          return p1.second.visit_count < p2.second.visit_count;
                                        });
 
         if (info.debug > 0) {
-          auto fpu = info.get_fpu(*root);
-          for (const auto& [m, b] : root->branches)
+          auto fpu = info.get_fpu(*root_);
+          for (const auto& [m, b] : root_->branches)
             std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value(fpu) << std::endl;
         }
         // // Depth-2 debugging:
-        // for (const auto& [m, b] : root->children.at(max_it->first)->branches)
+        // for (const auto& [m, b] : root_->children.at(max_it->first)->branches)
         //   std::cout << "info string visits:   " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
 
         // std::cout << "info string move " << game_board.total_moves/2 + 1 << ": E[V] = " << max_it->second.total_value / max_it->second.visit_count << ", visits = " << max_it->second.visit_count << std::endl;
@@ -226,7 +253,7 @@ namespace zero {
         // Select move randomly in proportion to visit counts
         std::vector<Move> moves;
         std::vector<int> visit_counts;
-        for (const auto& [move, branch] : root->branches) {
+        for (const auto& [move, branch] : root_->branches) {
           moves.push_back(move);
           visit_counts.push_back(branch.visit_count);
         }
@@ -242,8 +269,8 @@ namespace zero {
       std::cout << " depth " << static_cast<int>(cumulative_depth / round_number);
       std::cout << " seldepth " << max_depth;
       std::cout << " time " << static_cast<int>(timer.elapsed() * 1000);
-      std::cout << " nodes " << round_number;
-      std::cout << " score cp " << root->branches.at(best_move).value_in_centipawns(0.0);
+      std::cout << " nodes " << root_->get_children_visits();
+      std::cout << " score cp " << root_->branches.at(best_move).value_in_centipawns(0.0);
       std::cout << " pv " << best_move;
       std::cout << std::endl;
     }
