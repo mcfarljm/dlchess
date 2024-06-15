@@ -25,7 +25,8 @@ int main(int argc, const char* argv[]) {
     ("network", "Path to pytorch script file", cxxopts::value<std::string>())
     ("o,output-path", "Directory to store output", cxxopts::value<std::string>())
     ("l,label", "Label to use within experience directory", cxxopts::value<std::string>()->default_value(""))
-    ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("800"))
+    ("r,rounds", "Number of rounds (-1 no limit)", cxxopts::value<int>()->default_value("-1"))
+    ("visits", "Number of visits (-1 no limit)", cxxopts::value<int>()->default_value("800"))
     ("g,num-games", "Number of games", cxxopts::value<int>()->default_value("1"))
     ("m,max-moves", "Maximum moves per game", cxxopts::value<int>()->default_value("10000"))
     // Careful, this only works with --noise=false, and "--noise false" will not
@@ -66,6 +67,7 @@ int main(int argc, const char* argv[]) {
   bool store_experience = false;
 
   auto num_rounds = args["rounds"].as<int>();
+  auto num_visits = args["visits"].as<int>();
   auto num_games = args["num-games"].as<int>();
   auto max_moves = args["max-moves"].as<int>();
   auto save_interval = args["save-every"].as<int>();
@@ -74,6 +76,10 @@ int main(int argc, const char* argv[]) {
   auto add_noise = args["noise"].as<bool>();
   auto policy_softmax_temp = args["policy-softmax-temp"].as<float>();
   auto cpuct = args["cpuct"].as<float>();
+  if (num_rounds <= 0 && num_visits <= 0) {
+    std::cerr << "Error, must specify number of rounds or visits" << std::endl;
+    exit(1);
+  }
   if (args.count("output-path")) {
     output_path = args["output-path"].as<std::string>();
     store_experience = true;
@@ -106,6 +112,7 @@ int main(int argc, const char* argv[]) {
 
   zero::SearchInfo info;
   info.num_rounds = num_rounds;
+  info.num_visits = num_visits;
   info.num_randomized_moves = 30;
   info.add_noise = add_noise;
   info.policy_softmax_temp = policy_softmax_temp;

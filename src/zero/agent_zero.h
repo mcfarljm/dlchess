@@ -84,6 +84,11 @@ namespace zero {
       return 0;
     }
 
+    int get_children_visits() const {
+      assert(total_visit_count > 0);
+      return total_visit_count - 1;
+    }
+
   };
 
   enum class GameMode {
@@ -92,7 +97,10 @@ namespace zero {
   };
 
   struct SearchInfo {
+    // Limit on number of playouts, regardless of tree re-use.  Negative number means no limit.
     int num_rounds = 800;
+    // Limit on number of visits, which does include tree re-use.  Negative number means no limit.
+    int num_visits = -1;
     // Specify number of initial moves for which move selection is done randomly
     // baesd on visit count proportion.  Beyond this threshold, moves are
     // selected greedily.
@@ -147,6 +155,9 @@ namespace zero {
     std::shared_ptr<Encoder> encoder;
 
     std::shared_ptr<ExperienceCollector> collector;
+
+    // Store pointer to tree root so that the tree can be re-used across moves.
+    std::shared_ptr<ZeroNode> root_;
 
   public:
     SearchInfo info;
