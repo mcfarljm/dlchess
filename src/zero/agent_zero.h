@@ -97,7 +97,10 @@ namespace zero {
   };
 
   struct SearchInfo {
+    // Limit on number of playouts, regardless of tree re-use.  Negative number means no limit.
     int num_rounds = 800;
+    // Limit on number of visits, which does include tree re-use.  Negative number means no limit.
+    int num_visits = -1;
     // Specify number of initial moves for which move selection is done randomly
     // baesd on visit count proportion.  Beyond this threshold, moves are
     // selected greedily.

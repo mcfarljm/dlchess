@@ -205,7 +205,9 @@ namespace zero {
       if (info.have_time_limit) {
         if (info.timer.elapsed() * 1000 > info.time_limit_ms)
           break;
-      } else if (round_number >= info.num_rounds)
+      } else if (info.num_visits > 0 && root_->get_children_visits() >= info.num_visits)
+        break;
+      else if (info.num_rounds > 0 && round_number >= info.num_rounds)
         break;
     }
 
