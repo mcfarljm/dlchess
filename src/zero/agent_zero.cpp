@@ -135,25 +135,24 @@ namespace zero {
         // Keep root_ pointer as is.
         if (info.debug > 0)
           std::cout << "info string tree hit at depth 0: " << root_->get_children_visits() << std::endl;
+
+      } else if (game_board.history.size()) {
+        // Check for match at depth one (last move).  This will occur when the agent is
+        // playing both sides (self play).
+        auto child_it = root_->children.find(game_board.history.back().mv);
+        if (child_it != root_->children.end()) {
+          if (info.debug > 0)
+            std::cout << "info string tree hit at depth 1: " << child_it->second->total_visit_count << std::endl;
+          root_ = child_it->second;
+        } else
+          // No match at depth 1.
+          root_ = create_node(game_board);
       } else
-        // No match.
+        // Tree board has no history and doesn't match current board.
         root_ = create_node(game_board);
     } else
       // No existing tree.
       root_ = create_node(game_board);
-
-    // if (info.debug > 0 && root_ && game_board.history.size()) {
-    //   // Check for a tree hit on last move.  Hits at depth one (last move) will only
-    //   // occur when the agent is playing both sides (self play).  We could also check at
-    //   // depth two with a little bit of added complexity, but the number of visits that
-    //   // carry over will decrease at higher depths.
-
-    //   std::cout << "info string checking tree hit for " << game_board.history.back().mv << std::endl;
-    //   auto child_it = root_->children.find(game_board.history.back().mv);
-    //   std::cout << "info root children: " << root_->children.size() << std::endl;
-    //   if (child_it != root_->children.end())
-    //     std::cout << "info string tree hit: " << child_it->second->total_visit_count << std::endl;
-    // }
 
     int max_depth = 0;
     long long cumulative_depth = 0;
