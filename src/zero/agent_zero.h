@@ -113,7 +113,7 @@ namespace zero {
     float cpuct_factor = 0.0;
 
     bool fpu_absolute = false;
-    float fpu_value = 0.44;
+    float fpu_value = 0.33;
 
     bool disable_underpromotion = true;
     int debug = 0;

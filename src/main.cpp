@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.745"))
     ("cpuct-base", "c_puct base for growth", cxxopts::value<float>()->default_value("38739.0"))
     ("cpuct-factor", "c_puct multiplier for growth", cxxopts::value<float>()->default_value("3.894"))
-    ("fpu-value", "First play urgency value", cxxopts::value<float>()->default_value("0.44"))
+    ("fpu-value", "First play urgency value", cxxopts::value<float>()->default_value("0.33"))
     ("fpu-absolute", "Use FPU absolute strategy")
     // Note: Disabling bool must be done via --opt=false
     ("time-manager", "Use time manager", cxxopts::value<bool>()->default_value("true"))
