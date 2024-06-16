@@ -156,9 +156,6 @@ namespace zero {
 
     std::shared_ptr<ExperienceCollector> collector;
 
-    // Store pointer to tree root so that the tree can be re-used across moves.
-    std::shared_ptr<ZeroNode> root_;
-
   public:
     SearchInfo info;
 
