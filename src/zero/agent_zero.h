@@ -5,6 +5,8 @@
 #include <optional>
 #include <unordered_map>
 #include <algorithm>
+#include <queue>
+#include <unordered_set> // Todo: Temporary, for cache testing
 
 #include "encoder.h"
 #include "experience.h"
@@ -128,6 +130,8 @@ namespace zero {
     bool have_time_limit = false;
     float time_limit_ms;
 
+    int nn_cache_size = 100000;
+
     /// Set search time and start counting.
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
@@ -144,6 +148,29 @@ namespace zero {
     }
   };
 
+  struct fifo_map {
+    int max_size_;
+    std::queue<uint64_t> queue_;
+    std::unordered_set<uint64_t> set_;
+
+    fifo_map(int max_size) : max_size_(max_size) {}
+
+    bool contains(uint64_t value) {
+      return set_.contains(value);
+    }
+
+    void insert(uint64_t value) {
+      while (set_.size() >= max_size_) {
+        set_.erase(queue_.front());
+        queue_.pop();
+      }
+      set_.insert(value);
+      queue_.push(value);
+    }
+
+  };
+
+
   class ZeroAgent : public Agent {
 
     // Concentration parameter for dirichlet noise:
@@ -156,6 +183,9 @@ namespace zero {
 
     std::shared_ptr<ExperienceCollector> collector;
 
+    fifo_map nn_cache_;
+    int num_cache_hits_ = 0;
+
   public:
     SearchInfo info;
 
@@ -163,7 +193,7 @@ namespace zero {
     ZeroAgent(std::shared_ptr<InferenceModel> model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      model(std::move(model)), encoder(encoder), info(info) {}
+      model(std::move(model)), encoder(encoder), info(info), nn_cache_(info.nn_cache_size) {}
 
     Move select_move(const board::Board&);
 

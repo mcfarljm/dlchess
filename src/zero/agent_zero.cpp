@@ -4,6 +4,7 @@
 #include "agent_zero.h"
 #include "../myrand.h"
 #include "../utils.h"
+#include "../hashcat.h"
 
 
 namespace zero {
@@ -137,6 +138,7 @@ namespace zero {
     int max_depth = 0;
     long long cumulative_depth = 0;
     int round_number = 0;
+    num_cache_hits_ = 0;
     for (;;) {
       // std::cout << "Round: " << round_number << std::endl;
       int depth = 0;
@@ -243,6 +245,11 @@ namespace zero {
       }
     }();
 
+    if (info.debug > 0) {
+      std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
+      std::cout << "info string cache size: " << nn_cache_.set_.size() << std::endl;
+    }
+
     // Disable regular score output when debugging, as in xboard this prevents
     // it from showing the debug output.  Is limiting to debug==0 still needed?
     if (info.game_mode == GameMode::uci) {
@@ -299,6 +306,20 @@ namespace zero {
   std::shared_ptr<ZeroNode> ZeroAgent::create_node(const board::Board& game_board,
                                                    std::optional<Move> move,
                                                    std::weak_ptr<ZeroNode> parent) {
+
+    // Check cache:
+
+    // Note that the Board hash does not include repetition or fifty move count, which
+    // are part of the NN encoding.  So we concatenate them in, following LC0.
+
+    auto hash = game_board.hash;
+    hash = utils::HashCat(hash, game_board.repetition_count());
+    hash = utils::HashCat(hash, game_board.fifty_move);
+
+    if (nn_cache_.contains(hash))
+      ++num_cache_hits_;
+    else
+      nn_cache_.insert(hash);
 
     auto state_tensor = encoder->encode(game_board);
 
