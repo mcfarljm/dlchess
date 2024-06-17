@@ -194,7 +194,7 @@ namespace zero {
     }
 
     if (collector) {
-      auto root_state_tensor = encoder->encode(game_board);
+      auto root_state_tensor = encoder_->encode(game_board);
       std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
       Tensor<float> visit_counts(visit_counts_shape);
       auto get_visit_count = [&](Move mv) {
@@ -321,23 +321,9 @@ namespace zero {
     else
       nn_cache_.insert(hash);
 
-    auto state_tensor = encoder->encode(game_board);
-
-    auto outputs = model->operator()(state_tensor);
-
-    auto priors = &outputs[0]; // Shape: (1, 73, 8, 8)
-    auto values = &outputs[1]; // Shape: (1, 1)
-
-    float value = values->at({0, 0});
-
-    auto move_coord_map = decode_legal_moves(game_board);
     std::unordered_map<Move, float, MoveHash> move_priors;
-    for (const auto &[mv, coords] : move_coord_map) {
-      // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
-      if (info.disable_underpromotion && mv.is_underpromotion())
-        continue;
-      move_priors.emplace(mv, priors->at({0, coords[0], coords[1], coords[2]}));
-    }
+    float value;
+    model_->operator()(game_board, move_priors, value);
 
     if (! move_priors.empty()) {
       // Apply softmax

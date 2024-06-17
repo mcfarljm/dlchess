@@ -10,7 +10,7 @@
 
 #include "encoder.h"
 #include "experience.h"
-#include "inference.h"
+#include "cached_inference.h"
 #include "../agent_base.h"
 #include "../utils.h"
 #include "../time_management.h"
@@ -177,9 +177,8 @@ namespace zero {
     constexpr static double DIRICHLET_CONCENTRATION = 0.03;
     constexpr static float DIRICHLET_WEIGHT = 0.25;
 
-    std::shared_ptr<InferenceModel> model;
-
-    std::shared_ptr<Encoder> encoder;
+    std::shared_ptr<CachedInferenceModel> model_;
+    std::shared_ptr<Encoder> encoder_;
 
     std::shared_ptr<ExperienceCollector> collector;
 
@@ -193,7 +192,9 @@ namespace zero {
     ZeroAgent(std::shared_ptr<InferenceModel> model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      model(std::move(model)), encoder(encoder), info(info), nn_cache_(info.nn_cache_size) {}
+      encoder_(encoder), info(info), nn_cache_(info.nn_cache_size) {
+      model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.disable_underpromotion);
+    }
 
     Move select_move(const board::Board&);
 
