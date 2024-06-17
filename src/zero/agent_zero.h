@@ -168,7 +168,7 @@ namespace zero {
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
       encoder_(encoder), info(info) {
-      model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.disable_underpromotion);
+      model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.policy_softmax_temp, info.disable_underpromotion);
     }
 
     Move select_move(const board::Board&);

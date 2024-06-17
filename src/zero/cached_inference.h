@@ -43,14 +43,17 @@ namespace zero {
     fifo_map cache_;
 
     bool disable_underpromotion_;
+    float policy_softmax_temp_;
 
   public:
 
     CachedInferenceModel(std::shared_ptr<InferenceModel> model,
                          std::shared_ptr<Encoder> encoder,
                          int cache_size,
+                         float policy_softmax_temp,
                          bool disable_underpromotion) :
-      model_(std::move(model)), encoder_(encoder), cache_(cache_size), disable_underpromotion_(disable_underpromotion) {}
+    model_(std::move(model)), encoder_(encoder), cache_(cache_size),
+    policy_softmax_temp_(policy_softmax_temp), disable_underpromotion_(disable_underpromotion) {}
 
     // Get current size of cache
     int cache_size() const {
@@ -60,6 +63,11 @@ namespace zero {
     // Get a neural network result, possibly using the cache.
     //
     // Returns true if there was a cache hit.  Value and prior data are updated as inplace arguments.
+
+    // Todo: To return move_priors, may be better to use a pointer into the cache map.
+    // After the data have been inserted, then use &(cache_.map_[hash]).  This avoids
+    // having to copy the data.  Note that if multiple threads are ever used, will need
+    // to review this for safety.
     bool operator() (const board::Board& game_board,
                      std::unordered_map<Move, float, MoveHash>& move_priors,
                      float& value) {
@@ -81,6 +89,29 @@ namespace zero {
           continue;
         move_priors.emplace(mv, priors->at({0, coords[0], coords[1], coords[2]}));
       }
+
+      if (! move_priors.empty()) {
+        // Apply softmax
+        // Following LC0, subtract off the maximum.  This shouldn't change the
+        // result, but maybe it helps conditioning.
+        auto pmax = std::max_element
+          (
+           std::begin(move_priors), std::end(move_priors),
+           [] (const auto& pair1, const auto& pair2) {
+             return pair1.second < pair2.second;
+           }
+           )->second;
+
+        for (auto &[mv, p]: move_priors)
+          p = exp((p - pmax) / policy_softmax_temp_);
+      }
+
+      // Renormalize prior based on legal moves:
+      float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
+                                   [](float value, const std::unordered_map<Move, float, MoveHash>::value_type& p) {return value + p.second;}
+                                   );
+      for (auto &[mv, p] : move_priors)
+        p /= psum;
 
       // Check cache:
 
