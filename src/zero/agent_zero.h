@@ -5,8 +5,6 @@
 #include <optional>
 #include <unordered_map>
 #include <algorithm>
-#include <queue>
-#include <unordered_set> // Todo: Temporary, for cache testing
 
 #include "encoder.h"
 #include "experience.h"
@@ -148,28 +146,6 @@ namespace zero {
     }
   };
 
-  struct fifo_map {
-    int max_size_;
-    std::queue<uint64_t> queue_;
-    std::unordered_set<uint64_t> set_;
-
-    fifo_map(int max_size) : max_size_(max_size) {}
-
-    bool contains(uint64_t value) {
-      return set_.contains(value);
-    }
-
-    void insert(uint64_t value) {
-      while (set_.size() >= max_size_) {
-        set_.erase(queue_.front());
-        queue_.pop();
-      }
-      set_.insert(value);
-      queue_.push(value);
-    }
-
-  };
-
 
   class ZeroAgent : public Agent {
 
@@ -182,7 +158,6 @@ namespace zero {
 
     std::shared_ptr<ExperienceCollector> collector;
 
-    fifo_map nn_cache_;
     int num_cache_hits_ = 0;
 
   public:
@@ -192,8 +167,8 @@ namespace zero {
     ZeroAgent(std::shared_ptr<InferenceModel> model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      encoder_(encoder), info(info), nn_cache_(info.nn_cache_size) {
-      model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.disable_underpromotion);
+      encoder_(encoder), info(info) {
+      model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.disable_underpromotion);
     }
 
     Move select_move(const board::Board&);

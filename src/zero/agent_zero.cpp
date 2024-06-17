@@ -4,7 +4,6 @@
 #include "agent_zero.h"
 #include "../myrand.h"
 #include "../utils.h"
-#include "../hashcat.h"
 
 
 namespace zero {
@@ -247,7 +246,7 @@ namespace zero {
 
     if (info.debug > 0) {
       std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
-      std::cout << "info string cache size: " << nn_cache_.set_.size() << std::endl;
+      std::cout << "info string cache size: " << model_->cache_size() << std::endl;
     }
 
     // Disable regular score output when debugging, as in xboard this prevents
@@ -307,23 +306,10 @@ namespace zero {
                                                    std::optional<Move> move,
                                                    std::weak_ptr<ZeroNode> parent) {
 
-    // Check cache:
-
-    // Note that the Board hash does not include repetition or fifty move count, which
-    // are part of the NN encoding.  So we concatenate them in, following LC0.
-
-    auto hash = game_board.hash;
-    hash = utils::HashCat(hash, game_board.repetition_count());
-    hash = utils::HashCat(hash, game_board.fifty_move);
-
-    if (nn_cache_.contains(hash))
-      ++num_cache_hits_;
-    else
-      nn_cache_.insert(hash);
 
     std::unordered_map<Move, float, MoveHash> move_priors;
     float value;
-    model_->operator()(game_board, move_priors, value);
+    num_cache_hits_ += model_->operator()(game_board, move_priors, value);
 
     if (! move_priors.empty()) {
       // Apply softmax
