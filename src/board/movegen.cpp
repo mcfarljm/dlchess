@@ -146,6 +146,8 @@ namespace board {
         case Piece::WQ: case Piece::BQ:
           attacks = piece_moves::get_queen_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
+        default:
+          throw std::runtime_error("unreachable");
         }
         attacks &= ~ bb_sides[static_cast<int>(side)];
         for (auto t_sq : attacks) {
