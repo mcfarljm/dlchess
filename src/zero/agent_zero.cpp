@@ -71,7 +71,7 @@ namespace zero {
   }
 
   ZeroNode::ZeroNode(const board::Board& game_board, float value,
-                     std::unordered_map<Move, float, MoveHash> priors,
+                     const std::unordered_map<Move, float, MoveHash>& priors,
                      std::weak_ptr<ZeroNode> parent,
                      std::optional<Move> last_move) :
     game_board(game_board), value(value), parent(parent), last_move(last_move),
@@ -137,6 +137,7 @@ namespace zero {
     int max_depth = 0;
     long long cumulative_depth = 0;
     int round_number = 0;
+    num_cache_hits_ = 0;
     for (;;) {
       // std::cout << "Round: " << round_number << std::endl;
       int depth = 0;
@@ -192,7 +193,7 @@ namespace zero {
     }
 
     if (collector) {
-      auto root_state_tensor = encoder->encode(game_board);
+      auto root_state_tensor = encoder_->encode(game_board);
       std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
       Tensor<float> visit_counts(visit_counts_shape);
       auto get_visit_count = [&](Move mv) {
@@ -242,6 +243,11 @@ namespace zero {
         return moves[dist(rng)];
       }
     }();
+
+    if (info.debug > 0) {
+      std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
+      std::cout << "info string cache size: " << model_->cache_size() << std::endl;
+    }
 
     // Disable regular score output when debugging, as in xboard this prevents
     // it from showing the debug output.  Is limiting to debug==0 still needed?
@@ -299,54 +305,17 @@ namespace zero {
   std::shared_ptr<ZeroNode> ZeroAgent::create_node(const board::Board& game_board,
                                                    std::optional<Move> move,
                                                    std::weak_ptr<ZeroNode> parent) {
+    bool cache_hit = false;
+    auto output = model_->operator()(game_board, cache_hit);
+    num_cache_hits_ += cache_hit;
 
-    auto state_tensor = encoder->encode(game_board);
-
-    auto outputs = model->operator()(state_tensor);
-
-    auto priors = &outputs[0]; // Shape: (1, 73, 8, 8)
-    auto values = &outputs[1]; // Shape: (1, 1)
-
-    float value = values->at({0, 0});
-
-    auto move_coord_map = decode_legal_moves(game_board);
-    std::unordered_map<Move, float, MoveHash> move_priors;
-    for (const auto &[mv, coords] : move_coord_map) {
-      // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
-      if (info.disable_underpromotion && mv.is_underpromotion())
-        continue;
-      move_priors.emplace(mv, priors->at({0, coords[0], coords[1], coords[2]}));
-    }
-
-    if (! move_priors.empty()) {
-      // Apply softmax
-      using move_priors_valtype = decltype(move_priors)::value_type;
-      // Following LC0, subtract off the maximum.  This shouldn't change the
-      // result, but maybe it helps conditioning.
-      auto pmax = std::max_element
-        (
-         std::begin(move_priors), std::end(move_priors),
-         [] (const move_priors_valtype& pair1, const move_priors_valtype& pair2) {
-           return pair1.second < pair2.second;
-         }
-         )->second;
-
-      for (auto &[mv, p]: move_priors)
-        p = exp((p - pmax) / info.policy_softmax_temp);
-
-      // Renormalize prior based on legal moves:
-      float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
-                                   [](float value, const std::unordered_map<Move, float, MoveHash>::value_type& p) {return value + p.second;}
-                                   );
-      for (auto &[mv, p] : move_priors)
-        p /= psum;
-
+    if (! output.move_priors.empty()) {
       if (info.add_noise && (! parent.lock()))
-        add_noise_to_priors(move_priors);
+        add_noise_to_priors(output.move_priors);
     }
 
-    auto new_node = std::make_shared<ZeroNode>(game_board, value,
-                                               std::move(move_priors),
+    auto new_node = std::make_shared<ZeroNode>(game_board, output.value,
+                                               output.move_priors,
                                                parent,
                                                move);
     auto parent_shared = parent.lock();

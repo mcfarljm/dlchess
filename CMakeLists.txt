@@ -64,6 +64,7 @@ add_library(dlchesslib SHARED
   src/zero/encoder.cpp
   src/zero/agent_zero.cpp
   src/zero/experience.cpp
+  src/zero/cached_inference.cpp
 
   src/io/uci.cpp
 )
