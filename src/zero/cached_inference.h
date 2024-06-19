@@ -27,7 +27,9 @@ namespace zero {
     std::queue<uint64_t> queue_;
     std::unordered_map<uint64_t, NetworkOutput> map_;
 
-    fifo_map(int max_size) : max_size_(max_size) {}
+    fifo_map(int max_size) : max_size_(max_size) {
+      map_.reserve(max_size);
+    }
 
     bool contains(uint64_t key) {
       return map_.contains(key);
