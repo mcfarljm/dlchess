@@ -59,7 +59,7 @@ namespace zero {
     bool terminal;
 
     ZeroNode(const board::Board& game_board, float value,
-             std::unordered_map<Move, float, MoveHash> priors,
+             const std::unordered_map<Move, float, MoveHash>& priors,
              std::weak_ptr<ZeroNode> parent,
              std::optional<Move> last_move);
 

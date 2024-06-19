@@ -71,7 +71,7 @@ namespace zero {
   }
 
   ZeroNode::ZeroNode(const board::Board& game_board, float value,
-                     std::unordered_map<Move, float, MoveHash> priors,
+                     const std::unordered_map<Move, float, MoveHash>& priors,
                      std::weak_ptr<ZeroNode> parent,
                      std::optional<Move> last_move) :
     game_board(game_board), value(value), parent(parent), last_move(last_move),
@@ -305,19 +305,17 @@ namespace zero {
   std::shared_ptr<ZeroNode> ZeroAgent::create_node(const board::Board& game_board,
                                                    std::optional<Move> move,
                                                    std::weak_ptr<ZeroNode> parent) {
+    bool cache_hit = false;
+    auto output = model_->operator()(game_board, cache_hit);
+    num_cache_hits_ += cache_hit;
 
-
-    std::unordered_map<Move, float, MoveHash> move_priors;
-    float value;
-    num_cache_hits_ += model_->operator()(game_board, move_priors, value);
-
-    if (! move_priors.empty()) {
+    if (! output.move_priors.empty()) {
       if (info.add_noise && (! parent.lock()))
-        add_noise_to_priors(move_priors);
+        add_noise_to_priors(output.move_priors);
     }
 
-    auto new_node = std::make_shared<ZeroNode>(game_board, value,
-                                               std::move(move_priors),
+    auto new_node = std::make_shared<ZeroNode>(game_board, output.value,
+                                               output.move_priors,
                                                parent,
                                                move);
     auto parent_shared = parent.lock();

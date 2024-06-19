@@ -2,7 +2,7 @@
 #define CACHED_INFERENCE_H
 
 #include <queue>
-#include <unordered_set> // Todo: Temporary, for cache testing
+#include <unordered_map>
 
 #include "inference.h"
 #include "../hashcat.h"
@@ -12,24 +12,34 @@ namespace zero {
 
   using namespace game_moves;
 
+  using priors_type = std::unordered_map<Move, float, MoveHash>;
+
+  struct NetworkOutput {
+    priors_type move_priors;
+    float value;
+
+    NetworkOutput(priors_type p, float v) : move_priors(std::move(p)), value(v) {}
+  };
+
+  template <class T>
   struct fifo_map {
     int max_size_;
     std::queue<uint64_t> queue_;
-    std::unordered_set<uint64_t> set_;
+    std::unordered_map<uint64_t, NetworkOutput> map_;
 
     fifo_map(int max_size) : max_size_(max_size) {}
 
-    bool contains(uint64_t value) {
-      return set_.contains(value);
+    bool contains(uint64_t key) {
+      return map_.contains(key);
     }
 
-    void insert(uint64_t value) {
-      while (set_.size() >= max_size_) {
-        set_.erase(queue_.front());
+    void insert(uint64_t key, T value) {
+      while (map_.size() >= max_size_) {
+        map_.erase(queue_.front());
         queue_.pop();
       }
-      set_.insert(value);
-      queue_.push(value);
+      map_.emplace(std::make_pair(key, std::move(value)));
+      queue_.push(key);
     }
 
   };
@@ -40,7 +50,7 @@ namespace zero {
     std::shared_ptr<InferenceModel> model_;
     std::shared_ptr<Encoder> encoder_;
 
-    fifo_map cache_;
+    fifo_map<NetworkOutput> cache_;
 
     bool disable_underpromotion_;
     float policy_softmax_temp_;
@@ -57,20 +67,11 @@ namespace zero {
 
     // Get current size of cache
     int cache_size() const {
-      return cache_.set_.size();
+      return cache_.map_.size();
     }
 
     // Get a neural network result, possibly using the cache.
-    //
-    // Returns true if there was a cache hit.  Value and prior data are updated as inplace arguments.
-
-    // Todo: To return move_priors, may be better to use a pointer into the cache map.
-    // After the data have been inserted, then use &(cache_.map_[hash]).  This avoids
-    // having to copy the data.  Note that if multiple threads are ever used, will need
-    // to review this for safety.
-    bool operator() (const board::Board& game_board,
-                     std::unordered_map<Move, float, MoveHash>& move_priors,
-                     float& value);
+    const NetworkOutput& operator() (const board::Board& game_board, bool& cache_hit);
   };
 
 };
