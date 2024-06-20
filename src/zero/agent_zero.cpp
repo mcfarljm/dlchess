@@ -306,16 +306,22 @@ namespace zero {
                                                    std::optional<Move> move,
                                                    std::weak_ptr<ZeroNode> parent) {
     bool cache_hit = false;
-    auto output = model_->operator()(game_board, cache_hit);
+    auto& output = model_->operator()(game_board, cache_hit);
     num_cache_hits_ += cache_hit;
 
-    if (! output.move_priors.empty()) {
-      if (info.add_noise && (! parent.lock()))
-        add_noise_to_priors(output.move_priors);
+    // Set up local pointer to move_priors.  If not adding noise, then we can just point
+    // to cache reference, otherwise we need to make a local copy and point to that.
+    bool adding_noise = info.add_noise && !parent.lock() && !output.move_priors.empty();
+    priors_type move_priors;  // Only needed if copying.
+    const priors_type* move_priors_ptr = adding_noise ? &move_priors : &output.move_priors;
+
+    if (adding_noise) {
+      move_priors = output.move_priors; // Create copy
+      add_noise_to_priors(move_priors);
     }
 
     auto new_node = std::make_shared<ZeroNode>(game_board, output.value,
-                                               output.move_priors,
+                                               *move_priors_ptr,
                                                parent,
                                                move);
     auto parent_shared = parent.lock();
