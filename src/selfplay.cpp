@@ -33,7 +33,7 @@ int main(int argc, const char* argv[]) {
     // work and will not raise an error.
     ("noise", "Include Dirichlet noise", cxxopts::value<bool>()->default_value("true"))
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("1.0"))
-    ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("3.0"))
+    ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.2"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
@@ -113,10 +113,11 @@ int main(int argc, const char* argv[]) {
   zero::SearchInfo info;
   info.num_rounds = num_rounds;
   info.num_visits = num_visits;
-  info.num_randomized_moves = 30;
+  info.num_randomized_moves = 10000;
   info.add_noise = add_noise;
   info.policy_softmax_temp = policy_softmax_temp;
   info.cpuct = cpuct;
+  info.fpu_value = 0.0;
   info.debug = debug;
 
   auto encoder = std::make_shared<SimpleEncoder>();
