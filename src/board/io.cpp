@@ -28,13 +28,10 @@ namespace board {
           // Return nullopt if the input is missing a promotion character
           if (str.size() < 5)
             return std::nullopt;
-          if (mv.promote.is_queen() && str[4] == 'q')
-            return mv;
-          else if (mv.promote.is_rook() && str[4] == 'r')
-            return mv;
-          else if (mv.promote.is_bishop() && str[4] == 'b')
-            return mv;
-          else if (mv.promote.is_knight() && str[4] == 'n')
+          if ((mv.promote.is_queen() && str[4] == 'q') ||
+              (mv.promote.is_rook() && str[4] == 'r') ||
+              (mv.promote.is_bishop() && str[4] == 'b') ||
+              (mv.promote.is_knight() && str[4] == 'n'))
             return mv;
         }
         else

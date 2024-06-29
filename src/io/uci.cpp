@@ -26,16 +26,12 @@ namespace {
     auto words = utils::split_string(line, ' ');
     for (auto i=0; i<words.size(); ++i) {
       // std::cout << "parse_go: " << words[i] << "\n";
-      if (words[i] == "winc" && b.side == Color::white) {
+      if ((words[i] == "winc" && b.side == Color::white) ||
+          (words[i] == "binc" && b.side == Color::black)) {
         inc_ms = std::stoi(words[i+1]);
       }
-      else if (words[i] == "binc" && b.side == Color::black) {
-        inc_ms = std::stoi(words[i+1]);
-      }
-      else if (words[i] == "wtime" && b.side == Color::white) {
-        time_left_ms = std::stoi(words[i+1]);
-      }
-      else if (words[i] == "btime" && b.side == Color::black) {
+      else if ((words[i] == "wtime" && b.side == Color::white) ||
+               (words[i] == "btime" && b.side == Color::black)) {
         time_left_ms = std::stoi(words[i+1]);
       }
       // else if (words[i] == "movestogo") {
