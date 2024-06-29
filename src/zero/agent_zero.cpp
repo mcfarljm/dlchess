@@ -9,7 +9,8 @@
 namespace zero {
 
   float SearchInfo::compute_cpuct(int N) const {
-    return cpuct + (cpuct_factor ? cpuct_factor * std::log((N + cpuct_base) / cpuct_base) : 0.0);
+    return cpuct + (static_cast<bool>(cpuct_factor) ?
+                    cpuct_factor * std::log((static_cast<float>(N) + cpuct_base) / cpuct_base) : 0.0f);
   }
 
   /// Set search time and start count.
@@ -26,7 +27,7 @@ namespace zero {
     float duration_ms;
 
     if (move_time_ms)
-      duration_ms = move_time_ms.value();
+      duration_ms = static_cast<float>(move_time_ms.value());
     else if (time_left_ms) {
       duration_ms = time_manager->budget_ms(*time_left_ms, inc_ms, b);
     }
@@ -100,7 +101,7 @@ namespace zero {
     // Running average of node expected value is based on:
     // M_{k} = M_{k-1} + (x_k - M_{k-1}) / k
     // Note that k is number of child visits, which is (total_visit_count - 1)
-    expected_value_ += (value - expected_value_) / total_visit_count;
+    expected_value_ += (value - expected_value_) / static_cast<float>(total_visit_count);
     ++total_visit_count;
 
     auto it = branches.find(move);
@@ -275,7 +276,7 @@ namespace zero {
     // Sample noise on legal moves:
     // Adjust concentration based on number of legal moves, following Katago
     // paper.
-    double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / priors.size();
+    double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / static_cast<double>(priors.size());
     auto dirichlet_dist = DirichletDistribution(priors.size(), alpha);
     std::vector<double> noise = dirichlet_dist.sample();
     // std::cout << "Noise: " << noise << std::endl;

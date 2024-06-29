@@ -21,12 +21,12 @@ namespace zero {
 
       // Initialize data.  Todo: there might be a way to do this in the
       // initializer list, using a constexpr function for product.
-      int n = 1;
+      int64_t n = 1;
       for (auto& i : shape) n *= i;
       data.resize(n);
 
       strides.resize(shape.size(), 1);
-      int val = 1;
+      int64_t val = 1;
       for (int i=strides.size()-2; i>=0; --i) {
         val *= shape[i+1];
         strides[i] = val;
@@ -44,7 +44,7 @@ namespace zero {
 
     T& at(std::initializer_list<int64_t> indices) {
       assert(indices.size() == shape.size());
-      auto index = std::inner_product(indices.begin(), indices.end(), strides.begin(), 0);
+      auto index = std::inner_product(indices.begin(), indices.end(), strides.begin(), 0l);
       return data[index];
     }
 

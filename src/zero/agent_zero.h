@@ -33,7 +33,7 @@ namespace zero {
         // if (fpu != 0) std::cout << "FPU: " << fpu << "\n";
         return fpu;
       }
-      return total_value / visit_count;
+      return total_value / static_cast<float>(visit_count);
     }
 
     int value_in_centipawns(float fpu) const {
