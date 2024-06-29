@@ -1,3 +1,5 @@
 Checks:
+  # clang-analyzer checks weren't flagging anything
+  - -clang-analyzer-*
   - bugprone-*
   - -bugprone-easily-swappable-parameters
