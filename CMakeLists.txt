@@ -101,7 +101,6 @@ catch_discover_tests(tests)
 
 add_custom_target(
   check clang-tidy -p ${CMAKE_BINARY_DIR}/compile_commands.json
-  --checks=bugprone-*
   --header-filter=${CMAKE_CURRENT_SOURCE_DIR}/.*
   ${sources}
   DEPENDS ${sources}
