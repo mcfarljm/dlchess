@@ -41,7 +41,7 @@ namespace zero {
     board_tensor.fill_channel(0, 19, b.castle_perm[castling::BQ]);
 
     // No progress count
-    board_tensor.fill_channel(0, 20, b.fifty_move);
+    board_tensor.fill_channel(0, 20, static_cast<float>(b.fifty_move));
 
     return board_tensor;
   }

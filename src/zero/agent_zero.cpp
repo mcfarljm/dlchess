@@ -86,7 +86,7 @@ namespace zero {
 
     if (terminal) {
       // Override the model's value estimate with actual result
-      auto winner = game_board.winner().value();
+      auto winner = game_board.winner().value(); // NOLINT
       if (winner == game_board.side)
         // This is not possible, but we include this case for clarity
         ZeroNode::value = 1.0;
@@ -277,14 +277,13 @@ namespace zero {
     // Adjust concentration based on number of legal moves, following Katago
     // paper.
     double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / static_cast<double>(priors.size());
-    auto dirichlet_dist = DirichletDistribution(priors.size(), alpha);
+    auto dirichlet_dist = DirichletDistribution(static_cast<int>(priors.size()), alpha);
     std::vector<double> noise = dirichlet_dist.sample();
     // std::cout << "Noise: " << noise << std::endl;
 
     size_t idx = 0;
     for (auto &[move, prior]: priors) {
-      prior = (1.0 - DIRICHLET_WEIGHT) * prior +
-        DIRICHLET_WEIGHT * noise[idx];
+      prior = (1.0 - DIRICHLET_WEIGHT) * prior + DIRICHLET_WEIGHT * noise[idx];
       // Force a flat prior for testing:
       // prior = 1.0 / priors.size();
       ++idx;

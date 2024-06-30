@@ -31,7 +31,7 @@ std::pair<Color, int> simulate_game(Agent* white_agent,
     winner = Color::both;
   }
   else {
-    winner = b.winner().value();
+    winner = b.winner().value(); // NOLINT
   }
 
   if (verbosity >= 1) {

@@ -12,8 +12,8 @@ namespace squares {
 
   std::string square_string(Square sq) {
     std::string s;
-    s += ('a' + sq%8);
-    s += ('1' + sq/8);
+    s += static_cast<char>('a' + sq%8);
+    s += static_cast<char>('1' + sq/8);
     return s;
   }
 
