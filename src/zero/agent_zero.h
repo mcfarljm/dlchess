@@ -59,11 +59,11 @@ namespace zero {
     bool terminal;
 
     ZeroNode(const board::Board& game_board, float value,
-             std::unordered_map<Move, float, MoveHash> priors,
+             const std::unordered_map<Move, float, MoveHash>& priors,
              std::weak_ptr<ZeroNode> parent,
              std::optional<Move> last_move);
 
-    void add_child(Move move, std::shared_ptr<ZeroNode> child) {
+    void add_child(Move move, const std::shared_ptr<ZeroNode>& child) {
       children.emplace(move, child);
     }
 
@@ -175,13 +175,13 @@ namespace zero {
     }
 
     void set_collector(std::shared_ptr<ExperienceCollector> c) {
-      collector = c;
+      collector = std::move(c);
     }
 
   private:
     std::shared_ptr<ZeroNode> create_node(const board::Board& b,
                                           std::optional<Move> move = std::nullopt,
-                                          std::weak_ptr<ZeroNode> parent = std::weak_ptr<ZeroNode>());
+                                          const std::weak_ptr<ZeroNode>& parent = std::weak_ptr<ZeroNode>());
     void add_noise_to_priors(std::unordered_map<Move, float, MoveHash>& priors) const;
     Move select_branch(const ZeroNode& node) const;
     void debug_select_branch(const ZeroNode& node, int) const;

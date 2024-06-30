@@ -72,7 +72,7 @@ namespace zero {
   }
 
   ZeroNode::ZeroNode(const board::Board& game_board, float value,
-                     std::unordered_map<Move, float, MoveHash> priors,
+                     const std::unordered_map<Move, float, MoveHash>& priors,
                      std::weak_ptr<ZeroNode> parent,
                      std::optional<Move> last_move) :
     game_board(game_board), value(value), parent(std::move(parent)), last_move(last_move),
@@ -164,7 +164,7 @@ namespace zero {
         auto new_board = node->game_board;
         auto legal = new_board.make_move(next_move);
         assert(legal);
-        auto child_node = create_node(std::move(new_board), next_move, node);
+        auto child_node = create_node(new_board, next_move, node);
         value = -1 * child_node->value;
         move = next_move;
       }
@@ -297,7 +297,7 @@ namespace zero {
 
   std::shared_ptr<ZeroNode> ZeroAgent::create_node(const board::Board& game_board,
                                                    std::optional<Move> move,
-                                                   std::weak_ptr<ZeroNode> parent) {
+                                                   const std::weak_ptr<ZeroNode>& parent) {
 
     auto state_tensor = encoder->encode(game_board);
 
@@ -345,7 +345,7 @@ namespace zero {
     }
 
     auto new_node = std::make_shared<ZeroNode>(game_board, value,
-                                               std::move(move_priors),
+                                               move_priors,
                                                parent,
                                                move);
     auto parent_shared = parent.lock();

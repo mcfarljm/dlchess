@@ -126,7 +126,7 @@ namespace zero {
   }
 
 
-  void ExperienceCollector::serialize_binary(const std::string directory, const std::string label) {
+  void ExperienceCollector::serialize_binary(const std::string& directory, const std::string& label) {
     if (! states.size())
       return;
 
