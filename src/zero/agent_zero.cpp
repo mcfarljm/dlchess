@@ -68,7 +68,7 @@ namespace zero {
 
 
   float value_to_centipawns(float value) {
-    return 111.714640912 * tan(1.5620688421 * value);
+    return 111.714640912 * std::tan(1.5620688421 * value);
   }
 
   ZeroNode::ZeroNode(const board::Board& game_board, float value,
@@ -333,7 +333,7 @@ namespace zero {
          )->second;
 
       for (auto &[mv, p]: move_priors)
-        p = exp((p - pmax) / info.policy_softmax_temp);
+        p = std::exp((p - pmax) / info.policy_softmax_temp);
 
       // Renormalize prior based on legal moves:
       float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
