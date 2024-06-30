@@ -31,13 +31,12 @@ namespace board {
 
       side_key = dist(engine);
 
-      for (int i=0; i<pieces::NUM_PIECE_TYPES_BOTH + 1; ++i) {
-        for (int j=0; j<BOARD_SQ_NUM; ++j)
-          piece_keys[i][j] = dist(engine);
-      }
+      for (auto& row : piece_keys)
+        for (auto& piece_key : row)
+          piece_key = dist(engine);
 
-      for (int i=0; i<16; ++i)
-        castle_keys[i] = dist(engine);
+      for (auto& castle_key : castle_keys)
+        castle_key = dist(engine);
     }
   };
 

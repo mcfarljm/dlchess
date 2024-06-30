@@ -18,7 +18,7 @@ namespace zero {
 
   class SimpleEncoder : public Encoder {
   public:
-    Tensor<float> encode(const board::Board&) const;
+    Tensor<float> encode(const board::Board&) const override;
     /* Move decode_move_index(int index) const; */
   };
 

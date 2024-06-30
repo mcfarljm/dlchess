@@ -75,7 +75,7 @@ namespace zero {
                      std::unordered_map<Move, float, MoveHash> priors,
                      std::weak_ptr<ZeroNode> parent,
                      std::optional<Move> last_move) :
-    game_board(game_board), value(value), parent(parent), last_move(last_move),
+    game_board(game_board), value(value), parent(std::move(parent)), last_move(last_move),
     terminal(game_board.is_over()) {
 
     for (const auto &[move, p] : priors) {

@@ -3,9 +3,13 @@ Checks:
   - -clang-analyzer-*
   # - bugprone-*
   - -bugprone-easily-swappable-parameters
-  - misc-*
+  # - misc-*
   - -misc-non-private-member-variables-in-classes
   - -misc-include-cleaner
   - -misc-no-recursion
+  - modernize-*
+  - -modernize-use-trailing-return-type
+  - -modernize-use-nodiscard
+  - -modernize-avoid-c-arrays # todo
 CheckOptions:
   bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: false

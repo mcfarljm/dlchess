@@ -13,8 +13,8 @@ namespace zero {
       // We assume that each entry in the collection is a tensor containing a
       // single item.  This allows us to determine the total length of the first
       // axis as the number of items in the vector.
-      for (int i=0; i<tensors.size(); ++i)
-        assert(tensors[i].shape[0] == 1);
+      for (const auto& tensor : tensors)
+        assert(tensor.shape[0] == 1);
 
       if (tensors.empty())
         return;
@@ -25,7 +25,7 @@ namespace zero {
       std::ofstream fout(json_path, std::ios::out);
       fout << "{\n  \"data\": \"" << name << ".dat" << "\",\n";
 
-      fout << "  \"dtype\": \"";
+      fout << R"(  "dtype": ")";
       if (typeid(tensors[0]) == typeid(Tensor<float>))
         fout << "float32";
       else if (typeid(tensors[0]) == typeid(Tensor<int16_t>))
@@ -73,7 +73,7 @@ namespace zero {
       std::ofstream fout(json_path, std::ios::out);
       fout << "{\n  \"data\": \"" << name << ".dat" << "\",\n";
 
-      fout << "  \"dtype\": \"";
+      fout << R"(  "dtype": ")";
       if (typeid(vec) == typeid(std::vector<float>))
         fout << "float32";
       else if (typeid(vec) == typeid(std::vector<int16_t>))
@@ -119,8 +119,8 @@ namespace zero {
 
       auto data_path = std::filesystem::path(directory) / (name + ".dat");
       std::ofstream fout(data_path, std::ios::out | std::ios::binary);
-      for (int i=0; i<tensors.size(); ++i)
-        fout.write(reinterpret_cast<char*>(tensors[i].data.data()), sizeof(decltype(tensors[i].data)::value_type) * tensors[i].data.size()); // NOLINT(bugprone-narrowing-conversions)
+      for (auto& tensor : tensors)
+        fout.write(reinterpret_cast<char*>(tensor.data.data()), sizeof(decltype(tensor.data)::value_type) * tensor.data.size()); // NOLINT(bugprone-narrowing-conversions)
       fout.close();
     }
   }

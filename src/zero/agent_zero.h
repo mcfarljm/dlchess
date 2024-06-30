@@ -163,14 +163,14 @@ namespace zero {
     ZeroAgent(std::shared_ptr<InferenceModel> model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      model(std::move(model)), encoder(encoder), info(info) {}
+      model(std::move(model)), encoder(std::move(encoder)), info(std::move(info)) {}
 
-    Move select_move(const board::Board&);
+    Move select_move(const board::Board&) override;
 
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
                          std::optional<int> inc_ms,
-                         const board::Board& b) {
+                         const board::Board& b) override {
       info.set_search_time(move_time_ms, time_left_ms, inc_ms, b);
     }
 

@@ -163,7 +163,7 @@ namespace zero {
         }
       }
       assert(plane >= 0 && plane < 73);
-      move_map.emplace(std::make_pair(mv, std::array<int,3>({plane, from_rank_file[0], from_rank_file[1]})));
+      move_map.emplace(mv, std::array<int,3>({plane, from_rank_file[0], from_rank_file[1]}));
     }
     return move_map;
   }

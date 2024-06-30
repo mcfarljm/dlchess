@@ -18,7 +18,7 @@ class AlphaZeroTimeManager : public TimeManager {
 public:
   AlphaZeroTimeManager() = default;
   AlphaZeroTimeManager(float percentage) : percentage_(percentage) {}
-  float budget_ms(int time_left_ms, std::optional<int> /* inc_ms */, const board::Board& /* b */) {
+  float budget_ms(int time_left_ms, std::optional<int> /* inc_ms */, const board::Board& /* b */) override {
     return (static_cast<float>(time_left_ms) - move_overhead_ms_) * percentage_ * 0.01f;
   }
 };
@@ -33,7 +33,7 @@ class SimpleTimeManager : public TimeManager {
 
 public:
   SimpleTimeManager() = default;
-  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const board::Board& b) {
+  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const board::Board& b) override {
     const int increment = inc_ms ? std::max(0, *inc_ms) : 0;
 
     const float time_available = static_cast<float>(time_left_ms) - move_overhead_ms_;
