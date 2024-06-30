@@ -105,7 +105,7 @@ namespace zero {
 
       auto data_path = std::filesystem::path(directory) / (name + ".dat");
       std::ofstream fout(data_path, std::ios::out | std::ios::binary);
-      fout.write(reinterpret_cast<char*>(vec.data()), sizeof(std::remove_reference_t<decltype(vec)>::value_type) * vec.size());
+      fout.write(reinterpret_cast<char*>(vec.data()), sizeof(std::remove_reference_t<decltype(vec)>::value_type) * vec.size()); // NOLINT(bugprone-narrowing-conversions)
       fout.close();
     }
 
@@ -120,7 +120,7 @@ namespace zero {
       auto data_path = std::filesystem::path(directory) / (name + ".dat");
       std::ofstream fout(data_path, std::ios::out | std::ios::binary);
       for (int i=0; i<tensors.size(); ++i)
-        fout.write(reinterpret_cast<char*>(tensors[i].data.data()), sizeof(decltype(tensors[i].data)::value_type) * tensors[i].data.size());
+        fout.write(reinterpret_cast<char*>(tensors[i].data.data()), sizeof(decltype(tensors[i].data)::value_type) * tensors[i].data.size()); // NOLINT(bugprone-narrowing-conversions)
       fout.close();
     }
   }

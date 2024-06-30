@@ -11,7 +11,7 @@ Move RandomAgent::select_move(const Board& b) {
   if (candidates.empty())
     throw std::runtime_error("No legal moves");
 
-  std::uniform_int_distribution<> dist(0ul, candidates.size() - 1ul);
+  std::uniform_int_distribution<> dist(0, candidates.size() - 1);  // NOLINT(bugprone-narrowing-conversions)
   auto idx = dist(rng);
   return candidates[idx];
 }

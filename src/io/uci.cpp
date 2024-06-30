@@ -52,14 +52,14 @@ namespace {
 
     board::Board b = [&]() {
       if (slice.rfind("startpos", 0) == 0)
-        return board::Board();
+        return board::Board(); // NOLINT(bugprone-branch-clone)
       else if (slice.rfind("fen", 0) == 0) {
         slice = slice.substr(4);
         return board::Board(slice);
       }
       else
         // Unexpected input, but just assume startpos
-        return board::Board();
+        return board::Board(); // NOLINT(bugprone-branch-clone)
     }();
 
     auto i = slice.find("moves");
@@ -88,7 +88,7 @@ namespace {
     if (words[2] == "playouts") {
       try {
         agent->info.num_rounds = stoi(words[4]);
-      } catch (const std::invalid_argument& e) {}
+      } catch (const std::invalid_argument& e) {} // NOLINT(bugprone-empty-catch)
     }
     else if (words[2] == "noise") {
       if (words[4] == "true")

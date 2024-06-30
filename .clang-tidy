@@ -3,3 +3,5 @@ Checks:
   - -clang-analyzer-*
   - bugprone-*
   - -bugprone-easily-swappable-parameters
+CheckOptions:
+  bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: false
