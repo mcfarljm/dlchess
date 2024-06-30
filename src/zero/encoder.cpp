@@ -6,7 +6,7 @@ using squares::GRID_SIZE;
 namespace zero {
   
   Tensor<float> SimpleEncoder::encode(const board::Board& b) const {
-    std::vector<int64_t> board_tensor_shape = {1, 21, GRID_SIZE, GRID_SIZE};
+    const std::vector<int64_t> board_tensor_shape = {1, 21, GRID_SIZE, GRID_SIZE};
     auto board_tensor = Tensor<float>(board_tensor_shape);
 
     // First 12 planes encode piece occupation

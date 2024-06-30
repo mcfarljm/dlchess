@@ -124,7 +124,7 @@ namespace zero {
 
 
   Move ZeroAgent::select_move(const board::Board& game_board) {
-    utils::Timer timer; // Could be moved into SearchInfo to expand access.
+    const utils::Timer timer; // Could be moved into SearchInfo to expand access.
 
     // std::cerr << "In select move, prior move count: " << game_board.total_moves << std::endl;
 
@@ -193,7 +193,7 @@ namespace zero {
 
     if (collector) {
       auto root_state_tensor = encoder->encode(game_board);
-      std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
+      const std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
       Tensor<float> visit_counts(visit_counts_shape);
       auto get_visit_count = [&](Move mv) {
         auto it = root->branches.find(mv);
@@ -275,7 +275,7 @@ namespace zero {
     // Sample noise on legal moves:
     // Adjust concentration based on number of legal moves, following Katago
     // paper.
-    double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / static_cast<double>(priors.size());
+    const double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / static_cast<double>(priors.size());
     auto dirichlet_dist = DirichletDistribution(static_cast<int>(priors.size()), alpha);
     std::vector<double> noise = dirichlet_dist.sample();
     // std::cout << "Noise: " << noise << std::endl;
@@ -306,7 +306,7 @@ namespace zero {
     auto priors = &outputs[0]; // Shape: (1, 73, 8, 8)
     auto values = &outputs[1]; // Shape: (1, 1)
 
-    float value = values->at({0, 0});
+    const float value = values->at({0, 0});
 
     auto move_coord_map = decode_legal_moves(game_board);
     std::unordered_map<Move, float, MoveHash> move_priors;
@@ -334,8 +334,8 @@ namespace zero {
         p = std::exp((p - pmax) / info.policy_softmax_temp);
 
       // Renormalize prior based on legal moves:
-      float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
-                                   [](float value, const std::unordered_map<Move, float, MoveHash>::value_type& p) {return value + p.second;}
+      const float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
+                                         [](float value, const std::unordered_map<Move, float, MoveHash>::value_type& p) {return value + p.second;}
                                    );
       for (auto &[mv, p] : move_priors)
         p /= psum;

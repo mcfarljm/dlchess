@@ -64,7 +64,7 @@ namespace {
 
     auto i = slice.find("moves");
     if (i != slice.npos) {
-      std::string slice_str(slice.substr(i+6));
+      const std::string slice_str(slice.substr(i+6));
       auto words = utils::split_string(slice_str, ' ');
       for (auto& word : words) {
         auto mv = b.parse_move_string(word);

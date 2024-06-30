@@ -37,7 +37,7 @@ namespace zero {
       // Get the input and output names:
       assert(session.GetInputCount() == 1);
       assert(session.GetOutputCount() == 2);
-      Ort::AllocatorWithDefaultOptions allocator;
+      const Ort::AllocatorWithDefaultOptions allocator;
       input_name = session.GetInputNameAllocated(0, allocator).get();
       input_names_char[0] = input_name.c_str();
       for (int i=0; i<session.GetOutputCount(); ++i) {
@@ -53,8 +53,8 @@ namespace zero {
                                                           input_tensor.data.data(), input_tensor.data.size(),
                                                           input_tensor.shape.data(), input_tensor.shape.size());
 
-      std::vector<int64_t> policy_shape = {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
-      std::vector<int64_t> value_shape = {1, 1};
+      const std::vector<int64_t> policy_shape = {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
+      const std::vector<int64_t> value_shape = {1, 1};
       // Pre-allocate the memory for the results:
       std::array<Tensor<float>, 2> output_tensors = {
         Tensor<float>(policy_shape),

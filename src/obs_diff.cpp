@@ -3,43 +3,40 @@
 
 #include "obs_diff.h"
 
-using squares::u64;
 
-namespace obs_diff {
-
+namespace {
+  using squares::u64;
   using squares::Square;
-  class ObsDiffMask;
-  using ObsDiffArray = std::array<std::array<ObsDiffMask, 64>, 4>;
 
-  static u64 rank_mask(Square sq) {
+  u64 rank_mask(Square sq) {
     return 0xffLL << (sq & 56);
   }
 
-  static u64 file_mask(Square sq) {
+  u64 file_mask(Square sq) {
     return 0x0101010101010101LL << (sq & 7);
   }
 
-  static u64 diagonal_mask(Square sq) {
-    u64 main_diag = 0x8040201008040201;
-    int diag = 8*(sq & 7) - (sq & 56);
+  u64 diagonal_mask(Square sq) {
+    const u64 main_diag = 0x8040201008040201;
+    const int diag = 8*(sq & 7) - (sq & 56);
     auto north = -diag & (diag >> 31);
     auto south = diag & (-diag >> 31);
     return (main_diag >> south) << north;
   }
 
-  static u64 anti_diagonal_mask(Square sq) {
-    u64 main_diag = 0x0102040810204080;
-    int diag = 56 - 8*(sq & 7) - (sq & 56);
+  u64 anti_diagonal_mask(Square sq) {
+    const u64 main_diag = 0x0102040810204080;
+    const int diag = 56 - 8*(sq & 7) - (sq & 56);
     auto north = -diag & (diag >> 31);
     auto south = diag & (-diag >> 31);
     return (main_diag >> south) << north;
   }
 
-  static u64 positive_ray(Square sq, u64 line) {
+  u64 positive_ray(Square sq, u64 line) {
     return line & (0LL - (2LL << sq));
   }
 
-  static u64 negative_ray(Square sq, u64 line) {
+  u64 negative_ray(Square sq, u64 line) {
     return line & ((1ULL << sq) - 1);
   }
 
@@ -54,7 +51,9 @@ namespace obs_diff {
       lower(lower), upper(upper), line_exc(lower | upper) {}
   };
 
-  static ObsDiffArray get_obstruction_diff_masks() {
+  using ObsDiffArray = std::array<std::array<ObsDiffMask, 64>, 4>;
+
+  ObsDiffArray get_obstruction_diff_masks() {
     ObsDiffArray os_masks;
 
     for (Square sq=0; sq<64; ++sq) {
@@ -87,6 +86,10 @@ namespace obs_diff {
   }
 
   static const ObsDiffArray OBS_DIFF_MASKS = get_obstruction_diff_masks();
+
+};
+
+namespace obs_diff {
 
   u64 get_line_attacks(u64 occ, int direction, Square sq) {
     auto os_mask = OBS_DIFF_MASKS[direction][sq];
