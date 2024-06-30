@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 #include <cstdint>
+#include <array>
 
 #include "../squares.h"
 #include "../pieces.h"
@@ -16,9 +17,9 @@ namespace board {
   class Hasher {
   public:
     // Hashing also includes EMPTY pieces
-    uint64_t piece_keys[pieces::NUM_PIECE_TYPES_BOTH + 1][BOARD_SQ_NUM];
+    std::array<std::array<uint64_t, BOARD_SQ_NUM>, pieces::NUM_PIECE_TYPES_BOTH + 1> piece_keys;
     uint64_t side_key;
-    uint64_t castle_keys[16];
+    std::array<uint64_t, 16> castle_keys;
 
     Hasher() {
       /* std::cout << "Setting hash\n"; */

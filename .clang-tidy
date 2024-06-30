@@ -10,6 +10,5 @@ Checks:
   - modernize-*
   - -modernize-use-trailing-return-type
   - -modernize-use-nodiscard
-  - -modernize-avoid-c-arrays # todo
 CheckOptions:
   bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: false

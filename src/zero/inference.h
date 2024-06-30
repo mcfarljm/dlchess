@@ -61,7 +61,7 @@ namespace zero {
         Tensor<float>(value_shape),
       };
 
-      Ort::Value ort_outputs[] = {
+      Ort::Value ort_outputs[] = { // NOLINT(modernize-avoid-c-arrays)
         Ort::Value::CreateTensor<float>(memory_info,
                                         output_tensors[0].data.data(), output_tensors[0].data.size(),
                                         output_tensors[0].shape.data(), output_tensors[0].shape.size()),

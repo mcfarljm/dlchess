@@ -7,8 +7,8 @@
 using game_moves::MoveFlag;
 
 namespace movegen {
-  constexpr Piece white_promotion_pieces[] = {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
-  constexpr Piece black_promotion_pieces[] = {Piece::BN, Piece::BB, Piece::BR, Piece::BQ};
+  constexpr std::array<Piece, 4> white_promotion_pieces {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
+  constexpr std::array<Piece, 4> black_promotion_pieces {Piece::BN, Piece::BB, Piece::BR, Piece::BQ};
 
   void MoveList::add_white_pawn_move(Square from, Square to, Piece capture) {
     if (from / 8 == squares::RANK_7) {
