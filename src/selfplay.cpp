@@ -35,6 +35,7 @@ int main(int argc, const char* argv[]) {
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("1.0"))
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.2"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
+    ("transform", "Use canonical transform of board")
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
@@ -76,6 +77,7 @@ int main(int argc, const char* argv[]) {
   auto add_noise = args["noise"].as<bool>();
   auto policy_softmax_temp = args["policy-softmax-temp"].as<float>();
   auto cpuct = args["cpuct"].as<float>();
+  auto transform = args["transform"].as<bool>();
   if (num_rounds <= 0 && num_visits <= 0) {
     std::cerr << "Error, must specify number of rounds or visits" << std::endl;
     exit(1);
@@ -120,7 +122,7 @@ int main(int argc, const char* argv[]) {
   info.fpu_value = 0.0;
   info.debug = debug;
 
-  auto encoder = std::make_shared<SimpleEncoder>();
+  auto encoder = std::make_shared<SimpleEncoder>(transform);
 
   auto collector = std::make_shared<ExperienceCollector>();
 
