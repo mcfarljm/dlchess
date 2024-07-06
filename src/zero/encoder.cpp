@@ -1,11 +1,86 @@
+#include <bitset>
+
 #include "encoder.h"
 
 using squares::GRID_SIZE;
 
+namespace {
+  enum {
+    no_transform,
+    // Horizontal mirror, reverse_bits_in_bytes
+    flip_transform,
+    // Vertical mirror, reverse_bytes_in_bytes
+    mirror_transform,
+    // Diagonal tranpose A1 to H8, tranpose_bits_in_bytes
+    tranpose_transform,
+  };
+
+  // Flip bitboard horizontally.
+  inline uint64_t reverse_bits_in_bytes(uint64_t v) {
+    v = ((v >> 1) & 0x5555555555555555ull) | ((v & 0x5555555555555555ull) << 1);
+    v = ((v >> 2) & 0x3333333333333333ull) | ((v & 0x3333333333333333ull) << 2);
+    v = ((v >> 4) & 0x0F0F0F0F0F0F0F0Full) | ((v & 0x0F0F0F0F0F0F0F0Full) << 4);
+    return v;
+  }
+
+  // Flip bitboard vertically.
+  inline uint64_t reverse_bytes_in_bytes(uint64_t v) {
+    v = (v & 0x00000000FFFFFFFF) << 32 | (v & 0xFFFFFFFF00000000) >> 32;
+    v = (v & 0x0000FFFF0000FFFF) << 16 | (v & 0xFFFF0000FFFF0000) >> 16;
+    v = (v & 0x00FF00FF00FF00FF) << 8 | (v & 0xFF00FF00FF00FF00) >> 8;
+    return v;
+  }
+
+  const bitboard::Bitboard lhs {0x0F0F0F0F0F0F0F0FULL};
+  const bitboard::Bitboard top_half {0xFFFFFFFF00000000ULL};
+  // Upper-right triangle within the lower-right quadrant
+  const bitboard::Bitboard lower_right_upper_tri {0xE0C08000ULL};
+
+  std::bitset<4> choose_transform(const board::Board& b) {
+    if (b.castle_perm.any())
+      return std::bitset<4>{};
+
+    std::bitset<4> transform;
+    auto king_piece = (b.side == Color::white ? Piece::WK : Piece::BK);
+    auto king_bb = b.bitboards[static_cast<int>(king_piece)];
+    if ((king_bb & lhs).any()) {
+      transform.set(flip_transform);
+      king_bb = Bitboard{reverse_bits_in_bytes(king_bb.to_ullong())};
+    }
+    // If there are any pawns, only horizontal flip is valid.
+    if ((b.bitboards[static_cast<int>(Piece::WP)] | b.bitboards[static_cast<int>(Piece::BP)]).any())
+      return transform;
+
+    if ((king_bb & top_half).any()) {
+      transform.set(mirror_transform);
+      king_bb = Bitboard{reverse_bytes_in_bytes(king_bb.to_ullong())};
+    }
+
+    // Now king is in the bottom right quadrant.
+    if ((king_bb & lower_right_upper_tri).any())
+      transform.set(tranpose_transform);
+
+    // LC0 checks if the king is on the diagonal within the bottom right quadrant, and
+    // if it is it applies further checks to constrain the transform.
+    return transform;
+  }
+
+};
+
 
 namespace zero {
   
-  Tensor<float> SimpleEncoder::encode(const board::Board& b) const {
+  // Todo: restore const
+  Tensor<float> SimpleEncoder::encode(const board::Board& b) /*const*/ {
+    // Check transform to canonical representation.
+    ++_num_calls;
+    if (_transform_position) {
+      auto transform = choose_transform(b);
+      if (transform.any())
+        ++_transform_count;
+    }
+
+
     std::vector<int64_t> board_tensor_shape = {1, 21, GRID_SIZE, GRID_SIZE};
     auto board_tensor = Tensor<float>(board_tensor_shape);
 
