@@ -31,16 +31,29 @@ namespace {
     return v;
   }
 
+  // Transpose across the diagonal connecting bit 7 to bit 56.
+  inline uint64_t transpose_bits_in_bytes(uint64_t v) {
+    v = (v & 0xAA00AA00AA00AA00ULL) >> 9 | (v & 0x0055005500550055ULL) << 9 |
+      (v & 0x55AA55AA55AA55AAULL);
+    v = (v & 0xCCCC0000CCCC0000ULL) >> 18 | (v & 0x0000333300003333ULL) << 18 |
+      (v & 0x3333CCCC3333CCCCULL);
+    v = (v & 0xF0F0F0F000000000ULL) >> 36 | (v & 0x000000000F0F0F0FULL) << 36 |
+      (v & 0x0F0F0F0FF0F0F0F0ULL);
+    return v;
+  }
+
   const bitboard::Bitboard lhs {0x0F0F0F0F0F0F0F0FULL};
   const bitboard::Bitboard top_half {0xFFFFFFFF00000000ULL};
   // Upper-right triangle within the lower-right quadrant
   const bitboard::Bitboard lower_right_upper_tri {0xE0C08000ULL};
 
-  std::bitset<4> choose_transform(const board::Board& b) {
-    if (b.castle_perm.any())
-      return std::bitset<4>{};
+  using Transform = std::bitset<4>;
 
-    std::bitset<4> transform;
+  Transform choose_transform(const board::Board& b) {
+    if (b.castle_perm.any())
+      return Transform{};
+
+    Transform transform;
     auto king_piece = (b.side == Color::white ? Piece::WK : Piece::BK);
     auto king_bb = b.bitboards[static_cast<int>(king_piece)];
     if ((king_bb & lhs).any()) {
@@ -65,28 +78,42 @@ namespace {
     return transform;
   }
 
+  Bitboard transform_bitboard(Bitboard bb, Transform transform) {
+    if (! transform.any() || ! bb.any())
+      return bb;
+
+    auto new_bb_ul = bb.to_ullong();
+    if (transform[flip_transform])
+      new_bb_ul = reverse_bits_in_bytes(new_bb_ul);
+    if (transform[mirror_transform])
+      new_bb_ul = reverse_bytes_in_bytes(new_bb_ul);
+    if (transform[tranpose_transform])
+      new_bb_ul = transpose_bits_in_bytes(new_bb_ul);
+
+    return Bitboard {new_bb_ul};
+  }
+
 };
 
 
 namespace zero {
   
-  // Todo: restore const
-  Tensor<float> SimpleEncoder::encode(const board::Board& b) /*const*/ {
-    // Check transform to canonical representation.
-    ++_num_calls;
-    if (_transform_position) {
-      auto transform = choose_transform(b);
-      if (transform.any())
-        ++_transform_count;
-    }
-
+  Tensor<float> SimpleEncoder::encode(const board::Board& b) const {
+    // Choose transform to canonical representation.
+    Transform transform;
+    if (_transform_position)
+      transform = choose_transform(b);
+    bool have_transform = transform.any();
 
     std::vector<int64_t> board_tensor_shape = {1, 21, GRID_SIZE, GRID_SIZE};
     auto board_tensor = Tensor<float>(board_tensor_shape);
 
     // First 12 planes encode piece occupation
     for (int piece_idx=0; piece_idx<pieces::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
-      for (auto sq : b.bitboards[static_cast<int>(piece_idx)]) {
+      auto bb = b.bitboards[static_cast<int>(piece_idx)];
+      if (have_transform)
+        bb = transform_bitboard(bb, transform);
+      for (auto sq : bb) {
         auto coords = squares::sq_to_rf(sq);
         board_tensor.at({0, piece_idx, coords[0], coords[1]}) = 1.0;
       }

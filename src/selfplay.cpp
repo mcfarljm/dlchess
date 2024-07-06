@@ -178,8 +178,6 @@ int main(int argc, const char* argv[]) {
 
   std::cout << "Finished: " << total_num_moves << " moves at " << std::setprecision(2) << total_num_moves / cumulative_timer.elapsed() << " moves / second" << std::endl;
 
-  std::cout << "Transforms: " << (static_cast<float>(encoder->_transform_count) / encoder->_num_calls) << std::endl;
-
   if (store_experience) {
     collector->serialize_binary(output_path, experience_label);
   }

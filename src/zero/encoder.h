@@ -12,18 +12,15 @@ namespace zero {
 
   class Encoder {
   public:
-    // Todo: restore const
-    virtual Tensor<float> encode(const board::Board&) = 0;
+    virtual Tensor<float> encode(const board::Board&) const = 0;
     /* virtual Move decode_move_index(int index) const = 0; */
   };
 
   class SimpleEncoder : public Encoder {
     bool _transform_position;
   public:
-    int _transform_count = 0; // tmp
-    int _num_calls = 0; // tmp
     SimpleEncoder(bool transform_position = true) : _transform_position{transform_position} {}
-    Tensor<float> encode(const board::Board&);
+    Tensor<float> encode(const board::Board&) const;
     /* Move decode_move_index(int index) const; */
   };
 
