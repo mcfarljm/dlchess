@@ -111,25 +111,27 @@ def main(output, force, input):
         torch.save(model.state_dict(), output)
     model.eval()
 
-    with torch.no_grad():
-        # Noting that online examples with ONNX export do set requires_grad=True
-        # on the sample input, but not sure if it is necessary.
-        X = torch.rand(1, encoder_channels, grid_size, grid_size,
-                       requires_grad=True, device=device)
-        # Note that the exported model has fixed shapes for input and output.
-        # This should be OK as long as inference is done in batches of 1.  If
-        # needed, we can add a dynamic_axes option to make the first axis (of
-        # input and outputs) dynamic.
-        torch.onnx.export(model, X,
-                          output.replace('.pt', '.onnx'),
-                          input_names=['state'],
-                          output_names=['policy', 'value'],
-                          )
-        # print(torch.onnx.export_to_pretty_string(
-        #     model, X,
-        #     input_names=['state'],
-        #     output_names=['policy', 'value'],
-        # ))
+    # Noting that online examples with ONNX export do set requires_grad=True
+    # on the sample input, but not sure if it is necessary.
+    X = torch.rand(1, encoder_channels, grid_size, grid_size,
+                   requires_grad=True, device=device)
+    # Note that the exported model has fixed shapes for input and output.
+    # This should be OK as long as inference is done in batches of 1.  If
+    # needed, we can add a dynamic_axes option to make the first axis (of
+    # input and outputs) dynamic.
+    torch.onnx.export(model, X,
+                      output.replace('.pt', '.onnx'),
+                      input_names=['state'],
+                      output_names=['policy', 'value'],
+                      # dynamic_axes={'state' : {0 : 'batch_size'},    # variable length axes
+                      #               'policy' : {0 : 'batch_size'},
+                      #               'value': {0: 'batch_size'}}
+                      )
+    # print(torch.onnx.export_to_pretty_string(
+    #     model, X,
+    #     input_names=['state'],
+    #     output_names=['policy', 'value'],
+    # ))
 
 
 if __name__ == '__main__':
