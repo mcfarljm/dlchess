@@ -57,7 +57,10 @@ def train(dataloader, model, optimizer, output_interval):
 @click.option('--lr', default=1e-2, help='learning rate')
 @click.option('--interval', default=1, help='output interval')
 @click.option('-f', '--force', is_flag=True, help='overwrite existing output files')
-def main(experience, query, batch_size, input_path, output_path, subset, lr, interval, force):
+# Todo: Parse encoding version based on experience data shape or model
+@click.option('-v', '--encoding-version', default=0, show_default=True)
+def main(experience, query, batch_size, input_path, output_path, subset, lr, interval,
+         force, encoding_version):
     THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 
     import sys
@@ -75,7 +78,8 @@ def main(experience, query, batch_size, input_path, output_path, subset, lr, int
     if query:
         return
     
-    model = ChessNet()
+    encoder_channels = 21 if encoding_version == 0 else 22
+    model = ChessNet(in_channels=encoder_channels)
     model.load_state_dict(torch.load(input_path))
     
     optimizer = torch.optim.SGD(model.parameters(),
