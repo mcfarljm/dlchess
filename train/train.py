@@ -62,15 +62,28 @@ def train(dataloader, model, optimizer, output_interval):
 @click.option("--lr", default=1e-2, help="learning rate")
 @click.option("--interval", default=1, help="output interval")
 @click.option("-f", "--force", is_flag=True, help="overwrite existing output files")
+@click.option("--resid-net", is_flag=True, help="use residual network")
 def main(
-    experience, query, batch_size, input_path, output_path, subset, lr, interval, force
+    experience,
+    query,
+    batch_size,
+    input_path,
+    output_path,
+    subset,
+    lr,
+    interval,
+    force,
+    resid_net,
 ):
     THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 
     import sys
 
     sys.path.append(os.path.join(THIS_DIR, "../nn"))
-    from conv_4x64 import ChessNet
+    if resid_net:
+        from resid_net import ChessNet
+    else:
+        from conv_4x64 import ChessNet
 
     if int(subset) == subset:
         subset = int(subset)
