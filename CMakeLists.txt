@@ -50,7 +50,7 @@ add_library(dlchesslib SHARED
   src/bitboard.cpp
   src/pieces.cpp
   src/chess/board.cpp
-  src/obs_diff.cpp
+  src/chess/obs_diff.cpp
   src/chess/piece_moves.cpp
   src/chess/game_moves.cpp
   src/chess/movegen.cpp

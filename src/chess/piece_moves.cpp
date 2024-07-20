@@ -1,5 +1,5 @@
 #include "piece_moves.h"
-#include "../obs_diff.h"
+#include "obs_diff.h"
 
 using obs_diff::get_line_attacks;
 

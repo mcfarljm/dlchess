@@ -1,7 +1,7 @@
 #ifndef OBS_DIFF_H
 #define OBS_DIFF_H
 
-#include "squares.h"
+#include "../squares.h"
 
 namespace obs_diff {
 
