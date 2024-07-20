@@ -4,8 +4,6 @@
 #include "board.h"
 #include "piece_moves.h"
 
-using chess::MoveFlag;
-
 namespace chess {
   constexpr Piece white_promotion_pieces[] = {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
   constexpr Piece black_promotion_pieces[] = {Piece::BN, Piece::BB, Piece::BR, Piece::BQ};
@@ -180,10 +178,10 @@ namespace chess {
     return move_list;
   }
 
-  std::vector<chess::Move> Board::generate_legal_moves() const {
+  std::vector<Move> Board::generate_legal_moves() const {
     auto move_list = generate_all_moves();
     auto board_copy = *this;
-    std::vector<chess::Move> moves;
+    std::vector<Move> moves;
     for (auto& mv : move_list.moves) {
       if (! board_copy.make_move(mv))
         continue;

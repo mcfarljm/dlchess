@@ -32,7 +32,7 @@ namespace chess {
   extern const Hasher hasher;
 
   struct Undo {
-    chess::Move mv;
+    Move mv;
     std::bitset<4> castle_perm;
     Square en_pas;
     int fifty_move;
@@ -74,21 +74,21 @@ namespace chess {
 
     bool square_attacked(Square sq, Color side) const;
 
-    chess::MoveList generate_all_moves() const;
-    std::vector<chess::Move> generate_legal_moves() const;
+    MoveList generate_all_moves() const;
+    std::vector<Move> generate_legal_moves() const;
 
     bool is_over() const;
     std::optional<Color> winner() const;
     int repetition_count() const;
 
     // makemove
-    bool make_move(chess::Move mv);
+    bool make_move(Move mv);
     void undo_move();
 
     long perft(int depth);
 
     // io
-    std::optional<chess::Move> parse_move_string(std::string_view str);
+    std::optional<Move> parse_move_string(std::string_view str);
 
   private:
     void update_lists_and_material();
