@@ -93,7 +93,7 @@ def count_parameters(model):
 @click.option('-o', '--output', default='conv_4x64.pt')
 @click.option('-f', '--force', is_flag=True, help='overwrite')
 @click.option('-i', '--input', help='input file with model state')
-@click.option('-v', '--encoding-version', default=0, show_default=True)
+@click.option('-v', '--encoding-version', default=1, show_default=True)
 def main(output, force, input, encoding_version):
     if not output.endswith('.pt'):
         output += '.pt'

@@ -58,7 +58,7 @@ def train(dataloader, model, optimizer, output_interval):
 @click.option('--interval', default=1, help='output interval')
 @click.option('-f', '--force', is_flag=True, help='overwrite existing output files')
 # Todo: Parse encoding version based on experience data shape or model
-@click.option('-v', '--encoding-version', default=0, show_default=True)
+@click.option('-v', '--encoding-version', default=1, show_default=True)
 def main(experience, query, batch_size, input_path, output_path, subset, lr, interval,
          force, encoding_version):
     THIS_DIR = os.path.abspath(os.path.dirname(__file__))

@@ -36,7 +36,7 @@ int main(int argc, const char* argv[]) {
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.2"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
     // Todo: should be able to parse input shape from onnx model and determine this automatically.
-    ("encoding-version", "Version of network input encoding", cxxopts::value<int>()->default_value("0"))
+    ("encoding-version", "Version of network input encoding", cxxopts::value<int>()->default_value("1"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
