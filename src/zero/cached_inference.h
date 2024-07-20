@@ -64,8 +64,8 @@ namespace zero {
                          int cache_size,
                          float policy_softmax_temp,
                          bool disable_underpromotion) :
-    model_(std::move(model)), encoder_(encoder), cache_(cache_size),
-    policy_softmax_temp_(policy_softmax_temp), disable_underpromotion_(disable_underpromotion) {}
+      model_(std::move(model)), encoder_(std::move(encoder)), cache_(cache_size),
+      policy_softmax_temp_(policy_softmax_temp), disable_underpromotion_(disable_underpromotion) {}
 
     // Get current size of cache
     int cache_size() const {

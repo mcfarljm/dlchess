@@ -164,7 +164,7 @@ namespace zero {
     SearchInfo info;
 
   public:
-    ZeroAgent(std::shared_ptr<InferenceModel> model,
+    ZeroAgent(const std::shared_ptr<InferenceModel>& model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
       encoder_(std::move(encoder)), info(std::move(info)) {

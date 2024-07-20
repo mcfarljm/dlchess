@@ -12,5 +12,7 @@ Checks:
   # - -modernize-use-nodiscard
   - performance-*
   - -performance-avoid-endl
+  - -performance-enum-size
+  - -performance-type-promotion-in-math-fn
 CheckOptions:
   bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: false
