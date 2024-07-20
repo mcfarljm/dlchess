@@ -11,7 +11,7 @@ namespace zero {
     auto board_tensor = Tensor<float>(board_tensor_shape);
 
     // First 12 planes encode piece occupation
-    for (int piece_idx=0; piece_idx<pieces::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
+    for (int piece_idx=0; piece_idx<chess::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
       for (auto sq : b.bitboards[static_cast<int>(piece_idx)]) {
         auto coords = squares::sq_to_rf(sq);
         board_tensor.at({0, piece_idx, coords[0], coords[1]}) = 1.0;
@@ -28,7 +28,7 @@ namespace zero {
       board_tensor.fill_channel(0, 13, 1.0);
 
     // Color of side to move
-    if (b.side == Color::black)
+    if (b.side == chess::Color::black)
       board_tensor.fill_channel(0, 14, 1.0);
 
     // Constant plane, to help with edge detection.  Was originally used for

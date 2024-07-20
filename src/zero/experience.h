@@ -25,7 +25,7 @@ namespace zero {
   private:
     std::vector<Tensor<float>> current_episode_states;
     std::vector<Tensor<float>> current_episode_visit_counts;
-    std::vector<pieces::Color> current_episode_sides;
+    std::vector<chess::Color> current_episode_sides;
   
   public:
 
@@ -35,7 +35,7 @@ namespace zero {
       current_episode_sides.clear();
     }
 
-    void record_decision(Tensor<float>&& state, Tensor<float>&& visit_counts, pieces::Color side) {
+    void record_decision(Tensor<float>&& state, Tensor<float>&& visit_counts, chess::Color side) {
       current_episode_states.push_back(std::move(state));
       current_episode_visit_counts.push_back(std::move(visit_counts));
       current_episode_sides.push_back(side);
@@ -50,7 +50,7 @@ namespace zero {
                           std::make_move_iterator(current_episode_visit_counts.end()));
       assert(current_episode_states.size() == current_episode_sides.size());
       for (const auto& side : current_episode_sides)
-        rewards.push_back(side == pieces::Color::white ? white_reward : -white_reward);
+        rewards.push_back(side == chess::Color::white ? white_reward : -white_reward);
 
       // Clear current episode containers.
       current_episode_states.clear();

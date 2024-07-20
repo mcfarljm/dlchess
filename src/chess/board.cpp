@@ -6,13 +6,6 @@
 #include "piece_moves.h"
 
 
-using pieces::Piece;
-using pieces::Color;
-using chess::white_pawn_attacks;
-using chess::black_pawn_attacks;
-using chess::knight_moves;
-using chess::king_moves;
-
 namespace chess {
 
   const std::string_view START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -198,7 +191,7 @@ namespace chess {
   }
 
   bool Board::check() const {
-    std::array<int, pieces::NUM_PIECE_TYPES_BOTH> piece_count{};
+    std::array<int, NUM_PIECE_TYPES_BOTH> piece_count{};
 
     auto board_assert = [](bool condition, std::string_view msg) {
       if (!condition) {
@@ -215,15 +208,15 @@ namespace chess {
         ++piece_count[static_cast<int>(piece.value)];
     }
 
-    for (auto piece_index=0; piece_index<pieces::NUM_PIECE_TYPES_BOTH; ++piece_index)
+    for (auto piece_index=0; piece_index<NUM_PIECE_TYPES_BOTH; ++piece_index)
       board_assert(piece_count[piece_index] == bitboards[piece_index].count(),
                    "piece count matches bitboard count");
 
     // Check pawn bitboard squares:
-    for (auto sq : bitboards[static_cast<int>(pieces::Piece::WP)])
-      board_assert(pieces[sq] == pieces::Piece::WP, "WP bitboard");
-    for (auto sq : bitboards[static_cast<int>(pieces::Piece::BP)])
-      board_assert(pieces[sq] == pieces::Piece::BP, "BP bitboard");
+    for (auto sq : bitboards[static_cast<int>(Piece::WP)])
+      board_assert(pieces[sq] == Piece::WP, "WP bitboard");
+    for (auto sq : bitboards[static_cast<int>(Piece::BP)])
+      board_assert(pieces[sq] == Piece::BP, "BP bitboard");
 
     board_assert(side == Color::white || side == Color::black, "side");
     board_assert(hash == get_position_hash(), "hash");
@@ -233,10 +226,10 @@ namespace chess {
                  (en_pas/8 == squares::RANK_3 && side == Color::black),
                  "en_pas");
 
-    board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == pieces::Piece::WK, "WK");
-    board_assert(pieces[king_sq[static_cast<int>(Color::black)]] == pieces::Piece::BK, "BK");
-    board_assert(bitboards[static_cast<int>(pieces::Piece::WK)][king_sq[static_cast<int>(Color::white)]], "WK BB");
-    board_assert(bitboards[static_cast<int>(pieces::Piece::BK)][king_sq[static_cast<int>(Color::black)]], "BK BB");
+    board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == Piece::WK, "WK");
+    board_assert(pieces[king_sq[static_cast<int>(Color::black)]] == Piece::BK, "BK");
+    board_assert(bitboards[static_cast<int>(Piece::WK)][king_sq[static_cast<int>(Color::white)]], "WK BB");
+    board_assert(bitboards[static_cast<int>(Piece::BK)][king_sq[static_cast<int>(Color::black)]], "BK BB");
 
     // Check side piece bitboards:
 
@@ -252,11 +245,11 @@ namespace chess {
 
     // Pawns
     if (side == Color::white) {
-      if ((bitboards[static_cast<int>(pieces::Piece::WP)] & black_pawn_attacks[sq]).any())
+      if ((bitboards[static_cast<int>(Piece::WP)] & black_pawn_attacks[sq]).any())
         return true;
     }
     else {
-      if ((bitboards[static_cast<int>(pieces::Piece::BP)] & white_pawn_attacks[sq]).any())
+      if ((bitboards[static_cast<int>(Piece::BP)] & white_pawn_attacks[sq]).any())
         return true;
     }
 

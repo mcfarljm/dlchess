@@ -14,8 +14,6 @@
 #include "game_moves.h"
 
 
-using pieces::Piece;
-using pieces::Color;
 using bitboard::Bitboard;
 namespace Position = squares::Position;
 
@@ -52,7 +50,7 @@ namespace chess {
 
     std::array<Piece, BOARD_SQ_NUM> pieces;
 
-    std::array<Bitboard, pieces::NUM_PIECE_TYPES_BOTH> bitboards;
+    std::array<Bitboard, NUM_PIECE_TYPES_BOTH> bitboards;
     // White, black, and both-side bitboards for all pieces
     std::array<Bitboard, 3> bb_sides;
 

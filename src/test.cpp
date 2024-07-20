@@ -172,7 +172,7 @@ TEST_CASE( "King moves", "[attacks]" ) {
 TEST_CASE( "Move string", "[moves]" ) {
   auto mv = chess::Move(squares::Position::C1,
                         squares::Position::C3,
-                        Piece::none, Piece::WR,
+                        chess::Piece::none, chess::Piece::WR,
                         chess::MoveFlag::none);
   std::stringstream ss;
   ss << mv;
@@ -300,7 +300,7 @@ TEST_CASE( "Draw by repetition", "[is_over]" ) {
                             squares::Position::B8));
   }
   REQUIRE( b.is_over() );
-  REQUIRE( b.winner().value() == Color::both );
+  REQUIRE( b.winner().value() == chess::Color::both );
 }
 
 

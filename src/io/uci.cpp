@@ -5,6 +5,8 @@
 #include "../chess/board.h"
 #include "../utils.h"
 
+using chess::Color;
+
 namespace {
   void uci_ok() {
     std::cout << "id name " << version::PROGRAM_NAME << std::endl;

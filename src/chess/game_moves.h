@@ -9,7 +9,6 @@
 namespace chess {
 
   using squares::Square;
-  using pieces::Piece;
 
   enum class MoveFlag {
     none,
@@ -26,12 +25,12 @@ namespace chess {
     MoveFlag flag;
 
     Move(Square from, Square to) :
-      from(from), to(to), capture(pieces::Piece::none),
-      promote(pieces::Piece::none), flag(MoveFlag::none) {}
+      from(from), to(to), capture(Piece::none),
+      promote(Piece::none), flag(MoveFlag::none) {}
 
     Move(Square from, Square to, Piece capture) :
       from(from), to(to), capture(capture),
-      promote(pieces::Piece::none), flag(MoveFlag::none) {}
+      promote(Piece::none), flag(MoveFlag::none) {}
 
     Move(Square from, Square to, Piece capture, Piece promote, MoveFlag flag) :
       from(from), to(to), capture(capture),

@@ -133,7 +133,7 @@ namespace chess {
     }
 
     // Sliders
-    for (auto piece : pieces::sliders[static_cast<int>(side)]) {
+    for (auto piece : sliders[static_cast<int>(side)]) {
       for (auto sq : bitboards[piece.value]) {
         Bitboard attacks;
         switch (piece.value) {
@@ -156,7 +156,7 @@ namespace chess {
     }
 
     // Non-sliders
-    for (auto piece : pieces::non_sliders[static_cast<int>(side)]) {
+    for (auto piece : non_sliders[static_cast<int>(side)]) {
       for (auto sq : bitboards[piece.value]) {
         auto bb = [=]() {
           switch(piece.value) {
