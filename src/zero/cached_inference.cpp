@@ -27,7 +27,7 @@ namespace zero {
     auto priors = &outputs[0]; // Shape: (1, 73, 8, 8)
     auto values = &outputs[1]; // Shape: (1, 1)
 
-    float value = values->at({0, 0});
+    const float value = values->at({0, 0});
 
     priors_type move_priors;
     auto move_coord_map = decode_legal_moves(game_board);
@@ -55,9 +55,10 @@ namespace zero {
     }
 
     // Renormalize prior based on legal moves:
-    float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
-                                 [](float value, const priors_type::value_type& p) {return value + p.second;}
-                                 );
+    const float psum = std::accumulate(move_priors.begin(), move_priors.end(), 0.0,
+                                       [](float value, const priors_type::value_type& p)
+                                       {return value + p.second;}
+                                       );
     for (auto &[mv, p] : move_priors)
       p /= psum;
 

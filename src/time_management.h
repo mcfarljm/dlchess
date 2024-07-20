@@ -18,8 +18,8 @@ class AlphaZeroTimeManager : public TimeManager {
 public:
   AlphaZeroTimeManager() = default;
   AlphaZeroTimeManager(float percentage) : percentage_(percentage) {}
-  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const chess::Board& b) {
-    return (time_left_ms - move_overhead_ms_) * percentage_ * 0.01;
+  float budget_ms(int time_left_ms, std::optional<int> /* inc_ms */, const chess::Board& /* b */) override {
+    return (static_cast<float>(time_left_ms) - move_overhead_ms_) * percentage_ * 0.01f;
   }
 };
 
@@ -33,15 +33,15 @@ class SimpleTimeManager : public TimeManager {
 
 public:
   SimpleTimeManager() = default;
-  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const chess::Board& b) {
-    int increment = inc_ms ? std::max(0, *inc_ms) : 0;
+  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const chess::Board& b) override {
+    const int increment = inc_ms ? std::max(0, *inc_ms) : 0;
 
-    float time_available = time_left_ms - move_overhead_ms_;
+    const float time_available = static_cast<float>(time_left_ms) - move_overhead_ms_;
 
-    float time_ratio = static_cast<float>(increment) / static_cast<float>(time_left_ms);
+    const float time_ratio = static_cast<float>(increment) / static_cast<float>(time_left_ms);
 
     // Increase percentage as ply count increases.
-    float frac = (base_pct_ + b.total_moves * ply_pct_) * 0.01;
+    float frac = (base_pct_ + static_cast<float>(b.total_moves) * ply_pct_) * 0.01f;
 
     // std::cout << "frac before: " << frac << "\n";
     // Increase fraction as ratio of increment to total time reaches equality

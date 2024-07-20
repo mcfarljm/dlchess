@@ -5,8 +5,8 @@
 #include "piece_moves.h"
 
 namespace chess {
-  constexpr Piece white_promotion_pieces[] = {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
-  constexpr Piece black_promotion_pieces[] = {Piece::BN, Piece::BB, Piece::BR, Piece::BQ};
+  constexpr std::array<Piece, 4> white_promotion_pieces {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
+  constexpr std::array<Piece, 4> black_promotion_pieces {Piece::BN, Piece::BB, Piece::BR, Piece::BQ};
 
   void MoveList::add_white_pawn_move(Square from, Square to, Piece capture) {
     if (from / 8 == RANK_7) {
@@ -144,6 +144,8 @@ namespace chess {
         case Piece::WQ: case Piece::BQ:
           attacks = get_queen_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
+        default:
+          throw std::runtime_error("unreachable");
         }
         attacks &= ~ bb_sides[static_cast<int>(side)];
         for (auto t_sq : attacks) {

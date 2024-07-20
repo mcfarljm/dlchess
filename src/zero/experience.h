@@ -69,7 +69,7 @@ namespace zero {
       rewards.insert(rewards.end(), other.rewards.begin(), other.rewards.end());
     }
 
-    void serialize_binary(const std::string directory, const std::string label);
+    void serialize_binary(const std::string& directory, const std::string& label);
 
     void reset() {
       states.clear();

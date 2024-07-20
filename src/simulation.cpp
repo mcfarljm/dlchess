@@ -1,13 +1,14 @@
 #include "simulation.h"
 
 #include <iostream>
+#include <array>
 
 
 std::pair<chess::Color, int> simulate_game(Agent* white_agent,
                                            Agent* black_agent,
                                            int verbosity,
                                            int max_moves) {
-  Agent* agents[2] = {white_agent, black_agent};
+  std::array<Agent*, 2> agents {white_agent, black_agent};
   int move_count = 0;
 
   auto b = chess::Board();
@@ -31,7 +32,7 @@ std::pair<chess::Color, int> simulate_game(Agent* white_agent,
     winner = chess::Color::both;
   }
   else {
-    winner = b.winner().value();
+    winner = b.winner().value(); // NOLINT
   }
 
   if (verbosity >= 1) {

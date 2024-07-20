@@ -5,6 +5,8 @@ project(dlchess LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS "ON" CACHE INTERNAL "")
+
 
 option(ONNXRUNTIME_ROOTDIR "onnxruntime root dir")
 
@@ -42,7 +44,7 @@ FetchContent_MakeAvailable(cxxopts)
 # The -P is optional but produces only the call graph, which is much easier to use.
 set( CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_DEBUG} -pg" )
 
-add_library(dlchesslib SHARED
+set(sources
   src/utils.cpp
   src/version.cpp
   src/myrand.cpp
@@ -69,6 +71,13 @@ add_library(dlchesslib SHARED
   src/io/uci.cpp
 )
 
+
+# Absolute paths needed for clang-tidy, probably good practice in general.
+list(TRANSFORM sources PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/)
+
+
+add_library(dlchesslib SHARED ${sources})
+
 # set_target_properties(dlchess PROPERTIES CXX_STANDARD 20)
 
 target_link_libraries(dlchesslib onnxruntime)
@@ -86,3 +95,11 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 catch_discover_tests(tests)
+
+
+add_custom_target(
+  check clang-tidy -p ${CMAKE_BINARY_DIR}/compile_commands.json
+  --header-filter=${CMAKE_CURRENT_SOURCE_DIR}/.*
+  ${sources}
+  DEPENDS ${sources}
+)

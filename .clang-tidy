@@ -1,0 +1,18 @@
+Checks:
+  # clang-analyzer checks weren't flagging anything
+  - -clang-analyzer-*
+  - bugprone-*
+  - -bugprone-easily-swappable-parameters
+  # - misc-*
+  # - -misc-non-private-member-variables-in-classes
+  # - -misc-include-cleaner
+  # - -misc-no-recursion
+  # - modernize-*
+  # - -modernize-use-trailing-return-type
+  # - -modernize-use-nodiscard
+  # - performance-*
+  # - -performance-avoid-endl
+  # - -performance-enum-size
+  # - -performance-type-promotion-in-math-fn
+CheckOptions:
+  bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: false

@@ -28,16 +28,12 @@ namespace {
     auto words = utils::split_string(line, ' ');
     for (auto i=0; i<words.size(); ++i) {
       // std::cout << "parse_go: " << words[i] << "\n";
-      if (words[i] == "winc" && b.side == Color::white) {
+      if ((words[i] == "winc" && b.side == Color::white) ||
+          (words[i] == "binc" && b.side == Color::black)) {
         inc_ms = std::stoi(words[i+1]);
       }
-      else if (words[i] == "binc" && b.side == Color::black) {
-        inc_ms = std::stoi(words[i+1]);
-      }
-      else if (words[i] == "wtime" && b.side == Color::white) {
-        time_left_ms = std::stoi(words[i+1]);
-      }
-      else if (words[i] == "btime" && b.side == Color::black) {
+      else if ((words[i] == "wtime" && b.side == Color::white) ||
+               (words[i] == "btime" && b.side == Color::black)) {
         time_left_ms = std::stoi(words[i+1]);
       }
       // else if (words[i] == "movestogo") {
@@ -57,20 +53,20 @@ namespace {
     auto slice = line.substr(9);
 
     chess::Board b = [&]() {
-      if (slice.rfind("startpos", 0) == 0)
-        return chess::Board();
-      else if (slice.rfind("fen", 0) == 0) {
+      if (slice.starts_with("startpos") == 0)
+        return chess::Board(); // NOLINT(bugprone-branch-clone)
+      else if (slice.starts_with("fen") == 0) {
         slice = slice.substr(4);
         return chess::Board(slice);
       }
       else
         // Unexpected input, but just assume startpos
-        return chess::Board();
+        return chess::Board(); // NOLINT(bugprone-branch-clone)
     }();
 
     auto i = slice.find("moves");
     if (i != slice.npos) {
-      std::string slice_str(slice.substr(i+6));
+      const std::string slice_str(slice.substr(i+6));
       auto words = utils::split_string(slice_str, ' ');
       for (auto& word : words) {
         auto mv = b.parse_move_string(word);
@@ -94,7 +90,7 @@ namespace {
     if (words[2] == "playouts") {
       try {
         agent->info.num_rounds = stoi(words[4]);
-      } catch (const std::invalid_argument& e) {}
+      } catch (const std::invalid_argument& e) {} // NOLINT(bugprone-empty-catch)
     }
     else if (words[2] == "noise") {
       if (words[4] == "true")
@@ -123,19 +119,19 @@ namespace uci {
 
       if (input[0] == '\n')
         continue;
-      else if (input.rfind("uci", 0) == 0)
+      else if (input.starts_with("uci") == 0)
         uci_ok();
-      else if (input.rfind("isready", 0) == 0)
+      else if (input.starts_with("isready") == 0)
         std::cout << "readyok" << std::endl;
-      else if (input.rfind("position", 0) == 0)
+      else if (input.starts_with("position") == 0)
         b = parse_pos(input);
-      else if (input.rfind("ucinewgame", 0) == 0)
+      else if (input.starts_with("ucinewgame") == 0)
         b = parse_pos("position startpos\n");
-      else if (input.rfind("setoption", 0) == 0)
+      else if (input.starts_with("setoption") == 0)
         parse_setoption(input, agent);
-      else if (input.rfind("go", 0) == 0)
+      else if (input.starts_with("go") == 0)
         parse_go(input, b, agent);
-      else if (input.rfind("quit", 0) == 0)
+      else if (input.starts_with("quit") == 0)
         break;
     }
   };

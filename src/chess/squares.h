@@ -29,9 +29,9 @@ namespace chess {
   constexpr FileRank RANK_7 = 6;
   constexpr FileRank RANK_8 = 7;
 
-  constexpr FileRank RANKS[8] = {0, 1, 2, 3, 4, 5, 6, 7};
-  constexpr FileRank RANKS_REVERSED[8] = {7, 6, 5, 4, 3, 2, 1, 0};
-  constexpr FileRank FILES[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+  constexpr std::array<FileRank, 8> RANKS {0, 1, 2, 3, 4, 5, 6, 7};
+  constexpr std::array<FileRank, 8> RANKS_REVERSED {7, 6, 5, 4, 3, 2, 1, 0};
+  constexpr std::array<FileRank, 8> FILES {0, 1, 2, 3, 4, 5, 6, 7};
 
   Square fr_to_sq(FileRank file, FileRank rank);
   std::array<int, 2> sq_to_rf(Square);

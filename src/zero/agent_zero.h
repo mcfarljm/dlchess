@@ -31,7 +31,7 @@ namespace zero {
         // if (fpu != 0) std::cout << "FPU: " << fpu << "\n";
         return fpu;
       }
-      return total_value / visit_count;
+      return total_value / static_cast<float>(visit_count);
     }
 
     int value_in_centipawns(float fpu) const {
@@ -61,7 +61,7 @@ namespace zero {
              std::weak_ptr<ZeroNode> parent,
              std::optional<chess::Move> last_move);
 
-    void add_child(chess::Move move, std::shared_ptr<ZeroNode> child) {
+    void add_child(chess::Move move, const std::shared_ptr<ZeroNode>& child) {
       children.emplace(move, child);
     }
 
@@ -162,30 +162,30 @@ namespace zero {
     SearchInfo info;
 
   public:
-    ZeroAgent(std::shared_ptr<InferenceModel> model,
+    ZeroAgent(const std::shared_ptr<InferenceModel>& model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      encoder_(encoder), info(info) {
+      encoder_(std::move(encoder)), info(info) {
       model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.policy_softmax_temp, info.disable_underpromotion);
     }
 
-    chess::Move select_move(const chess::Board&);
+    chess::Move select_move(const chess::Board&) override;
 
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
                          std::optional<int> inc_ms,
-                         const chess::Board& b) {
+                         const chess::Board& b) override {
       info.set_search_time(move_time_ms, time_left_ms, inc_ms, b);
     }
 
     void set_collector(std::shared_ptr<ExperienceCollector> c) {
-      collector = c;
+      collector = std::move(c);
     }
 
   private:
     std::shared_ptr<ZeroNode> create_node(const chess::Board& b,
                                           std::optional<chess::Move> move = std::nullopt,
-                                          std::weak_ptr<ZeroNode> parent = std::weak_ptr<ZeroNode>());
+                                          const std::weak_ptr<ZeroNode>& parent = std::weak_ptr<ZeroNode>());
     void add_noise_to_priors(std::unordered_map<chess::Move, float, chess::MoveHash>& priors) const;
     chess::Move select_branch(const ZeroNode& node) const;
     void debug_select_branch(const ZeroNode& node, int) const;

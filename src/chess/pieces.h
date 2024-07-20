@@ -2,6 +2,7 @@
 #define PIECES_H
 
 #include <iostream>
+#include <array>
 
 namespace chess {
 
@@ -87,14 +88,14 @@ namespace chess {
   };
 
   // SLIDERS[color] produces an array that can be iterated through
-  constexpr Piece sliders[2][3] = {
-    {Piece::WB, Piece::WR, Piece::WQ},
-    {Piece::BB, Piece::BR, Piece::BQ},
-  };
-  constexpr Piece non_sliders[2][2] = {
-    {Piece::WN, Piece::WK},
-    {Piece::BN, Piece::BK},
-  };
+  constexpr std::array<std::array<Piece, 3>, 2> sliders {{
+      {Piece::WB, Piece::WR, Piece::WQ},
+      {Piece::BB, Piece::BR, Piece::BQ},
+    }};
+  constexpr std::array<std::array<Piece, 2>, 2> non_sliders {{
+      {Piece::WN, Piece::WK},
+      {Piece::BN, Piece::BK},
+    }};
 
 };
 

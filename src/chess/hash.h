@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 #include <cstdint>
+#include <array>
 
 #include "squares.h"
 #include "pieces.h"
@@ -14,9 +15,9 @@ namespace chess {
   class Hasher {
   public:
     // Hashing also includes EMPTY pieces
-    uint64_t piece_keys[NUM_PIECE_TYPES_BOTH + 1][BOARD_SQ_NUM];
+    std::array<std::array<uint64_t, BOARD_SQ_NUM>, NUM_PIECE_TYPES_BOTH + 1> piece_keys;
     uint64_t side_key;
-    uint64_t castle_keys[16];
+    std::array<uint64_t, 16> castle_keys;
 
     Hasher() {
       /* std::cout << "Setting hash\n"; */
@@ -29,13 +30,12 @@ namespace chess {
 
       side_key = dist(engine);
 
-      for (int i=0; i<NUM_PIECE_TYPES_BOTH + 1; ++i) {
-        for (int j=0; j<BOARD_SQ_NUM; ++j)
-          piece_keys[i][j] = dist(engine);
-      }
+      for (auto& row : piece_keys)
+        for (auto& piece_key : row)
+          piece_key = dist(engine);
 
-      for (int i=0; i<16; ++i)
-        castle_keys[i] = dist(engine);
+      for (auto& castle_key : castle_keys)
+        castle_key = dist(engine);
     }
   };
 

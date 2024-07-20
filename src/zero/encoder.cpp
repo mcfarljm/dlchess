@@ -42,7 +42,7 @@ namespace zero {
     board_tensor.fill_channel(0, 19, b.castle_perm[castling::BQ]);
 
     // No progress count
-    board_tensor.fill_channel(0, 20, b.fifty_move);
+    board_tensor.fill_channel(0, 20, static_cast<float>(b.fifty_move));
 
     // En passant
     if (en_passant_ && b.en_pas != chess::Position::none) {
@@ -170,7 +170,7 @@ namespace zero {
         }
       }
       assert(plane >= 0 && plane < 73);
-      move_map.emplace(std::make_pair(mv, std::array<int,3>({plane, from_rank_file[0], from_rank_file[1]})));
+      move_map.emplace(mv, std::array<int,3>({plane, from_rank_file[0], from_rank_file[1]}));
     }
     return move_map;
   }

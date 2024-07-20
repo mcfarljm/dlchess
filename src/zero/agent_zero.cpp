@@ -15,7 +15,8 @@ using chess::Color;
 namespace zero {
 
   float SearchInfo::compute_cpuct(int N) const {
-    return cpuct + (cpuct_factor ? cpuct_factor * std::log((N + cpuct_base) / cpuct_base) : 0.0);
+    return cpuct + (static_cast<bool>(cpuct_factor) ?
+                    cpuct_factor * std::log((static_cast<float>(N) + cpuct_base) / cpuct_base) : 0.0f);
   }
 
   /// Set search time and start count.
@@ -32,7 +33,7 @@ namespace zero {
     float duration_ms;
 
     if (move_time_ms)
-      duration_ms = move_time_ms.value();
+      duration_ms = static_cast<float>(move_time_ms.value());
     else if (time_left_ms) {
       duration_ms = time_manager->budget_ms(*time_left_ms, inc_ms, b);
     }
@@ -73,14 +74,14 @@ namespace zero {
 
 
   float value_to_centipawns(float value) {
-    return 111.714640912 * tan(1.5620688421 * value);
+    return 111.714640912 * std::tan(1.5620688421 * value);
   }
 
   ZeroNode::ZeroNode(const chess::Board& game_board, float value,
                      const std::unordered_map<Move, float, MoveHash>& priors,
                      std::weak_ptr<ZeroNode> parent,
                      std::optional<Move> last_move) :
-    game_board(game_board), value(value), parent(parent), last_move(last_move),
+    game_board(game_board), value(value), parent(std::move(parent)), last_move(last_move),
     terminal(game_board.is_over()) {
 
     for (const auto &[move, p] : priors) {
@@ -91,7 +92,7 @@ namespace zero {
 
     if (terminal) {
       // Override the model's value estimate with actual result
-      auto winner = game_board.winner().value();
+      auto winner = game_board.winner().value(); // NOLINT
       if (winner == game_board.side)
         // This is not possible, but we include this case for clarity
         ZeroNode::value = 1.0;
@@ -106,7 +107,7 @@ namespace zero {
     // Running average of node expected value is based on:
     // M_{k} = M_{k-1} + (x_k - M_{k-1}) / k
     // Note that k is number of child visits, which is (total_visit_count - 1)
-    expected_value_ += (value - expected_value_) / total_visit_count;
+    expected_value_ += (value - expected_value_) / static_cast<float>(total_visit_count);
     ++total_visit_count;
 
     auto it = branches.find(move);
@@ -129,7 +130,7 @@ namespace zero {
 
 
   Move ZeroAgent::select_move(const chess::Board& game_board) {
-    utils::Timer timer; // Could be moved into SearchInfo to expand access.
+    const utils::Timer timer; // Could be moved into SearchInfo to expand access.
 
     // std::cerr << "In select move, prior move count: " << game_board.total_moves << std::endl;
 
@@ -170,7 +171,7 @@ namespace zero {
         auto new_board = node->game_board;
         auto legal = new_board.make_move(next_move);
         assert(legal);
-        auto child_node = create_node(std::move(new_board), next_move, node);
+        auto child_node = create_node(new_board, next_move, node);
         value = -1 * child_node->value;
         move = next_move;
       }
@@ -182,7 +183,7 @@ namespace zero {
         if (node->terminal)
           (node->total_visit_count)++;
         else
-          node->record_visit(move.value(), value);
+          node->record_visit(move.value(), value); // NOLINT(bugprone-unchecked-optional-access)
         move = node->last_move; // Will be null at root node
         node = node->parent.lock();
         value = -1 * value;
@@ -192,15 +193,14 @@ namespace zero {
       if (info.have_time_limit) {
         if (info.timer.elapsed() * 1000 > info.time_limit_ms)
           break;
-      } else if (info.num_visits > 0 && root->get_children_visits() >= info.num_visits)
-        break;
-      else if (info.num_rounds > 0 && round_number >= info.num_rounds)
+      } else if ((info.num_visits > 0 && root->get_children_visits() >= info.num_visits) ||
+                 (info.num_rounds > 0 && round_number >= info.num_rounds))
         break;
     }
 
     if (collector) {
       auto root_state_tensor = encoder_->encode(game_board);
-      std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
+      const std::vector<int64_t> visit_counts_shape {1, PRIOR_SHAPE[0], PRIOR_SHAPE[1], PRIOR_SHAPE[2]};
       Tensor<float> visit_counts(visit_counts_shape);
       auto get_visit_count = [&](Move mv) {
         auto it = root->branches.find(mv);
@@ -287,15 +287,14 @@ namespace zero {
     // Sample noise on legal moves:
     // Adjust concentration based on number of legal moves, following Katago
     // paper.
-    double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / priors.size();
-    auto dirichlet_dist = DirichletDistribution(priors.size(), alpha);
+    const double alpha = DIRICHLET_CONCENTRATION * 19.0 * 19.0 / static_cast<double>(priors.size());
+    auto dirichlet_dist = DirichletDistribution(static_cast<int>(priors.size()), alpha);
     std::vector<double> noise = dirichlet_dist.sample();
     // std::cout << "Noise: " << noise << std::endl;
 
     size_t idx = 0;
     for (auto &[move, prior]: priors) {
-      prior = (1.0 - DIRICHLET_WEIGHT) * prior +
-        DIRICHLET_WEIGHT * noise[idx];
+      prior = (1.0 - DIRICHLET_WEIGHT) * prior + DIRICHLET_WEIGHT * noise[idx];
       // Force a flat prior for testing:
       // prior = 1.0 / priors.size();
       ++idx;
@@ -310,14 +309,14 @@ namespace zero {
 
   std::shared_ptr<ZeroNode> ZeroAgent::create_node(const chess::Board& game_board,
                                                    std::optional<Move> move,
-                                                   std::weak_ptr<ZeroNode> parent) {
+                                                   const std::weak_ptr<ZeroNode>& parent) {
     bool cache_hit = false;
     auto& output = model_->operator()(game_board, cache_hit);
     num_cache_hits_ += cache_hit;
 
     // Set up local pointer to move_priors.  If not adding noise, then we can just point
     // to cache reference, otherwise we need to make a local copy and point to that.
-    bool adding_noise = info.add_noise && !parent.lock() && !output.move_priors.empty();
+    const bool adding_noise = info.add_noise && !parent.lock() && !output.move_priors.empty();
     priors_type move_priors;  // Only needed if copying.
     const priors_type* move_priors_ptr = adding_noise ? &move_priors : &output.move_priors;
 

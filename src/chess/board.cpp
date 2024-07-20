@@ -363,7 +363,7 @@ namespace chess {
     if (found)
       return std::nullopt;
 
-    bool in_check = square_attacked(king_sq[static_cast<int>(side)], other_side(side));
+    const bool in_check = square_attacked(king_sq[static_cast<int>(side)], other_side(side));
     if (in_check) {
       return other_side(side);
     }

@@ -20,7 +20,7 @@ namespace zero {
     bool en_passant_;
   public:
     SimpleEncoder(int version=1) : en_passant_{version>0} {}
-    Tensor<float> encode(const chess::Board&) const;
+    Tensor<float> encode(const chess::Board&) const override;
     /* Move decode_move_index(int index) const; */
   };
 
