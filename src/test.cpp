@@ -8,9 +8,9 @@
 #include <algorithm>
 
 #include "bitboard.h"
-#include "board/board.h"
-#include "board/piece_moves.h"
-#include "board/game_moves.h"
+#include "chess/board.h"
+#include "chess/piece_moves.h"
+#include "chess/game_moves.h"
 #include "utils.h"
 #include "zero/encoder.h"
 

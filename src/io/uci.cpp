@@ -2,7 +2,7 @@
 
 #include "uci.h"
 #include "../version.h"
-#include "../board/board.h"
+#include "../chess/board.h"
 #include "../utils.h"
 
 namespace {

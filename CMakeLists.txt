@@ -49,14 +49,14 @@ add_library(dlchesslib SHARED
   src/squares.cpp
   src/bitboard.cpp
   src/pieces.cpp
-  src/board/board.cpp
+  src/chess/board.cpp
   src/obs_diff.cpp
-  src/board/piece_moves.cpp
-  src/board/game_moves.cpp
-  src/board/movegen.cpp
-  src/board/makemove.cpp
-  src/board/perft.cpp
-  src/board/io.cpp
+  src/chess/piece_moves.cpp
+  src/chess/game_moves.cpp
+  src/chess/movegen.cpp
+  src/chess/makemove.cpp
+  src/chess/perft.cpp
+  src/chess/io.cpp
 
   src/agent_random.cpp
   src/simulation.cpp

@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include "tensor.h"
-#include "../board/board.h"
+#include "../chess/board.h"
 
 
 namespace zero {

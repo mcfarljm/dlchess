@@ -3,7 +3,7 @@
 
 #include <optional>
 
-#include "board/board.h"
+#include "chess/board.h"
 
 class TimeManager {
 public:

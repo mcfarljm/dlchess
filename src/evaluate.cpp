@@ -8,7 +8,7 @@
 
 #include <cxxopts.hpp>
 
-#include "board/board.h"
+#include "chess/board.h"
 #include "zero/agent_zero.h"
 #include "utils.h"
 #include "simulation.h"

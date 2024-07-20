@@ -1,7 +1,7 @@
 #ifndef AGENT_BASE_H
 #define AGENT_BASE_H
 
-#include "board/board.h"
+#include "chess/board.h"
 
 class Agent {
  public:
