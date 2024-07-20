@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../squares.h"
+#include "squares.h"
 #include "pieces.h"
 
 namespace chess {

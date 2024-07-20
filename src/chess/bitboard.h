@@ -5,7 +5,7 @@
 #include <bitset>
 #include <bit>
 
-#include "../squares.h"
+#include "squares.h"
 
 using squares::Square;
 

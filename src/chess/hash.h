@@ -5,7 +5,7 @@
 #include <random>
 #include <cstdint>
 
-#include "../squares.h"
+#include "squares.h"
 #include "pieces.h"
 
 
