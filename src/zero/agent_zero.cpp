@@ -310,7 +310,7 @@ namespace zero {
 
     // Set up local pointer to move_priors.  If not adding noise, then we can just point
     // to cache reference, otherwise we need to make a local copy and point to that.
-    bool adding_noise = info.add_noise && !parent.lock() && !output.move_priors.empty();
+    const bool adding_noise = info.add_noise && !parent.lock() && !output.move_priors.empty();
     priors_type move_priors;  // Only needed if copying.
     const priors_type* move_priors_ptr = adding_noise ? &move_priors : &output.move_priors;
 
