@@ -51,9 +51,9 @@ namespace {
     auto slice = line.substr(9);
 
     board::Board b = [&]() {
-      if (slice.rfind("startpos", 0) == 0)
+      if (slice.starts_with("startpos") == 0)
         return board::Board(); // NOLINT(bugprone-branch-clone)
-      else if (slice.rfind("fen", 0) == 0) {
+      else if (slice.starts_with("fen") == 0) {
         slice = slice.substr(4);
         return board::Board(slice);
       }
@@ -117,19 +117,19 @@ namespace uci {
 
       if (input[0] == '\n')
         continue;
-      else if (input.rfind("uci", 0) == 0)
+      else if (input.starts_with("uci") == 0)
         uci_ok();
-      else if (input.rfind("isready", 0) == 0)
+      else if (input.starts_with("isready") == 0)
         std::cout << "readyok" << std::endl;
-      else if (input.rfind("position", 0) == 0)
+      else if (input.starts_with("position") == 0)
         b = parse_pos(input);
-      else if (input.rfind("ucinewgame", 0) == 0)
+      else if (input.starts_with("ucinewgame") == 0)
         b = parse_pos("position startpos\n");
-      else if (input.rfind("setoption", 0) == 0)
+      else if (input.starts_with("setoption") == 0)
         parse_setoption(input, agent);
-      else if (input.rfind("go", 0) == 0)
+      else if (input.starts_with("go") == 0)
         parse_go(input, b, agent);
-      else if (input.rfind("quit", 0) == 0)
+      else if (input.starts_with("quit") == 0)
         break;
     }
   };
