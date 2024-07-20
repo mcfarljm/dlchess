@@ -68,7 +68,7 @@ namespace zero {
       policy_softmax_temp_(policy_softmax_temp), disable_underpromotion_(disable_underpromotion) {}
 
     // Get current size of cache
-    int cache_size() const {
+    size_t cache_size() const {
       return cache_.map_.size();
     }
 

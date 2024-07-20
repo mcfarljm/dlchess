@@ -177,7 +177,7 @@ namespace zero {
         if (node->terminal)
           (node->total_visit_count)++;
         else
-          node->record_visit(move.value(), value);
+          node->record_visit(move.value(), value); // NOLINT(bugprone-unchecked-optional-access)
         move = node->last_move; // Will be null at root node
         node = node->parent.lock();
         value = -1 * value;
