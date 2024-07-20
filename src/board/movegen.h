@@ -5,7 +5,7 @@
 
 #include "game_moves.h"
 
-namespace movegen {
+namespace chess {
   using chess::Move;
   using squares::Square;
   using pieces::Piece;

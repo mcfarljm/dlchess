@@ -82,7 +82,7 @@ namespace chess {
 
     bool square_attacked(Square sq, Color side) const;
 
-    movegen::MoveList generate_all_moves() const;
+    chess::MoveList generate_all_moves() const;
     std::vector<chess::Move> generate_legal_moves() const;
 
     bool is_over() const;

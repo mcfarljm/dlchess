@@ -6,7 +6,7 @@
 
 using chess::MoveFlag;
 
-namespace movegen {
+namespace chess {
   constexpr Piece white_promotion_pieces[] = {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
   constexpr Piece black_promotion_pieces[] = {Piece::BN, Piece::BB, Piece::BR, Piece::BQ};
 
@@ -34,8 +34,8 @@ namespace movegen {
 };
 
 namespace chess {
-  movegen::MoveList Board::generate_all_moves() const {
-    movegen::MoveList move_list;
+  MoveList Board::generate_all_moves() const {
+    MoveList move_list;
     move_list.moves.reserve(128);
 
     if (side == Color::white) {
