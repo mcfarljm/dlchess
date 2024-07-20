@@ -3,7 +3,7 @@
 
 using obs_diff::get_line_attacks;
 
-namespace piece_moves {
+namespace chess {
 
   Bitboard get_rook_attacks(Square sq, Bitboard occ_bb) {
     auto occ = occ_bb.to_ullong();

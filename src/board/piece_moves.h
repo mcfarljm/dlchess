@@ -6,7 +6,7 @@
 
 using bitboard::Bitboard;
 
-namespace piece_moves {
+namespace chess {
   extern std::array<Bitboard,64> king_moves;
   extern std::array<Bitboard,64> knight_moves;
   extern std::array<Bitboard,64> white_pawn_attacks;

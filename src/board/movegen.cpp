@@ -138,13 +138,13 @@ namespace chess {
         Bitboard attacks;
         switch (piece.value) {
         case Piece::WR: case Piece::BR:
-          attacks = piece_moves::get_rook_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          attacks = get_rook_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
         case Piece::WB: case Piece::BB:
-          attacks = piece_moves::get_bishop_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          attacks = get_bishop_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
         case Piece::WQ: case Piece::BQ:
-          attacks = piece_moves::get_queen_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          attacks = get_queen_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
         }
         attacks &= ~ bb_sides[static_cast<int>(side)];
@@ -161,9 +161,9 @@ namespace chess {
         auto bb = [=]() {
           switch(piece.value) {
           case Piece::WN: case Piece::BN:
-            return piece_moves::knight_moves[sq];
+            return knight_moves[sq];
           case Piece::WK: case Piece::BK:
-            return piece_moves::king_moves[sq];
+            return king_moves[sq];
           default:
             throw std::runtime_error("unreachable");
           }

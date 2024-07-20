@@ -139,32 +139,32 @@ castle: KQkq
 
 TEST_CASE( "Rook attacks", "[attacks]" ) {
   Bitboard occ;
-  auto attacks = piece_moves::get_rook_attacks(0, occ);
+  auto attacks = chess::get_rook_attacks(0, occ);
   auto vec = std::vector<Square>(attacks.begin(), attacks.end());
   std::vector<Square> expected = {1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 40, 48, 56};
   REQUIRE( vec == expected );
 
   occ.set_bit(4);
   occ.set_bit(32);
-  attacks = piece_moves::get_rook_attacks(0, occ);
+  attacks = chess::get_rook_attacks(0, occ);
   vec = std::vector<Square>(attacks.begin(), attacks.end());
   expected = {1, 2, 3, 4, 8, 16, 24, 32};
   REQUIRE( vec == expected );
 }
 
 TEST_CASE( "King moves", "[attacks]" ) {
-  auto moves = std::vector<Square>(piece_moves::king_moves[9].begin(),
-                                   piece_moves::king_moves[9].end());
+  auto moves = std::vector<Square>(chess::king_moves[9].begin(),
+                                   chess::king_moves[9].end());
   std::vector<Square> expected = {0, 1, 2, 8, 10, 16, 17, 18};
   REQUIRE( moves == expected );
 
-  moves = std::vector<Square>(piece_moves::king_moves[0].begin(),
-                              piece_moves::king_moves[0].end());
+  moves = std::vector<Square>(chess::king_moves[0].begin(),
+                              chess::king_moves[0].end());
   expected = {1, 8, 9};
   REQUIRE( moves == expected );
 
-  moves = std::vector<Square>(piece_moves::king_moves[63].begin(),
-                              piece_moves::king_moves[63].end());
+  moves = std::vector<Square>(chess::king_moves[63].begin(),
+                              chess::king_moves[63].end());
   expected = {54, 55, 62};
   REQUIRE( moves == expected );
 }

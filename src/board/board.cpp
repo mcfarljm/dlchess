@@ -8,10 +8,10 @@
 
 using pieces::Piece;
 using pieces::Color;
-using piece_moves::white_pawn_attacks;
-using piece_moves::black_pawn_attacks;
-using piece_moves::knight_moves;
-using piece_moves::king_moves;
+using chess::white_pawn_attacks;
+using chess::black_pawn_attacks;
+using chess::knight_moves;
+using chess::king_moves;
 
 namespace chess {
 
@@ -271,14 +271,14 @@ namespace chess {
     auto bishops_queens = (side == Color::white ?
                            bitboards[static_cast<int>(Piece::WB)] | bitboards[static_cast<int>(Piece::WQ)] :
                            bitboards[static_cast<int>(Piece::BB)] | bitboards[static_cast<int>(Piece::BQ)]);
-    if ((piece_moves::get_bishop_attacks(sq, occ) & bishops_queens).any())
+    if ((get_bishop_attacks(sq, occ) & bishops_queens).any())
       return true;
 
     // Rooks or queens
     auto rooks_queens = (side == Color::white ?
                            bitboards[static_cast<int>(Piece::WR)] | bitboards[static_cast<int>(Piece::WQ)] :
                            bitboards[static_cast<int>(Piece::BR)] | bitboards[static_cast<int>(Piece::BQ)]);
-    if ((piece_moves::get_rook_attacks(sq, occ) & rooks_queens).any())
+    if ((get_rook_attacks(sq, occ) & rooks_queens).any())
       return true;
 
     // Kings
