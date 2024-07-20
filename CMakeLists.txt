@@ -76,9 +76,6 @@ target_link_libraries(dlchesslib onnxruntime)
 add_executable(tests src/test.cpp)
 target_link_libraries(tests PRIVATE dlchesslib Catch2::Catch2WithMain)
 
-add_executable(evaluate src/evaluate.cpp)
-target_link_libraries(evaluate PRIVATE dlchesslib cxxopts)
-
 add_executable(selfplay src/selfplay.cpp)
 target_link_libraries(selfplay PRIVATE dlchesslib cxxopts)
 
