@@ -53,9 +53,9 @@ namespace {
     auto slice = line.substr(9);
 
     chess::Board b = [&]() {
-      if (slice.starts_with("startpos") == 0)
+      if (slice.starts_with("startpos"))
         return chess::Board(); // NOLINT(bugprone-branch-clone)
-      else if (slice.starts_with("fen") == 0) {
+      else if (slice.starts_with("fen")) {
         slice = slice.substr(4);
         return chess::Board(slice);
       }
@@ -119,19 +119,19 @@ namespace uci {
 
       if (input[0] == '\n')
         continue;
-      else if (input.starts_with("uci") == 0)
+      else if (input.starts_with("uci"))
         uci_ok();
-      else if (input.starts_with("isready") == 0)
+      else if (input.starts_with("isready"))
         std::cout << "readyok" << std::endl;
-      else if (input.starts_with("position") == 0)
+      else if (input.starts_with("position"))
         b = parse_pos(input);
-      else if (input.starts_with("ucinewgame") == 0)
+      else if (input.starts_with("ucinewgame"))
         b = parse_pos("position startpos\n");
-      else if (input.starts_with("setoption") == 0)
+      else if (input.starts_with("setoption"))
         parse_setoption(input, agent);
-      else if (input.starts_with("go") == 0)
+      else if (input.starts_with("go"))
         parse_go(input, b, agent);
-      else if (input.starts_with("quit") == 0)
+      else if (input.starts_with("quit"))
         break;
     }
   };
