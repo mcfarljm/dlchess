@@ -14,7 +14,6 @@
 #include "game_moves.h"
 
 
-using bitboard::Bitboard;
 namespace Position = squares::Position;
 
 

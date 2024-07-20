@@ -16,7 +16,7 @@
 
 
 TEST_CASE( "Test bb string empty", "[bitboard]" ) {
-  auto bb = bitboard::Bitboard();
+  auto bb = chess::Bitboard();
 
   std::stringstream ss;
   ss << std::endl << bb;
@@ -37,7 +37,7 @@ TEST_CASE( "Test bb string empty", "[bitboard]" ) {
 
 
 TEST_CASE( "Test bb string 9", "[bitboard]" ) {
-  auto bb = bitboard::Bitboard();
+  auto bb = chess::Bitboard();
   bb.set_bit(9);
 
   std::stringstream ss;
@@ -58,7 +58,7 @@ TEST_CASE( "Test bb string 9", "[bitboard]" ) {
 }
 
 TEST_CASE( "Test bb string 9, 44", "[bitboard]" ) {
-  auto bb = bitboard::Bitboard();
+  auto bb = chess::Bitboard();
   bb.set_bit(9);
   bb.set_bit(44);
 
@@ -81,7 +81,7 @@ TEST_CASE( "Test bb string 9, 44", "[bitboard]" ) {
 
 
 TEST_CASE( "Test bb count", "[bitboard]" ) {
-  auto bb = bitboard::Bitboard();
+  auto bb = chess::Bitboard();
   bb.set_bit(9);
   bb.set_bit(44);
   REQUIRE( bb.count() == 2 );
@@ -89,7 +89,7 @@ TEST_CASE( "Test bb count", "[bitboard]" ) {
 
 
 TEST_CASE( "Empty bb iter", "[bitboard]" ) {
-  auto bb = bitboard::Bitboard();
+  auto bb = chess::Bitboard();
   auto vec = std::vector<Square>(bb.begin(), bb.end());
   REQUIRE( vec.size() == 0 );
 }
@@ -97,7 +97,7 @@ TEST_CASE( "Empty bb iter", "[bitboard]" ) {
 
 TEST_CASE( "bb iter", "[bitboard]" ) {
   auto expected = std::vector<Square>({9, 25, 44});
-  auto bb = bitboard::Bitboard();
+  auto bb = chess::Bitboard();
   for (auto i : expected)
     bb.set_bit(i);
   auto vec = std::vector<Square>(bb.begin(), bb.end());
@@ -138,7 +138,7 @@ castle: KQkq
 
 
 TEST_CASE( "Rook attacks", "[attacks]" ) {
-  Bitboard occ;
+  chess::Bitboard occ;
   auto attacks = chess::get_rook_attacks(0, occ);
   auto vec = std::vector<Square>(attacks.begin(), attacks.end());
   std::vector<Square> expected = {1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 40, 48, 56};

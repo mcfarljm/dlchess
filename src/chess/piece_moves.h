@@ -4,8 +4,6 @@
 #include <array>
 #include "bitboard.h"
 
-using bitboard::Bitboard;
-
 namespace chess {
   extern std::array<Bitboard,64> king_moves;
   extern std::array<Bitboard,64> knight_moves;

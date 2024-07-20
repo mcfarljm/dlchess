@@ -41,7 +41,7 @@ namespace chess {
     if (side == Color::white) {
       // Pawn non-captures:
       auto to_step1 = (bitboards[static_cast<int>(Piece::WP)] << 8) & (~ bb_sides[static_cast<int>(Color::both)]);
-      auto to_step2 = (to_step1 << 8) & bitboard::BB_RANK_4 & (~ bb_sides[static_cast<int>(Color::both)]);
+      auto to_step2 = (to_step1 << 8) & BB_RANK_4 & (~ bb_sides[static_cast<int>(Color::both)]);
 
       for (auto to64 : Bitboard(to_step1))
         move_list.add_white_pawn_move(to64 - 8, to64, Piece::none);
@@ -49,8 +49,8 @@ namespace chess {
         move_list.moves.emplace_back(to64 - 2*8, to64, Piece::none, Piece::none, MoveFlag::pawnstart);
 
       // Pawn captures:
-      auto to_cap_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_A) << 7) & bb_sides[static_cast<int>(Color::black)];
-      auto to_cap_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_H) << 9) & bb_sides[static_cast<int>(Color::black)];
+      auto to_cap_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_A) << 7) & bb_sides[static_cast<int>(Color::black)];
+      auto to_cap_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_H) << 9) & bb_sides[static_cast<int>(Color::black)];
       for (auto to64 : Bitboard(to_cap_left))
         move_list.add_white_pawn_move(to64 - 7, to64, pieces[to64]);
       for (auto to64 : Bitboard(to_cap_right))
@@ -59,8 +59,8 @@ namespace chess {
       // En passant captures:
       if (en_pas != Position::none) {
         auto ep_bb = Bitboard(1ULL << en_pas);
-        auto ep_to_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_A) << 7) & ep_bb;
-        auto ep_to_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_H) << 9) & ep_bb;
+        auto ep_to_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_A) << 7) & ep_bb;
+        auto ep_to_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_H) << 9) & ep_bb;
 
         for (auto to64 : Bitboard(ep_to_left))
           move_list.moves.emplace_back(to64 - 7, to64, Piece::none, Piece::none, MoveFlag::enpas);
@@ -88,7 +88,7 @@ namespace chess {
 
       // Pawn non-captures:
       auto to_step1 = (bitboards[static_cast<int>(Piece::BP)] >> 8) & (~ bb_sides[static_cast<int>(Color::both)]);
-      auto to_step2 = (to_step1 >> 8) & bitboard::BB_RANK_5 & (~ bb_sides[static_cast<int>(Color::both)]);
+      auto to_step2 = (to_step1 >> 8) & BB_RANK_5 & (~ bb_sides[static_cast<int>(Color::both)]);
 
       for (auto to64 : Bitboard(to_step1))
         move_list.add_black_pawn_move(to64 + 8, to64, Piece::none);
@@ -96,8 +96,8 @@ namespace chess {
         move_list.moves.emplace_back(to64 + 2*8, to64, Piece::none, Piece::none, MoveFlag::pawnstart);
 
       // Pawn captures:
-      auto to_cap_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_A) >> 9) & bb_sides[static_cast<int>(Color::white)];
-      auto to_cap_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_H) >> 7) & bb_sides[static_cast<int>(Color::white)];
+      auto to_cap_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_A) >> 9) & bb_sides[static_cast<int>(Color::white)];
+      auto to_cap_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_H) >> 7) & bb_sides[static_cast<int>(Color::white)];
       for (auto to64 : Bitboard(to_cap_left))
         move_list.add_black_pawn_move(to64 + 9, to64, pieces[to64]);
       for (auto to64 : Bitboard(to_cap_right))
@@ -106,8 +106,8 @@ namespace chess {
       // En passant captures:
       if (en_pas != Position::none) {
         auto ep_bb = Bitboard(1ULL << en_pas);
-        auto ep_to_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_A) >> 9) & ep_bb;
-        auto ep_to_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_H) >> 7) & ep_bb;
+        auto ep_to_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_A) >> 9) & ep_bb;
+        auto ep_to_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_H) >> 7) & ep_bb;
 
         for (auto to64 : Bitboard(ep_to_left))
           move_list.moves.emplace_back(to64 + 9, to64, Piece::none, Piece::none, MoveFlag::enpas);

@@ -10,7 +10,7 @@
 using squares::Square;
 
 
-namespace bitboard {
+namespace chess {
 
   struct Bitboard;
 

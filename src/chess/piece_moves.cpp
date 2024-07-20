@@ -101,13 +101,13 @@ namespace chess {
       // Left captures
       Bitboard bb;
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_A) << 7);
+      bb = Bitboard((bb & ~ BB_FILE_A) << 7);
       bitboards[sq] |= bb;
 
       // Right captures
       bb.reset();
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_H) << 9);
+      bb = Bitboard((bb & ~ BB_FILE_H) << 9);
       bitboards[sq] |= bb;
     }
     return bitboards;
@@ -119,13 +119,13 @@ namespace chess {
       // Left captures
       Bitboard bb;
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_A) >> 9);
+      bb = Bitboard((bb & ~ BB_FILE_A) >> 9);
       bitboards[sq] |= bb;
 
       // Right captures
       bb.reset();
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_H) >> 7);
+      bb = Bitboard((bb & ~ BB_FILE_H) >> 7);
       bitboards[sq] |= bb;
     }
     return bitboards;
