@@ -8,7 +8,7 @@
 
 #include <cxxopts.hpp>
 
-#include "board/board.h"
+#include "chess/board.h"
 #include "zero/agent_zero.h"
 #include "utils.h"
 #include "simulation.h"
@@ -16,6 +16,7 @@
 
 using namespace zero;
 using namespace utils;
+using chess::Color;
 
 
 std::unique_ptr<Agent> load_zero_agent(const std::string network_path,

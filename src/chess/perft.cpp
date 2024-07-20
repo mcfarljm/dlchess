@@ -2,7 +2,7 @@
 #include <iostream>
 #include "board.h"
 
-namespace board {
+namespace chess {
   long Board::perft(int depth) {
     assert(check());
 

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-namespace pieces {
+namespace chess {
 
   enum class Color {
     white,

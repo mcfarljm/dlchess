@@ -5,18 +5,16 @@
 #include <random>
 #include <cstdint>
 
-#include "../squares.h"
-#include "../pieces.h"
+#include "squares.h"
+#include "pieces.h"
 
 
-namespace board {
-
-  using squares::BOARD_SQ_NUM;
+namespace chess {
 
   class Hasher {
   public:
     // Hashing also includes EMPTY pieces
-    uint64_t piece_keys[pieces::NUM_PIECE_TYPES_BOTH + 1][BOARD_SQ_NUM];
+    uint64_t piece_keys[NUM_PIECE_TYPES_BOTH + 1][BOARD_SQ_NUM];
     uint64_t side_key;
     uint64_t castle_keys[16];
 
@@ -31,7 +29,7 @@ namespace board {
 
       side_key = dist(engine);
 
-      for (int i=0; i<pieces::NUM_PIECE_TYPES_BOTH + 1; ++i) {
+      for (int i=0; i<NUM_PIECE_TYPES_BOTH + 1; ++i) {
         for (int j=0; j<BOARD_SQ_NUM; ++j)
           piece_keys[i][j] = dist(engine);
       }

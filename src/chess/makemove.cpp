@@ -1,7 +1,7 @@
 #include <cassert>
 #include "board.h"
 
-namespace board {
+namespace chess {
 
   static const std::array<int, BOARD_SQ_NUM> CASTLE_PERM = {
     13, 15, 15, 15, 12, 15, 15, 14,
@@ -75,7 +75,7 @@ namespace board {
     bb_sides[static_cast<int>(Color::both)].set_bit(to);
   }
 
-  bool Board::make_move(game_moves::Move mv) {
+  bool Board::make_move(Move mv) {
     assert(check());
 
     auto from = mv.from;
@@ -131,10 +131,10 @@ namespace board {
       if (mv.is_pawn_start()) {
         if (side == Color::white) {
           en_pas = from + 8;
-          assert(en_pas/8 == squares::RANK_3);
+          assert(en_pas/8 == RANK_3);
         } else {
           en_pas = from - 8;
-          assert(en_pas/8 == squares::RANK_6);
+          assert(en_pas/8 == RANK_6);
         }
         hash_en_pas();
       }

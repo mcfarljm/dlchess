@@ -5,10 +5,7 @@
 
 #include "game_moves.h"
 
-namespace movegen {
-  using game_moves::Move;
-  using squares::Square;
-  using pieces::Piece;
+namespace chess {
 
   struct MoveList {
     std::vector<Move> moves;

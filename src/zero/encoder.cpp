@@ -1,19 +1,19 @@
 #include "encoder.h"
 
-using squares::GRID_SIZE;
+using chess::GRID_SIZE;
 
 
 namespace zero {
   
-  Tensor<float> SimpleEncoder::encode(const board::Board& b) const {
+  Tensor<float> SimpleEncoder::encode(const chess::Board& b) const {
     const int num_planes = en_passant_ ? 22 : 21;
     const std::vector<int64_t> board_tensor_shape = {1, num_planes, GRID_SIZE, GRID_SIZE};
     auto board_tensor = Tensor<float>(board_tensor_shape);
 
     // First 12 planes encode piece occupation
-    for (int piece_idx=0; piece_idx<pieces::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
+    for (int piece_idx=0; piece_idx<chess::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
       for (auto sq : b.bitboards[static_cast<int>(piece_idx)]) {
-        auto coords = squares::sq_to_rf(sq);
+        auto coords = chess::sq_to_rf(sq);
         board_tensor.at({0, piece_idx, coords[0], coords[1]}) = 1.0;
       }
     }
@@ -28,7 +28,7 @@ namespace zero {
       board_tensor.fill_channel(0, 13, 1.0);
 
     // Color of side to move
-    if (b.side == Color::black)
+    if (b.side == chess::Color::black)
       board_tensor.fill_channel(0, 14, 1.0);
 
     // Constant plane, to help with edge detection.  Was originally used for
@@ -45,8 +45,8 @@ namespace zero {
     board_tensor.fill_channel(0, 20, b.fifty_move);
 
     // En passant
-    if (en_passant_ && b.en_pas != Position::none) {
-      auto coords = squares::sq_to_rf(b.en_pas);
+    if (en_passant_ && b.en_pas != chess::Position::none) {
+      auto coords = chess::sq_to_rf(b.en_pas);
       board_tensor.at({0, 21, coords[0], coords[1]}) = 1.0;
     }
 
@@ -57,16 +57,16 @@ namespace zero {
 
   // Given the board state, construct a map from legal moves to coordinates
   // associated with the tensor encoding.
-  std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash>
-  decode_legal_moves(const board::Board& b) {
+  std::unordered_map<chess::Move, std::array<int,3>, chess::MoveHash>
+  decode_legal_moves(const chess::Board& b) {
     constexpr int KNIGHT_BASE_PLANE = 56;
     constexpr int UNDERPROMOTION_BASE_PLANE = KNIGHT_BASE_PLANE + 8;
 
-    std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash> move_map;
+    std::unordered_map<chess::Move, std::array<int,3>, chess::MoveHash> move_map;
 
     auto moves = b.generate_legal_moves();
     for (auto& mv : moves) {
-      auto from_rank_file = squares::sq_to_rf(mv.from);
+      auto from_rank_file = chess::sq_to_rf(mv.from);
       int plane;
       auto delta = mv.to - mv.from;
       if (b.pieces[mv.from].is_knight()) {

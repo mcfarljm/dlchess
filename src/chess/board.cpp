@@ -6,14 +6,7 @@
 #include "piece_moves.h"
 
 
-using pieces::Piece;
-using pieces::Color;
-using piece_moves::white_pawn_attacks;
-using piece_moves::black_pawn_attacks;
-using piece_moves::knight_moves;
-using piece_moves::king_moves;
-
-namespace board {
+namespace chess {
 
   const std::string_view START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -21,8 +14,8 @@ namespace board {
   const Hasher hasher {};
 
   Board::Board(const std::string_view fen) {
-    auto rank = squares::RANK_8;
-    auto file = squares::FILE_A;
+    auto rank = RANK_8;
+    auto file = FILE_A;
     Piece piece;
     int count;
     char c;
@@ -31,7 +24,7 @@ namespace board {
 
     // This is essentially just a while(true) loop that must be
     // broken out off
-    while (rank >= squares::RANK_1) {
+    while (rank >= RANK_1) {
       c = *it++;
       count = 1;
       switch (c) {
@@ -55,8 +48,8 @@ namespace board {
         break;
 
       case '/': case ' ':
-        file = squares::FILE_A;
-        if (rank <= squares::RANK_1)
+        file = FILE_A;
+        if (rank <= RANK_1)
           goto exit_loop;
         rank--;
         continue;
@@ -67,7 +60,7 @@ namespace board {
 
       for (int i=0; i<count; ++i) {
         if (piece.exists()) {
-          auto sq = squares::fr_to_sq(file, rank);
+          auto sq = fr_to_sq(file, rank);
           pieces[sq] = piece;
         }
         ++file;
@@ -118,9 +111,9 @@ namespace board {
       file = c - 'a';
       c = *it++;
       rank = c - '1';
-      assert(file >= squares::FILE_A && file <= squares::FILE_H);
-      assert(rank >= squares::RANK_1 && rank <= squares::RANK_8);
-      en_pas = squares::fr_to_sq(file, rank);
+      assert(file >= FILE_A && file <= FILE_H);
+      assert(rank >= RANK_1 && rank <= RANK_8);
+      en_pas = fr_to_sq(file, rank);
     }
 
     hash = get_position_hash();
@@ -148,10 +141,10 @@ namespace board {
     static constexpr std::string_view side_chars = "wb-";
     static constexpr std::string_view file_chars = "abcdefgh";
 
-    for (auto rank : squares::RANKS_REVERSED) {
+    for (auto rank : RANKS_REVERSED) {
       os << rank + 1 << "     ";
-      for (auto file : squares::FILES) {
-        auto sq = squares::fr_to_sq(file, rank);
+      for (auto file : FILES) {
+        auto sq = fr_to_sq(file, rank);
         auto piece = b.pieces[sq];
         os << piece << "  ";
       }
@@ -159,7 +152,7 @@ namespace board {
     }
     os << std::endl << "      ";
 
-    for (auto file : squares::FILES)
+    for (auto file : FILES)
       os << file_chars[file] << "  ";
 
     os << std::endl;
@@ -198,7 +191,7 @@ namespace board {
   }
 
   bool Board::check() const {
-    std::array<int, pieces::NUM_PIECE_TYPES_BOTH> piece_count{};
+    std::array<int, NUM_PIECE_TYPES_BOTH> piece_count{};
 
     auto board_assert = [](bool condition, std::string_view msg) {
       if (!condition) {
@@ -215,28 +208,28 @@ namespace board {
         ++piece_count[static_cast<int>(piece.value)];
     }
 
-    for (auto piece_index=0; piece_index<pieces::NUM_PIECE_TYPES_BOTH; ++piece_index)
+    for (auto piece_index=0; piece_index<NUM_PIECE_TYPES_BOTH; ++piece_index)
       board_assert(piece_count[piece_index] == bitboards[piece_index].count(),
                    "piece count matches bitboard count");
 
     // Check pawn bitboard squares:
-    for (auto sq : bitboards[static_cast<int>(pieces::Piece::WP)])
-      board_assert(pieces[sq] == pieces::Piece::WP, "WP bitboard");
-    for (auto sq : bitboards[static_cast<int>(pieces::Piece::BP)])
-      board_assert(pieces[sq] == pieces::Piece::BP, "BP bitboard");
+    for (auto sq : bitboards[static_cast<int>(Piece::WP)])
+      board_assert(pieces[sq] == Piece::WP, "WP bitboard");
+    for (auto sq : bitboards[static_cast<int>(Piece::BP)])
+      board_assert(pieces[sq] == Piece::BP, "BP bitboard");
 
     board_assert(side == Color::white || side == Color::black, "side");
     board_assert(hash == get_position_hash(), "hash");
 
     board_assert(en_pas == Position::none ||
-                 (en_pas/8 == squares::RANK_6 && side == Color::white) ||
-                 (en_pas/8 == squares::RANK_3 && side == Color::black),
+                 (en_pas/8 == RANK_6 && side == Color::white) ||
+                 (en_pas/8 == RANK_3 && side == Color::black),
                  "en_pas");
 
-    board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == pieces::Piece::WK, "WK");
-    board_assert(pieces[king_sq[static_cast<int>(Color::black)]] == pieces::Piece::BK, "BK");
-    board_assert(bitboards[static_cast<int>(pieces::Piece::WK)][king_sq[static_cast<int>(Color::white)]], "WK BB");
-    board_assert(bitboards[static_cast<int>(pieces::Piece::BK)][king_sq[static_cast<int>(Color::black)]], "BK BB");
+    board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == Piece::WK, "WK");
+    board_assert(pieces[king_sq[static_cast<int>(Color::black)]] == Piece::BK, "BK");
+    board_assert(bitboards[static_cast<int>(Piece::WK)][king_sq[static_cast<int>(Color::white)]], "WK BB");
+    board_assert(bitboards[static_cast<int>(Piece::BK)][king_sq[static_cast<int>(Color::black)]], "BK BB");
 
     // Check side piece bitboards:
 
@@ -252,11 +245,11 @@ namespace board {
 
     // Pawns
     if (side == Color::white) {
-      if ((bitboards[static_cast<int>(pieces::Piece::WP)] & black_pawn_attacks[sq]).any())
+      if ((bitboards[static_cast<int>(Piece::WP)] & black_pawn_attacks[sq]).any())
         return true;
     }
     else {
-      if ((bitboards[static_cast<int>(pieces::Piece::BP)] & white_pawn_attacks[sq]).any())
+      if ((bitboards[static_cast<int>(Piece::BP)] & white_pawn_attacks[sq]).any())
         return true;
     }
 
@@ -271,14 +264,14 @@ namespace board {
     auto bishops_queens = (side == Color::white ?
                            bitboards[static_cast<int>(Piece::WB)] | bitboards[static_cast<int>(Piece::WQ)] :
                            bitboards[static_cast<int>(Piece::BB)] | bitboards[static_cast<int>(Piece::BQ)]);
-    if ((piece_moves::get_bishop_attacks(sq, occ) & bishops_queens).any())
+    if ((get_bishop_attacks(sq, occ) & bishops_queens).any())
       return true;
 
     // Rooks or queens
     auto rooks_queens = (side == Color::white ?
                            bitboards[static_cast<int>(Piece::WR)] | bitboards[static_cast<int>(Piece::WQ)] :
                            bitboards[static_cast<int>(Piece::BR)] | bitboards[static_cast<int>(Piece::BQ)]);
-    if ((piece_moves::get_rook_attacks(sq, occ) & rooks_queens).any())
+    if ((get_rook_attacks(sq, occ) & rooks_queens).any())
       return true;
 
     // Kings

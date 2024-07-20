@@ -1,6 +1,6 @@
 #include "pieces.h"
 
-namespace pieces {
+namespace chess {
 
   Color other_side(Color side) {
     switch(side) {

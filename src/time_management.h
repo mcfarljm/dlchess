@@ -3,12 +3,12 @@
 
 #include <optional>
 
-#include "board/board.h"
+#include "chess/board.h"
 
 class TimeManager {
 public:
   virtual float budget_ms(int time_left_ms, std::optional<int> inc_ms, const
-                          board::Board& b) = 0;
+                          chess::Board& b) = 0;
 };
 
 class AlphaZeroTimeManager : public TimeManager {
@@ -18,7 +18,7 @@ class AlphaZeroTimeManager : public TimeManager {
 public:
   AlphaZeroTimeManager() = default;
   AlphaZeroTimeManager(float percentage) : percentage_(percentage) {}
-  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const board::Board& b) {
+  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const chess::Board& b) {
     return (time_left_ms - move_overhead_ms_) * percentage_ * 0.01;
   }
 };
@@ -33,7 +33,7 @@ class SimpleTimeManager : public TimeManager {
 
 public:
   SimpleTimeManager() = default;
-  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const board::Board& b) {
+  float budget_ms(int time_left_ms, std::optional<int> inc_ms, const chess::Board& b) {
     int increment = inc_ms ? std::max(0, *inc_ms) : 0;
 
     float time_available = time_left_ms - move_overhead_ms_;

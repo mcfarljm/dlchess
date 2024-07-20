@@ -7,17 +7,11 @@
 #include <cstdint>
 #include <optional>
 
-#include "../pieces.h"
-#include "../bitboard.h"
+#include "pieces.h"
+#include "bitboard.h"
 #include "hash.h"
 #include "movegen.h"
 #include "game_moves.h"
-
-
-using pieces::Piece;
-using pieces::Color;
-using bitboard::Bitboard;
-namespace Position = squares::Position;
 
 
 namespace castling {
@@ -31,16 +25,14 @@ namespace castling {
 
 };
 
-namespace board {
-
-  using squares::BOARD_SQ_NUM;
+namespace chess {
 
   extern const std::string_view START_FEN;
 
   extern const Hasher hasher;
 
   struct Undo {
-    game_moves::Move mv;
+    Move mv;
     std::bitset<4> castle_perm;
     Square en_pas;
     int fifty_move;
@@ -52,7 +44,7 @@ namespace board {
 
     std::array<Piece, BOARD_SQ_NUM> pieces;
 
-    std::array<Bitboard, pieces::NUM_PIECE_TYPES_BOTH> bitboards;
+    std::array<Bitboard, NUM_PIECE_TYPES_BOTH> bitboards;
     // White, black, and both-side bitboards for all pieces
     std::array<Bitboard, 3> bb_sides;
 
@@ -82,21 +74,21 @@ namespace board {
 
     bool square_attacked(Square sq, Color side) const;
 
-    movegen::MoveList generate_all_moves() const;
-    std::vector<game_moves::Move> generate_legal_moves() const;
+    MoveList generate_all_moves() const;
+    std::vector<Move> generate_legal_moves() const;
 
     bool is_over() const;
     std::optional<Color> winner() const;
     int repetition_count() const;
 
     // makemove
-    bool make_move(game_moves::Move mv);
+    bool make_move(Move mv);
     void undo_move();
 
     long perft(int depth);
 
     // io
-    std::optional<game_moves::Move> parse_move_string(std::string_view str);
+    std::optional<Move> parse_move_string(std::string_view str);
 
   private:
     void update_lists_and_material();
