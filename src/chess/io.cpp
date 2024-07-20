@@ -15,10 +15,10 @@ namespace chess {
     if (str[3] > '8' || str[3] < '1')
       return std::nullopt;
 
-    auto from = squares::fr_to_sq(str[0] - 'a', str[1] - '1');
-    auto to = squares::fr_to_sq(str[2] - 'a', str[3] - '1');
-    assert(squares::square_on_board(from));
-    assert(squares::square_on_board(to));
+    auto from = fr_to_sq(str[0] - 'a', str[1] - '1');
+    auto to = fr_to_sq(str[2] - 'a', str[3] - '1');
+    assert(square_on_board(from));
+    assert(square_on_board(to));
 
     auto move_list = generate_all_moves();
 

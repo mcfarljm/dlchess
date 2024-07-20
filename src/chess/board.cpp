@@ -14,8 +14,8 @@ namespace chess {
   const Hasher hasher {};
 
   Board::Board(const std::string_view fen) {
-    auto rank = squares::RANK_8;
-    auto file = squares::FILE_A;
+    auto rank = RANK_8;
+    auto file = FILE_A;
     Piece piece;
     int count;
     char c;
@@ -24,7 +24,7 @@ namespace chess {
 
     // This is essentially just a while(true) loop that must be
     // broken out off
-    while (rank >= squares::RANK_1) {
+    while (rank >= RANK_1) {
       c = *it++;
       count = 1;
       switch (c) {
@@ -48,8 +48,8 @@ namespace chess {
         break;
 
       case '/': case ' ':
-        file = squares::FILE_A;
-        if (rank <= squares::RANK_1)
+        file = FILE_A;
+        if (rank <= RANK_1)
           goto exit_loop;
         rank--;
         continue;
@@ -60,7 +60,7 @@ namespace chess {
 
       for (int i=0; i<count; ++i) {
         if (piece.exists()) {
-          auto sq = squares::fr_to_sq(file, rank);
+          auto sq = fr_to_sq(file, rank);
           pieces[sq] = piece;
         }
         ++file;
@@ -111,9 +111,9 @@ namespace chess {
       file = c - 'a';
       c = *it++;
       rank = c - '1';
-      assert(file >= squares::FILE_A && file <= squares::FILE_H);
-      assert(rank >= squares::RANK_1 && rank <= squares::RANK_8);
-      en_pas = squares::fr_to_sq(file, rank);
+      assert(file >= FILE_A && file <= FILE_H);
+      assert(rank >= RANK_1 && rank <= RANK_8);
+      en_pas = fr_to_sq(file, rank);
     }
 
     hash = get_position_hash();
@@ -141,10 +141,10 @@ namespace chess {
     static constexpr std::string_view side_chars = "wb-";
     static constexpr std::string_view file_chars = "abcdefgh";
 
-    for (auto rank : squares::RANKS_REVERSED) {
+    for (auto rank : RANKS_REVERSED) {
       os << rank + 1 << "     ";
-      for (auto file : squares::FILES) {
-        auto sq = squares::fr_to_sq(file, rank);
+      for (auto file : FILES) {
+        auto sq = fr_to_sq(file, rank);
         auto piece = b.pieces[sq];
         os << piece << "  ";
       }
@@ -152,7 +152,7 @@ namespace chess {
     }
     os << std::endl << "      ";
 
-    for (auto file : squares::FILES)
+    for (auto file : FILES)
       os << file_chars[file] << "  ";
 
     os << std::endl;
@@ -222,8 +222,8 @@ namespace chess {
     board_assert(hash == get_position_hash(), "hash");
 
     board_assert(en_pas == Position::none ||
-                 (en_pas/8 == squares::RANK_6 && side == Color::white) ||
-                 (en_pas/8 == squares::RANK_3 && side == Color::black),
+                 (en_pas/8 == RANK_6 && side == Color::white) ||
+                 (en_pas/8 == RANK_3 && side == Color::black),
                  "en_pas");
 
     board_assert(pieces[king_sq[static_cast<int>(Color::white)]] == Piece::WK, "WK");

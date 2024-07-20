@@ -14,9 +14,6 @@
 #include "game_moves.h"
 
 
-namespace Position = squares::Position;
-
-
 namespace castling {
 
   enum {
@@ -29,8 +26,6 @@ namespace castling {
 };
 
 namespace chess {
-
-  using squares::BOARD_SQ_NUM;
 
   extern const std::string_view START_FEN;
 

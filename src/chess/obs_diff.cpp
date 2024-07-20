@@ -3,11 +3,8 @@
 
 #include "obs_diff.h"
 
-using squares::u64;
-
 namespace chess {
 
-  using squares::Square;
   class ObsDiffMask;
   using ObsDiffArray = std::array<std::array<ObsDiffMask, 64>, 4>;
 

@@ -11,8 +11,6 @@
 
 namespace chess {
 
-  using squares::BOARD_SQ_NUM;
-
   class Hasher {
   public:
     // Hashing also includes EMPTY pieces

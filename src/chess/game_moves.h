@@ -8,8 +8,6 @@
 
 namespace chess {
 
-  using squares::Square;
-
   enum class MoveFlag {
     none,
     enpas,

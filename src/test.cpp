@@ -14,9 +14,11 @@
 #include "utils.h"
 #include "zero/encoder.h"
 
+using namespace chess;
+
 
 TEST_CASE( "Test bb string empty", "[bitboard]" ) {
-  auto bb = chess::Bitboard();
+  auto bb = Bitboard();
 
   std::stringstream ss;
   ss << std::endl << bb;
@@ -37,7 +39,7 @@ TEST_CASE( "Test bb string empty", "[bitboard]" ) {
 
 
 TEST_CASE( "Test bb string 9", "[bitboard]" ) {
-  auto bb = chess::Bitboard();
+  auto bb = Bitboard();
   bb.set_bit(9);
 
   std::stringstream ss;
@@ -58,7 +60,7 @@ TEST_CASE( "Test bb string 9", "[bitboard]" ) {
 }
 
 TEST_CASE( "Test bb string 9, 44", "[bitboard]" ) {
-  auto bb = chess::Bitboard();
+  auto bb = Bitboard();
   bb.set_bit(9);
   bb.set_bit(44);
 
@@ -81,7 +83,7 @@ TEST_CASE( "Test bb string 9, 44", "[bitboard]" ) {
 
 
 TEST_CASE( "Test bb count", "[bitboard]" ) {
-  auto bb = chess::Bitboard();
+  auto bb = Bitboard();
   bb.set_bit(9);
   bb.set_bit(44);
   REQUIRE( bb.count() == 2 );
@@ -89,7 +91,7 @@ TEST_CASE( "Test bb count", "[bitboard]" ) {
 
 
 TEST_CASE( "Empty bb iter", "[bitboard]" ) {
-  auto bb = chess::Bitboard();
+  auto bb = Bitboard();
   auto vec = std::vector<Square>(bb.begin(), bb.end());
   REQUIRE( vec.size() == 0 );
 }
@@ -97,7 +99,7 @@ TEST_CASE( "Empty bb iter", "[bitboard]" ) {
 
 TEST_CASE( "bb iter", "[bitboard]" ) {
   auto expected = std::vector<Square>({9, 25, 44});
-  auto bb = chess::Bitboard();
+  auto bb = Bitboard();
   for (auto i : expected)
     bb.set_bit(i);
   auto vec = std::vector<Square>(bb.begin(), bb.end());
@@ -106,7 +108,7 @@ TEST_CASE( "bb iter", "[bitboard]" ) {
 }
 
 TEST_CASE( "Init board", "[board]" ) {
-  auto b = chess::Board();
+  auto b = Board();
 
   REQUIRE( b.king_sq[0] == 4 );
   REQUIRE( b.king_sq[1] == 60 );
@@ -138,42 +140,39 @@ castle: KQkq
 
 
 TEST_CASE( "Rook attacks", "[attacks]" ) {
-  chess::Bitboard occ;
-  auto attacks = chess::get_rook_attacks(0, occ);
+  Bitboard occ;
+  auto attacks = get_rook_attacks(0, occ);
   auto vec = std::vector<Square>(attacks.begin(), attacks.end());
   std::vector<Square> expected = {1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 40, 48, 56};
   REQUIRE( vec == expected );
 
   occ.set_bit(4);
   occ.set_bit(32);
-  attacks = chess::get_rook_attacks(0, occ);
+  attacks = get_rook_attacks(0, occ);
   vec = std::vector<Square>(attacks.begin(), attacks.end());
   expected = {1, 2, 3, 4, 8, 16, 24, 32};
   REQUIRE( vec == expected );
 }
 
 TEST_CASE( "King moves", "[attacks]" ) {
-  auto moves = std::vector<Square>(chess::king_moves[9].begin(),
-                                   chess::king_moves[9].end());
+  auto moves = std::vector<Square>(king_moves[9].begin(), king_moves[9].end());
   std::vector<Square> expected = {0, 1, 2, 8, 10, 16, 17, 18};
   REQUIRE( moves == expected );
 
-  moves = std::vector<Square>(chess::king_moves[0].begin(),
-                              chess::king_moves[0].end());
+  moves = std::vector<Square>(king_moves[0].begin(), king_moves[0].end());
   expected = {1, 8, 9};
   REQUIRE( moves == expected );
 
-  moves = std::vector<Square>(chess::king_moves[63].begin(),
-                              chess::king_moves[63].end());
+  moves = std::vector<Square>(king_moves[63].begin(), king_moves[63].end());
   expected = {54, 55, 62};
   REQUIRE( moves == expected );
 }
 
 TEST_CASE( "Move string", "[moves]" ) {
-  auto mv = chess::Move(squares::Position::C1,
-                        squares::Position::C3,
-                        chess::Piece::none, chess::Piece::WR,
-                        chess::MoveFlag::none);
+  auto mv = Move(Position::C1,
+                        Position::C3,
+                        Piece::none, Piece::WR,
+                        MoveFlag::none);
   std::stringstream ss;
   ss << mv;
   REQUIRE( ss.str() == "c1c3r" );
@@ -181,7 +180,7 @@ TEST_CASE( "Move string", "[moves]" ) {
 
 /// Utility function to check move count for a given FEN string.
 void check_move_count(std::string_view fen, long num_moves) {
-  auto b = chess::Board(fen);
+  auto b = Board(fen);
 
   auto ml = b.generate_all_moves();
   REQUIRE( ml.moves.size() == num_moves );
@@ -205,7 +204,7 @@ TEST_CASE( "Castling", "[movegen]" ) {
 }
 
 TEST_CASE( "Benchmark move generation", "[!benchmark][movegen]" ) {
-  auto b = chess::Board();
+  auto b = Board();
 
   BENCHMARK("movegen") {
     return b.generate_all_moves();
@@ -214,7 +213,7 @@ TEST_CASE( "Benchmark move generation", "[!benchmark][movegen]" ) {
 
 
 TEST_CASE( "Perft init 3", "[perft]" ) {
-  auto b = chess::Board();
+  auto b = Board();
   auto count = b.perft(3);
   REQUIRE( count == 8902 );
 }
@@ -222,7 +221,7 @@ TEST_CASE( "Perft init 3", "[perft]" ) {
 
 TEST_CASE( "Perft fen 2", "[perft]" ) {
   const auto fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
-  auto b = chess::Board(fen);
+  auto b = Board(fen);
   auto count = b.perft(2);
   REQUIRE( count == 2039 );
 }
@@ -233,7 +232,7 @@ void perft_test_line(const std::string& line, int max_depth) {
   auto items = utils::split_string(line, ';');
   auto fen = items.front();
   items.erase(items.begin());
-  auto b = chess::Board(fen);
+  auto b = Board(fen);
 
   for (auto& entry : items) {
     std::stringstream ss(entry);
@@ -266,7 +265,7 @@ TEST_CASE( "Perft all", "[.perftsuite]" ) {
 // results can be compared against a working program to find a problematic move.
 TEST_CASE( "Debug perft", "[.perftdebug]" ) {
   auto fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
-  auto b = chess::Board(fen);
+  auto b = Board(fen);
   const int depth = 3;
 
   auto move_list = b.generate_all_moves();
@@ -281,34 +280,30 @@ TEST_CASE( "Debug perft", "[.perftdebug]" ) {
 
 
 TEST_CASE( "Game not over at start", "[is_over]" ) {
-  auto b = chess::Board();
+  auto b = Board();
   REQUIRE( ! b.is_over() );
 }
 
 
 TEST_CASE( "Draw by repetition", "[is_over]" ) {
-  auto b = chess::Board();
+  auto b = Board();
 
   for (int i=0; i<2; ++i) {
-    b.make_move(chess::Move(squares::Position::G1,
-                            squares::Position::F3));
-    b.make_move(chess::Move(squares::Position::B8,
-                            squares::Position::C6));
-    b.make_move(chess::Move(squares::Position::F3,
-                            squares::Position::G1));
-    b.make_move(chess::Move(squares::Position::C6,
-                            squares::Position::B8));
+    b.make_move(Move(Position::G1, Position::F3));
+    b.make_move(Move(Position::B8, Position::C6));
+    b.make_move(Move(Position::F3, Position::G1));
+    b.make_move(Move(Position::C6, Position::B8));
   }
   REQUIRE( b.is_over() );
-  REQUIRE( b.winner().value() == chess::Color::both );
+  REQUIRE( b.winner().value() == Color::both );
 }
 
 
 TEST_CASE( "Test encoder", "[encoder]" ) {
-  auto b = chess::Board();
+  auto b = Board();
   zero::SimpleEncoder encoder;
 
-  b.make_move(chess::Move(squares::Position::G1, squares::Position::F3));
+  b.make_move(Move(Position::G1, Position::F3));
 
   auto tensor = encoder.encode(b);
   // std::cout << tensor << std::endl;

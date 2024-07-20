@@ -131,10 +131,10 @@ namespace chess {
       if (mv.is_pawn_start()) {
         if (side == Color::white) {
           en_pas = from + 8;
-          assert(en_pas/8 == squares::RANK_3);
+          assert(en_pas/8 == RANK_3);
         } else {
           en_pas = from - 8;
-          assert(en_pas/8 == squares::RANK_6);
+          assert(en_pas/8 == RANK_6);
         }
         hash_en_pas();
       }

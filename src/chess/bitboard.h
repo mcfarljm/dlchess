@@ -7,9 +7,6 @@
 
 #include "squares.h"
 
-using squares::Square;
-
-
 namespace chess {
 
   struct Bitboard;

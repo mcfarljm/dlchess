@@ -6,7 +6,6 @@
 #include "game_moves.h"
 
 namespace chess {
-  using squares::Square;
 
   struct MoveList {
     std::vector<Move> moves;

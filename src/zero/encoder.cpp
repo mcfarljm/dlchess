@@ -1,6 +1,6 @@
 #include "encoder.h"
 
-using squares::GRID_SIZE;
+using chess::GRID_SIZE;
 
 
 namespace zero {
@@ -13,7 +13,7 @@ namespace zero {
     // First 12 planes encode piece occupation
     for (int piece_idx=0; piece_idx<chess::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
       for (auto sq : b.bitboards[static_cast<int>(piece_idx)]) {
-        auto coords = squares::sq_to_rf(sq);
+        auto coords = chess::sq_to_rf(sq);
         board_tensor.at({0, piece_idx, coords[0], coords[1]}) = 1.0;
       }
     }
@@ -45,8 +45,8 @@ namespace zero {
     board_tensor.fill_channel(0, 20, b.fifty_move);
 
     // En passant
-    if (en_passant_ && b.en_pas != Position::none) {
-      auto coords = squares::sq_to_rf(b.en_pas);
+    if (en_passant_ && b.en_pas != chess::Position::none) {
+      auto coords = chess::sq_to_rf(b.en_pas);
       board_tensor.at({0, 21, coords[0], coords[1]}) = 1.0;
     }
 
@@ -66,7 +66,7 @@ namespace zero {
 
     auto moves = b.generate_legal_moves();
     for (auto& mv : moves) {
-      auto from_rank_file = squares::sq_to_rf(mv.from);
+      auto from_rank_file = chess::sq_to_rf(mv.from);
       int plane;
       auto delta = mv.to - mv.from;
       if (b.pieces[mv.from].is_knight()) {
