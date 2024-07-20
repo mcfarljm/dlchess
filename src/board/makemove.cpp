@@ -75,7 +75,7 @@ namespace chess {
     bb_sides[static_cast<int>(Color::both)].set_bit(to);
   }
 
-  bool Board::make_move(game_moves::Move mv) {
+  bool Board::make_move(chess::Move mv) {
     assert(check());
 
     auto from = mv.from;

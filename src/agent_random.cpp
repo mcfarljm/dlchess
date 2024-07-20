@@ -2,7 +2,7 @@
 #include "myrand.h"
 
 
-using game_moves::Move;
+using chess::Move;
 using chess::Board;
 
 Move RandomAgent::select_move(const Board& b) {

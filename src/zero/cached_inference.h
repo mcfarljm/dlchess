@@ -10,7 +10,8 @@
 
 namespace zero {
 
-  using namespace game_moves;
+  // Todo: remove using.
+  using namespace chess;
 
   using priors_type = std::unordered_map<Move, float, MoveHash>;
 

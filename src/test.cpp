@@ -170,10 +170,10 @@ TEST_CASE( "King moves", "[attacks]" ) {
 }
 
 TEST_CASE( "Move string", "[moves]" ) {
-  auto mv = game_moves::Move(squares::Position::C1,
-                             squares::Position::C3,
-                             Piece::none, Piece::WR,
-                             game_moves::MoveFlag::none);
+  auto mv = chess::Move(squares::Position::C1,
+                        squares::Position::C3,
+                        Piece::none, Piece::WR,
+                        chess::MoveFlag::none);
   std::stringstream ss;
   ss << mv;
   REQUIRE( ss.str() == "c1c3r" );
@@ -290,14 +290,14 @@ TEST_CASE( "Draw by repetition", "[is_over]" ) {
   auto b = chess::Board();
 
   for (int i=0; i<2; ++i) {
-    b.make_move(game_moves::Move(squares::Position::G1,
-                                 squares::Position::F3));
-    b.make_move(game_moves::Move(squares::Position::B8,
-                                 squares::Position::C6));
-    b.make_move(game_moves::Move(squares::Position::F3,
-                                 squares::Position::G1));
-    b.make_move(game_moves::Move(squares::Position::C6,
-                                 squares::Position::B8));
+    b.make_move(chess::Move(squares::Position::G1,
+                            squares::Position::F3));
+    b.make_move(chess::Move(squares::Position::B8,
+                            squares::Position::C6));
+    b.make_move(chess::Move(squares::Position::F3,
+                            squares::Position::G1));
+    b.make_move(chess::Move(squares::Position::C6,
+                            squares::Position::B8));
   }
   REQUIRE( b.is_over() );
   REQUIRE( b.winner().value() == Color::both );
@@ -308,8 +308,7 @@ TEST_CASE( "Test encoder", "[encoder]" ) {
   auto b = chess::Board();
   zero::SimpleEncoder encoder;
 
-  b.make_move(game_moves::Move(squares::Position::G1,
-                               squares::Position::F3));
+  b.make_move(chess::Move(squares::Position::G1, squares::Position::F3));
 
   auto tensor = encoder.encode(b);
   // std::cout << tensor << std::endl;

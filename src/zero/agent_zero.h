@@ -15,7 +15,7 @@
 
 namespace zero {
 
-  using namespace game_moves;
+  using namespace chess;
 
   float value_to_centipawns(float val);
 

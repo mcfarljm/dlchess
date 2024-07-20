@@ -4,7 +4,7 @@
 #include "board.h"
 #include "piece_moves.h"
 
-using game_moves::MoveFlag;
+using chess::MoveFlag;
 
 namespace movegen {
   constexpr Piece white_promotion_pieces[] = {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
@@ -180,10 +180,10 @@ namespace chess {
     return move_list;
   }
 
-  std::vector<game_moves::Move> Board::generate_legal_moves() const {
+  std::vector<chess::Move> Board::generate_legal_moves() const {
     auto move_list = generate_all_moves();
     auto board_copy = *this;
-    std::vector<game_moves::Move> moves;
+    std::vector<chess::Move> moves;
     for (auto& mv : move_list.moves) {
       if (! board_copy.make_move(mv))
         continue;

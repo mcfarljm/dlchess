@@ -6,7 +6,7 @@
 #include "../squares.h"
 #include "../pieces.h"
 
-namespace game_moves {
+namespace chess {
 
   using squares::Square;
   using pieces::Piece;

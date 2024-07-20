@@ -6,7 +6,7 @@
 
 class RandomAgent : public Agent {
 public:
-  game_moves::Move select_move(const chess::Board& b);
+  chess::Move select_move(const chess::Board& b);
 };
 
 
