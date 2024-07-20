@@ -16,6 +16,7 @@
 
 using namespace zero;
 using namespace utils;
+using chess::Color;
 
 
 std::unique_ptr<Agent> load_zero_agent(const std::string network_path,

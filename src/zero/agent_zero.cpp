@@ -6,6 +6,12 @@
 #include "../utils.h"
 
 
+using chess::Board;
+using chess::Move;
+using chess::MoveHash;
+using chess::Color;
+
+
 namespace zero {
 
   float SearchInfo::compute_cpuct(int N) const {

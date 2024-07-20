@@ -15,8 +15,6 @@
 
 namespace zero {
 
-  using namespace chess;
-
   float value_to_centipawns(float val);
 
   class Branch {
@@ -48,9 +46,9 @@ namespace zero {
     chess::Board game_board;
 
     std::weak_ptr<ZeroNode> parent;
-    std::optional<Move> last_move;
-    std::unordered_map<Move, std::shared_ptr<ZeroNode>, MoveHash> children;
-    std::unordered_map<Move, Branch, MoveHash> branches;
+    std::optional<chess::Move> last_move;
+    std::unordered_map<chess::Move, std::shared_ptr<ZeroNode>, chess::MoveHash> children;
+    std::unordered_map<chess::Move, Branch, chess::MoveHash> branches;
     // Value from neural net, or true terminal value.
     float value;
     int total_visit_count = 1;
@@ -59,25 +57,25 @@ namespace zero {
     bool terminal;
 
     ZeroNode(const chess::Board& game_board, float value,
-             const std::unordered_map<Move, float, MoveHash>& priors,
+             const std::unordered_map<chess::Move, float, chess::MoveHash>& priors,
              std::weak_ptr<ZeroNode> parent,
-             std::optional<Move> last_move);
+             std::optional<chess::Move> last_move);
 
-    void add_child(Move move, std::shared_ptr<ZeroNode> child) {
+    void add_child(chess::Move move, std::shared_ptr<ZeroNode> child) {
       children.emplace(move, child);
     }
 
-    void record_visit(Move m, float val);
+    void record_visit(chess::Move m, float val);
 
     float get_fpu() const;
-    float expected_value(Move m, float fpu) const;
+    float expected_value(chess::Move m, float fpu) const;
     float get_visited_policy() const;
 
-    float prior(Move m) const {
+    float prior(chess::Move m) const {
       return branches.find(m)->second.prior;
     }
 
-    int visit_count(Move m) const {
+    int visit_count(chess::Move m) const {
       auto it = branches.find(m);
       if (it != branches.end())
         return it->second.visit_count;
@@ -171,7 +169,7 @@ namespace zero {
       model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.policy_softmax_temp, info.disable_underpromotion);
     }
 
-    Move select_move(const chess::Board&);
+    chess::Move select_move(const chess::Board&);
 
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
@@ -186,10 +184,10 @@ namespace zero {
 
   private:
     std::shared_ptr<ZeroNode> create_node(const chess::Board& b,
-                                          std::optional<Move> move = std::nullopt,
+                                          std::optional<chess::Move> move = std::nullopt,
                                           std::weak_ptr<ZeroNode> parent = std::weak_ptr<ZeroNode>());
-    void add_noise_to_priors(std::unordered_map<Move, float, MoveHash>& priors) const;
-    Move select_branch(const ZeroNode& node) const;
+    void add_noise_to_priors(std::unordered_map<chess::Move, float, chess::MoveHash>& priors) const;
+    chess::Move select_branch(const ZeroNode& node) const;
     void debug_select_branch(const ZeroNode& node, int) const;
   };
 
