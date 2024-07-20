@@ -3,10 +3,12 @@
 
 #include <optional>
 #include <array>
+#include <algorithm>
 
 #include <onnxruntime_cxx_api.h>
 
 #include "tensor.h"
+#include "encoder.h" // PRIOR_SHAPE
 
 
 namespace zero {

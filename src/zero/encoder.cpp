@@ -6,7 +6,8 @@ using squares::GRID_SIZE;
 namespace zero {
   
   Tensor<float> SimpleEncoder::encode(const board::Board& b) const {
-    const std::vector<int64_t> board_tensor_shape = {1, 21, GRID_SIZE, GRID_SIZE};
+    const int num_planes = en_passant_ ? 22 : 21;
+    const std::vector<int64_t> board_tensor_shape = {1, num_planes, GRID_SIZE, GRID_SIZE};
     auto board_tensor = Tensor<float>(board_tensor_shape);
 
     // First 12 planes encode piece occupation
@@ -42,6 +43,12 @@ namespace zero {
 
     // No progress count
     board_tensor.fill_channel(0, 20, static_cast<float>(b.fifty_move));
+
+    // En passant
+    if (en_passant_ && b.en_pas != Position::none) {
+      auto coords = squares::sq_to_rf(b.en_pas);
+      board_tensor.at({0, 21, coords[0], coords[1]}) = 1.0;
+    }
 
     return board_tensor;
   }

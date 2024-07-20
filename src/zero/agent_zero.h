@@ -8,7 +8,7 @@
 
 #include "encoder.h"
 #include "experience.h"
-#include "inference.h"
+#include "cached_inference.h"
 #include "../agent_base.h"
 #include "../utils.h"
 #include "../time_management.h"
@@ -128,6 +128,8 @@ namespace zero {
     bool have_time_limit = false;
     float time_limit_ms;
 
+    int nn_cache_size = 100000;
+
     /// Set search time and start counting.
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
@@ -144,17 +146,19 @@ namespace zero {
     }
   };
 
+
   class ZeroAgent : public Agent {
 
     // Concentration parameter for dirichlet noise:
     constexpr static double DIRICHLET_CONCENTRATION = 0.03;
     constexpr static float DIRICHLET_WEIGHT = 0.25;
 
-    std::shared_ptr<InferenceModel> model;
-
-    std::shared_ptr<Encoder> encoder;
+    std::shared_ptr<CachedInferenceModel> model_;
+    std::shared_ptr<Encoder> encoder_;
 
     std::shared_ptr<ExperienceCollector> collector;
+
+    int num_cache_hits_ = 0;
 
   public:
     SearchInfo info;
@@ -163,7 +167,9 @@ namespace zero {
     ZeroAgent(std::shared_ptr<InferenceModel> model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      model(std::move(model)), encoder(std::move(encoder)), info(std::move(info)) {}
+      encoder_(std::move(encoder)), info(std::move(info)) {
+      model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.policy_softmax_temp, info.disable_underpromotion);
+    }
 
     Move select_move(const board::Board&) override;
 

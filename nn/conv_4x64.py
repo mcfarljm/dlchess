@@ -93,7 +93,8 @@ def count_parameters(model):
 @click.option('-o', '--output', default='conv_4x64.pt')
 @click.option('-f', '--force', is_flag=True, help='overwrite')
 @click.option('-i', '--input', help='input file with model state')
-def main(output, force, input):
+@click.option('-v', '--encoding-version', default=1, show_default=True)
+def main(output, force, input, encoding_version):
     if not output.endswith('.pt'):
         output += '.pt'
     if not force:
@@ -103,7 +104,7 @@ def main(output, force, input):
             raise ValueError('.onnx output exists')
 
     grid_size = 8
-    encoder_channels = 21
+    encoder_channels = 21 if encoding_version == 0 else 22
     model = ChessNet(in_channels=encoder_channels)
     if input is not None:
         model.load_state_dict(torch.load(input))
@@ -111,25 +112,27 @@ def main(output, force, input):
         torch.save(model.state_dict(), output)
     model.eval()
 
-    with torch.no_grad():
-        # Noting that online examples with ONNX export do set requires_grad=True
-        # on the sample input, but not sure if it is necessary.
-        X = torch.rand(1, encoder_channels, grid_size, grid_size,
-                       requires_grad=True, device=device)
-        # Note that the exported model has fixed shapes for input and output.
-        # This should be OK as long as inference is done in batches of 1.  If
-        # needed, we can add a dynamic_axes option to make the first axis (of
-        # input and outputs) dynamic.
-        torch.onnx.export(model, X,
-                          output.replace('.pt', '.onnx'),
-                          input_names=['state'],
-                          output_names=['policy', 'value'],
-                          )
-        # print(torch.onnx.export_to_pretty_string(
-        #     model, X,
-        #     input_names=['state'],
-        #     output_names=['policy', 'value'],
-        # ))
+    # Noting that online examples with ONNX export do set requires_grad=True
+    # on the sample input, but not sure if it is necessary.
+    X = torch.rand(1, encoder_channels, grid_size, grid_size,
+                   requires_grad=True, device=device)
+    # Note that the exported model has fixed shapes for input and output.
+    # This should be OK as long as inference is done in batches of 1.  If
+    # needed, we can add a dynamic_axes option to make the first axis (of
+    # input and outputs) dynamic.
+    torch.onnx.export(model, X,
+                      output.replace('.pt', '.onnx'),
+                      input_names=['state'],
+                      output_names=['policy', 'value'],
+                      # dynamic_axes={'state' : {0 : 'batch_size'},    # variable length axes
+                      #               'policy' : {0 : 'batch_size'},
+                      #               'value': {0: 'batch_size'}}
+                      )
+    # print(torch.onnx.export_to_pretty_string(
+    #     model, X,
+    #     input_names=['state'],
+    #     output_names=['policy', 'value'],
+    # ))
 
 
 if __name__ == '__main__':

@@ -33,8 +33,11 @@ int main(int argc, const char* argv[]) {
     // work and will not raise an error.
     ("noise", "Include Dirichlet noise", cxxopts::value<bool>()->default_value("true"))
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("1.0"))
-    ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("3.0"))
+    ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.2"))
     ("e,save-every", "Interval at which to save experience", cxxopts::value<int>()->default_value("100"))
+    // Todo: should be able to parse input shape from onnx model and determine this automatically.
+    ("encoding-version", "Version of network input encoding", cxxopts::value<int>()->default_value("1"))
+    ("cache-size", "Max num elements in network cache", cxxopts::value<int>()->default_value("100000"))
     ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
@@ -71,6 +74,8 @@ int main(int argc, const char* argv[]) {
   auto num_games = args["num-games"].as<int>();
   auto max_moves = args["max-moves"].as<int>();
   auto save_interval = args["save-every"].as<int>();
+  auto encoding_version = args["encoding-version"].as<int>();
+  auto cache_size = args["cache-size"].as<int>();
   auto verbosity = args["verbosity"].as<int>();
   auto debug = args["debug"].as<int>();
   auto add_noise = args["noise"].as<bool>();
@@ -113,13 +118,15 @@ int main(int argc, const char* argv[]) {
   zero::SearchInfo info;
   info.num_rounds = num_rounds;
   info.num_visits = num_visits;
-  info.num_randomized_moves = 30;
+  info.num_randomized_moves = 10000;
   info.add_noise = add_noise;
   info.policy_softmax_temp = policy_softmax_temp;
   info.cpuct = cpuct;
+  info.fpu_value = 0.0;
+  info.nn_cache_size = cache_size;
   info.debug = debug;
 
-  auto encoder = std::make_shared<SimpleEncoder>();
+  auto encoder = std::make_shared<SimpleEncoder>(encoding_version);
 
   auto collector = std::make_shared<ExperienceCollector>();
 

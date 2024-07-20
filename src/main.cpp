@@ -24,6 +24,8 @@ int main(int argc, char* argv[]) {
     ("fpu-absolute", "Use FPU absolute strategy")
     // Note: Disabling bool must be done via --opt=false
     ("time-manager", "Use time manager", cxxopts::value<bool>()->default_value("true"))
+    // Todo: should be able to parse input shape from onnx model and determine this automatically.
+    ("encoding-version", "Version of network input encoding", cxxopts::value<int>()->default_value("1"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("h,help", "Print usage")
@@ -63,6 +65,7 @@ int main(int argc, char* argv[]) {
   auto fpu_value = args["fpu-value"].as<float>();
   auto fpu_absolute = args["fpu-absolute"].as<bool>();
   auto time_manager = args["time-manager"].as<bool>();
+  auto encoding_version = args["encoding-version"].as<int>();
   auto debug = args["debug"].as<int>();
 
   std::optional<int> num_threads_option;
@@ -73,7 +76,7 @@ int main(int argc, char* argv[]) {
 
   auto model = std::make_shared<zero::InferenceModel>(args["network"].as<std::string>().c_str(), num_threads_option);
 
-  auto encoder = std::make_shared<zero::SimpleEncoder>();
+  auto encoder = std::make_shared<zero::SimpleEncoder>(encoding_version);
   zero::SearchInfo info;
   info.num_rounds = num_rounds;
   info.num_randomized_moves = num_randomized_moves;
