@@ -4,14 +4,14 @@
 #include <array>
 
 
-std::pair<Color, int> simulate_game(Agent* white_agent,
-                                    Agent* black_agent,
-                                    int verbosity,
-                                    int max_moves) {
+std::pair<chess::Color, int> simulate_game(Agent* white_agent,
+                                           Agent* black_agent,
+                                           int verbosity,
+                                           int max_moves) {
   std::array<Agent*, 2> agents {white_agent, black_agent};
   int move_count = 0;
 
-  auto b = board::Board();
+  auto b = chess::Board();
 
   while (move_count < max_moves && ! b.is_over()) {
     if (verbosity >= 3)
@@ -25,11 +25,11 @@ std::pair<Color, int> simulate_game(Agent* white_agent,
     ++move_count;
   }
 
-  Color winner;
+  chess::Color winner;
 
   if (move_count >= max_moves) {
     // Assign a draw if move count exceeded.
-    winner = Color::both;
+    winner = chess::Color::both;
   }
   else {
     winner = b.winner().value(); // NOLINT

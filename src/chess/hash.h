@@ -6,18 +6,16 @@
 #include <cstdint>
 #include <array>
 
-#include "../squares.h"
-#include "../pieces.h"
+#include "squares.h"
+#include "pieces.h"
 
 
-namespace board {
-
-  using squares::BOARD_SQ_NUM;
+namespace chess {
 
   class Hasher {
   public:
     // Hashing also includes EMPTY pieces
-    std::array<std::array<uint64_t, BOARD_SQ_NUM>, pieces::NUM_PIECE_TYPES_BOTH + 1> piece_keys;
+    std::array<std::array<uint64_t, BOARD_SQ_NUM>, NUM_PIECE_TYPES_BOTH + 1> piece_keys;
     uint64_t side_key;
     std::array<uint64_t, 16> castle_keys;
 

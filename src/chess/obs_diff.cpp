@@ -5,8 +5,9 @@
 
 
 namespace {
-  using squares::u64;
-  using squares::Square;
+
+  using chess::u64;
+  using chess::Square;
 
   u64 rank_mask(Square sq) {
     return 0xffLL << (sq & 56);
@@ -89,7 +90,7 @@ namespace {
 
 };
 
-namespace obs_diff {
+namespace chess {
 
   u64 get_line_attacks(u64 occ, int direction, Square sq) {
     auto os_mask = OBS_DIFF_MASKS[direction][sq];

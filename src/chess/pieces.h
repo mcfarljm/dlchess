@@ -4,7 +4,7 @@
 #include <iostream>
 #include <array>
 
-namespace pieces {
+namespace chess {
 
   enum class Color {
     white,

@@ -2,7 +2,7 @@
 
 namespace zero {
 
-  const NetworkOutput& CachedInferenceModel::operator() (const board::Board& game_board,
+  const NetworkOutput& CachedInferenceModel::operator() (const chess::Board& game_board,
                                          bool& cache_hit) {
     // Check cache:
 

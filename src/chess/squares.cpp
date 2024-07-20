@@ -1,6 +1,6 @@
 #include "squares.h"
 
-namespace squares {
+namespace chess {
 
   Square fr_to_sq(FileRank file, FileRank rank) {
     return file + rank * 8;

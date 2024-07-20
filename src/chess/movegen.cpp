@@ -4,14 +4,12 @@
 #include "board.h"
 #include "piece_moves.h"
 
-using game_moves::MoveFlag;
-
-namespace movegen {
+namespace chess {
   constexpr std::array<Piece, 4> white_promotion_pieces {Piece::WN, Piece::WB, Piece::WR, Piece::WQ};
   constexpr std::array<Piece, 4> black_promotion_pieces {Piece::BN, Piece::BB, Piece::BR, Piece::BQ};
 
   void MoveList::add_white_pawn_move(Square from, Square to, Piece capture) {
-    if (from / 8 == squares::RANK_7) {
+    if (from / 8 == RANK_7) {
       // Add a version of the move with each possible promotion
       for (auto promote : white_promotion_pieces) {
         moves.emplace_back(from, to, capture, promote, MoveFlag::none);
@@ -22,7 +20,7 @@ namespace movegen {
   }
 
   void MoveList::add_black_pawn_move(Square from, Square to, Piece capture) {
-    if (from / 8 == squares::RANK_2) {
+    if (from / 8 == RANK_2) {
       // Add a version of the move with each possible promotion
       for (auto promote : black_promotion_pieces) {
         moves.emplace_back(from, to, capture, promote, MoveFlag::none);
@@ -33,15 +31,15 @@ namespace movegen {
   }
 };
 
-namespace board {
-  movegen::MoveList Board::generate_all_moves() const {
-    movegen::MoveList move_list;
+namespace chess {
+  MoveList Board::generate_all_moves() const {
+    MoveList move_list;
     move_list.moves.reserve(128);
 
     if (side == Color::white) {
       // Pawn non-captures:
       auto to_step1 = (bitboards[static_cast<int>(Piece::WP)] << 8) & (~ bb_sides[static_cast<int>(Color::both)]);
-      auto to_step2 = (to_step1 << 8) & bitboard::BB_RANK_4 & (~ bb_sides[static_cast<int>(Color::both)]);
+      auto to_step2 = (to_step1 << 8) & BB_RANK_4 & (~ bb_sides[static_cast<int>(Color::both)]);
 
       for (auto to64 : Bitboard(to_step1))
         move_list.add_white_pawn_move(to64 - 8, to64, Piece::none);
@@ -49,8 +47,8 @@ namespace board {
         move_list.moves.emplace_back(to64 - 2*8, to64, Piece::none, Piece::none, MoveFlag::pawnstart);
 
       // Pawn captures:
-      auto to_cap_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_A) << 7) & bb_sides[static_cast<int>(Color::black)];
-      auto to_cap_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_H) << 9) & bb_sides[static_cast<int>(Color::black)];
+      auto to_cap_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_A) << 7) & bb_sides[static_cast<int>(Color::black)];
+      auto to_cap_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_H) << 9) & bb_sides[static_cast<int>(Color::black)];
       for (auto to64 : Bitboard(to_cap_left))
         move_list.add_white_pawn_move(to64 - 7, to64, pieces[to64]);
       for (auto to64 : Bitboard(to_cap_right))
@@ -59,8 +57,8 @@ namespace board {
       // En passant captures:
       if (en_pas != Position::none) {
         auto ep_bb = Bitboard(1ULL << en_pas);
-        auto ep_to_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_A) << 7) & ep_bb;
-        auto ep_to_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ bitboard::BB_FILE_H) << 9) & ep_bb;
+        auto ep_to_left = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_A) << 7) & ep_bb;
+        auto ep_to_right = ((bitboards[static_cast<int>(Piece::WP)] & ~ BB_FILE_H) << 9) & ep_bb;
 
         for (auto to64 : Bitboard(ep_to_left))
           move_list.moves.emplace_back(to64 - 7, to64, Piece::none, Piece::none, MoveFlag::enpas);
@@ -88,7 +86,7 @@ namespace board {
 
       // Pawn non-captures:
       auto to_step1 = (bitboards[static_cast<int>(Piece::BP)] >> 8) & (~ bb_sides[static_cast<int>(Color::both)]);
-      auto to_step2 = (to_step1 >> 8) & bitboard::BB_RANK_5 & (~ bb_sides[static_cast<int>(Color::both)]);
+      auto to_step2 = (to_step1 >> 8) & BB_RANK_5 & (~ bb_sides[static_cast<int>(Color::both)]);
 
       for (auto to64 : Bitboard(to_step1))
         move_list.add_black_pawn_move(to64 + 8, to64, Piece::none);
@@ -96,8 +94,8 @@ namespace board {
         move_list.moves.emplace_back(to64 + 2*8, to64, Piece::none, Piece::none, MoveFlag::pawnstart);
 
       // Pawn captures:
-      auto to_cap_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_A) >> 9) & bb_sides[static_cast<int>(Color::white)];
-      auto to_cap_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_H) >> 7) & bb_sides[static_cast<int>(Color::white)];
+      auto to_cap_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_A) >> 9) & bb_sides[static_cast<int>(Color::white)];
+      auto to_cap_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_H) >> 7) & bb_sides[static_cast<int>(Color::white)];
       for (auto to64 : Bitboard(to_cap_left))
         move_list.add_black_pawn_move(to64 + 9, to64, pieces[to64]);
       for (auto to64 : Bitboard(to_cap_right))
@@ -106,8 +104,8 @@ namespace board {
       // En passant captures:
       if (en_pas != Position::none) {
         auto ep_bb = Bitboard(1ULL << en_pas);
-        auto ep_to_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_A) >> 9) & ep_bb;
-        auto ep_to_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ bitboard::BB_FILE_H) >> 7) & ep_bb;
+        auto ep_to_left = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_A) >> 9) & ep_bb;
+        auto ep_to_right = ((bitboards[static_cast<int>(Piece::BP)] & ~ BB_FILE_H) >> 7) & ep_bb;
 
         for (auto to64 : Bitboard(ep_to_left))
           move_list.moves.emplace_back(to64 + 9, to64, Piece::none, Piece::none, MoveFlag::enpas);
@@ -133,18 +131,18 @@ namespace board {
     }
 
     // Sliders
-    for (auto piece : pieces::sliders[static_cast<int>(side)]) {
+    for (auto piece : sliders[static_cast<int>(side)]) {
       for (auto sq : bitboards[piece.value]) {
         Bitboard attacks;
         switch (piece.value) {
         case Piece::WR: case Piece::BR:
-          attacks = piece_moves::get_rook_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          attacks = get_rook_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
         case Piece::WB: case Piece::BB:
-          attacks = piece_moves::get_bishop_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          attacks = get_bishop_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
         case Piece::WQ: case Piece::BQ:
-          attacks = piece_moves::get_queen_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
+          attacks = get_queen_attacks(sq, bb_sides[static_cast<int>(Color::both)]);
           break;
         default:
           throw std::runtime_error("unreachable");
@@ -158,14 +156,14 @@ namespace board {
     }
 
     // Non-sliders
-    for (auto piece : pieces::non_sliders[static_cast<int>(side)]) {
+    for (auto piece : non_sliders[static_cast<int>(side)]) {
       for (auto sq : bitboards[piece.value]) {
         auto bb = [=]() {
           switch(piece.value) {
           case Piece::WN: case Piece::BN:
-            return piece_moves::knight_moves[sq];
+            return knight_moves[sq];
           case Piece::WK: case Piece::BK:
-            return piece_moves::king_moves[sq];
+            return king_moves[sq];
           default:
             throw std::runtime_error("unreachable");
           }
@@ -182,10 +180,10 @@ namespace board {
     return move_list;
   }
 
-  std::vector<game_moves::Move> Board::generate_legal_moves() const {
+  std::vector<Move> Board::generate_legal_moves() const {
     auto move_list = generate_all_moves();
     auto board_copy = *this;
-    std::vector<game_moves::Move> moves;
+    std::vector<Move> moves;
     for (auto& mv : move_list.moves) {
       if (! board_copy.make_move(mv))
         continue;

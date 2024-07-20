@@ -6,6 +6,12 @@
 #include "../utils.h"
 
 
+using chess::Board;
+using chess::Move;
+using chess::MoveHash;
+using chess::Color;
+
+
 namespace zero {
 
   float SearchInfo::compute_cpuct(int N) const {
@@ -20,7 +26,7 @@ namespace zero {
   void SearchInfo::set_search_time(std::optional<int> move_time_ms,
                                    std::optional<int> time_left_ms,
                                    std::optional<int> inc_ms,
-                                   const board::Board& b) {
+                                   const chess::Board& b) {
     if (!time_manager)
       return;
 
@@ -71,7 +77,7 @@ namespace zero {
     return 111.714640912 * std::tan(1.5620688421 * value);
   }
 
-  ZeroNode::ZeroNode(const board::Board& game_board, float value,
+  ZeroNode::ZeroNode(const chess::Board& game_board, float value,
                      const std::unordered_map<Move, float, MoveHash>& priors,
                      std::weak_ptr<ZeroNode> parent,
                      std::optional<Move> last_move) :
@@ -123,7 +129,7 @@ namespace zero {
   }
 
 
-  Move ZeroAgent::select_move(const board::Board& game_board) {
+  Move ZeroAgent::select_move(const chess::Board& game_board) {
     const utils::Timer timer; // Could be moved into SearchInfo to expand access.
 
     // std::cerr << "In select move, prior move count: " << game_board.total_moves << std::endl;
@@ -301,7 +307,7 @@ namespace zero {
   }
 
 
-  std::shared_ptr<ZeroNode> ZeroAgent::create_node(const board::Board& game_board,
+  std::shared_ptr<ZeroNode> ZeroAgent::create_node(const chess::Board& game_board,
                                                    std::optional<Move> move,
                                                    const std::weak_ptr<ZeroNode>& parent) {
     bool cache_hit = false;

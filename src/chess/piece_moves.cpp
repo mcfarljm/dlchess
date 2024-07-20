@@ -1,9 +1,7 @@
 #include "piece_moves.h"
-#include "../obs_diff.h"
+#include "obs_diff.h"
 
-using obs_diff::get_line_attacks;
-
-namespace piece_moves {
+namespace chess {
 
   Bitboard get_rook_attacks(Square sq, Bitboard occ_bb) {
     auto occ = occ_bb.to_ullong();
@@ -103,13 +101,13 @@ namespace piece_moves {
       // Left captures
       Bitboard bb;
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_A) << 7);
+      bb = Bitboard((bb & ~ BB_FILE_A) << 7);
       bitboards[sq] |= bb;
 
       // Right captures
       bb.reset();
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_H) << 9);
+      bb = Bitboard((bb & ~ BB_FILE_H) << 9);
       bitboards[sq] |= bb;
     }
     return bitboards;
@@ -121,13 +119,13 @@ namespace piece_moves {
       // Left captures
       Bitboard bb;
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_A) >> 9);
+      bb = Bitboard((bb & ~ BB_FILE_A) >> 9);
       bitboards[sq] |= bb;
 
       // Right captures
       bb.reset();
       bb.set_bit(sq);
-      bb = Bitboard((bb & ~ bitboard::BB_FILE_H) >> 7);
+      bb = Bitboard((bb & ~ BB_FILE_H) >> 7);
       bitboards[sq] |= bb;
     }
     return bitboards;

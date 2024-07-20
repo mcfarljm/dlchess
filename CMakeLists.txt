@@ -48,17 +48,17 @@ set(sources
   src/utils.cpp
   src/version.cpp
   src/myrand.cpp
-  src/squares.cpp
-  src/bitboard.cpp
-  src/pieces.cpp
-  src/board/board.cpp
-  src/obs_diff.cpp
-  src/board/piece_moves.cpp
-  src/board/game_moves.cpp
-  src/board/movegen.cpp
-  src/board/makemove.cpp
-  src/board/perft.cpp
-  src/board/io.cpp
+  src/chess/squares.cpp
+  src/chess/bitboard.cpp
+  src/chess/pieces.cpp
+  src/chess/board.cpp
+  src/chess/obs_diff.cpp
+  src/chess/piece_moves.cpp
+  src/chess/game_moves.cpp
+  src/chess/movegen.cpp
+  src/chess/makemove.cpp
+  src/chess/perft.cpp
+  src/chess/io.cpp
 
   src/agent_random.cpp
   src/simulation.cpp
@@ -84,9 +84,6 @@ target_link_libraries(dlchesslib onnxruntime)
 
 add_executable(tests src/test.cpp)
 target_link_libraries(tests PRIVATE dlchesslib Catch2::Catch2WithMain)
-
-add_executable(evaluate src/evaluate.cpp)
-target_link_libraries(evaluate PRIVATE dlchesslib cxxopts)
 
 add_executable(selfplay src/selfplay.cpp)
 target_link_libraries(selfplay PRIVATE dlchesslib cxxopts)

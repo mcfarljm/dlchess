@@ -10,9 +10,7 @@
 
 namespace zero {
 
-  using namespace game_moves;
-
-  using priors_type = std::unordered_map<Move, float, MoveHash>;
+  using priors_type = std::unordered_map<chess::Move, float, chess::MoveHash>;
 
   struct NetworkOutput {
     priors_type move_priors;
@@ -73,7 +71,7 @@ namespace zero {
     }
 
     // Get a neural network result, possibly using the cache.
-    const NetworkOutput& operator() (const board::Board& game_board, bool& cache_hit);
+    const NetworkOutput& operator() (const chess::Board& game_board, bool& cache_hit);
   };
 
 };

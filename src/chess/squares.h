@@ -5,7 +5,7 @@
 #include <string>
 #include <array>
 
-namespace squares {
+namespace chess {
 
   constexpr int BOARD_SQ_NUM = 64;
   constexpr int GRID_SIZE = 8;

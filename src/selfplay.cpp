@@ -8,13 +8,14 @@
 
 #include <cxxopts.hpp>
 
-#include "board/board.h"
+#include "chess/board.h"
 #include "zero/agent_zero.h"
 #include "simulation.h"
 #include "utils.h"
 
 using namespace zero;
 using namespace utils;
+using chess::Color;
 
 
 int main(int argc, const char* argv[]) {
