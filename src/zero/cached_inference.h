@@ -10,10 +10,7 @@
 
 namespace zero {
 
-  // Todo: remove using.
-  using namespace chess;
-
-  using priors_type = std::unordered_map<Move, float, MoveHash>;
+  using priors_type = std::unordered_map<chess::Move, float, chess::MoveHash>;
 
   struct NetworkOutput {
     priors_type move_priors;
