@@ -2,7 +2,7 @@
 #define PIECE_MOVES_H
 
 #include <array>
-#include "../bitboard.h"
+#include "bitboard.h"
 
 using bitboard::Bitboard;
 

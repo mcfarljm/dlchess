@@ -7,7 +7,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "bitboard.h"
+#include "chess/bitboard.h"
 #include "chess/board.h"
 #include "chess/piece_moves.h"
 #include "chess/game_moves.h"

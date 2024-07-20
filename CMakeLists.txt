@@ -47,7 +47,7 @@ add_library(dlchesslib SHARED
   src/version.cpp
   src/myrand.cpp
   src/squares.cpp
-  src/bitboard.cpp
+  src/chess/bitboard.cpp
   src/chess/pieces.cpp
   src/chess/board.cpp
   src/chess/obs_diff.cpp

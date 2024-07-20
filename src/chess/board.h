@@ -8,7 +8,7 @@
 #include <optional>
 
 #include "pieces.h"
-#include "../bitboard.h"
+#include "bitboard.h"
 #include "hash.h"
 #include "movegen.h"
 #include "game_moves.h"
