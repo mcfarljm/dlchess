@@ -18,7 +18,7 @@ namespace {
     std::cout << "uciok" << std::endl;
   }
 
-  void parse_go(std::string& line, const board::Board& b, Agent* agent) {
+  void parse_go(std::string& line, const chess::Board& b, Agent* agent) {
     std::optional<int> move_time_ms;
     std::optional<int> time_left_ms;
     std::optional<int> inc_ms;
@@ -51,19 +51,19 @@ namespace {
     std::cout << "bestmove " << mv << std::endl;
   }
 
-  board::Board parse_pos(std::string_view line) {
+  chess::Board parse_pos(std::string_view line) {
     auto slice = line.substr(9);
 
-    board::Board b = [&]() {
+    chess::Board b = [&]() {
       if (slice.rfind("startpos", 0) == 0)
-        return board::Board();
+        return chess::Board();
       else if (slice.rfind("fen", 0) == 0) {
         slice = slice.substr(4);
-        return board::Board(slice);
+        return chess::Board(slice);
       }
       else
         // Unexpected input, but just assume startpos
-        return board::Board();
+        return chess::Board();
     }();
 
     auto i = slice.find("moves");
@@ -106,7 +106,7 @@ namespace {
 namespace uci {
 
   void uci_loop(zero::ZeroAgent* agent) {
-    auto b = board::Board();
+    auto b = chess::Board();
 
     agent->info.game_mode = zero::GameMode::uci;
 

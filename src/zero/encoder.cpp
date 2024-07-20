@@ -5,7 +5,7 @@ using squares::GRID_SIZE;
 
 namespace zero {
   
-  Tensor<float> SimpleEncoder::encode(const board::Board& b) const {
+  Tensor<float> SimpleEncoder::encode(const chess::Board& b) const {
     const int num_planes = en_passant_ ? 22 : 21;
     const std::vector<int64_t> board_tensor_shape = {1, num_planes, GRID_SIZE, GRID_SIZE};
     auto board_tensor = Tensor<float>(board_tensor_shape);
@@ -58,7 +58,7 @@ namespace zero {
   // Given the board state, construct a map from legal moves to coordinates
   // associated with the tensor encoding.
   std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash>
-  decode_legal_moves(const board::Board& b) {
+  decode_legal_moves(const chess::Board& b) {
     constexpr int KNIGHT_BASE_PLANE = 56;
     constexpr int UNDERPROMOTION_BASE_PLANE = KNIGHT_BASE_PLANE + 8;
 

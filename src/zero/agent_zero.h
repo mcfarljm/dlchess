@@ -45,7 +45,7 @@ namespace zero {
   class ZeroNode {
 
   public:
-    board::Board game_board;
+    chess::Board game_board;
 
     std::weak_ptr<ZeroNode> parent;
     std::optional<Move> last_move;
@@ -58,7 +58,7 @@ namespace zero {
     float expected_value_ = 0.0;
     bool terminal;
 
-    ZeroNode(const board::Board& game_board, float value,
+    ZeroNode(const chess::Board& game_board, float value,
              const std::unordered_map<Move, float, MoveHash>& priors,
              std::weak_ptr<ZeroNode> parent,
              std::optional<Move> last_move);
@@ -134,7 +134,7 @@ namespace zero {
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
                          std::optional<int> inc_ms,
-                         const board::Board& b);
+                         const chess::Board& b);
 
   private:
     /// Assign the time limit and start the search timer.
@@ -171,12 +171,12 @@ namespace zero {
       model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.policy_softmax_temp, info.disable_underpromotion);
     }
 
-    Move select_move(const board::Board&);
+    Move select_move(const chess::Board&);
 
     void set_search_time(std::optional<int> move_time_ms,
                          std::optional<int> time_left_ms,
                          std::optional<int> inc_ms,
-                         const board::Board& b) {
+                         const chess::Board& b) {
       info.set_search_time(move_time_ms, time_left_ms, inc_ms, b);
     }
 
@@ -185,7 +185,7 @@ namespace zero {
     }
 
   private:
-    std::shared_ptr<ZeroNode> create_node(const board::Board& b,
+    std::shared_ptr<ZeroNode> create_node(const chess::Board& b,
                                           std::optional<Move> move = std::nullopt,
                                           std::weak_ptr<ZeroNode> parent = std::weak_ptr<ZeroNode>());
     void add_noise_to_priors(std::unordered_map<Move, float, MoveHash>& priors) const;

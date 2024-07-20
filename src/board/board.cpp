@@ -13,7 +13,7 @@ using piece_moves::black_pawn_attacks;
 using piece_moves::knight_moves;
 using piece_moves::king_moves;
 
-namespace board {
+namespace chess {
 
   const std::string_view START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 

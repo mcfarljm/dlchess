@@ -2,7 +2,7 @@
 
 #include "board.h"
 
-namespace board {
+namespace chess {
   std::optional<game_moves::Move> Board::parse_move_string(std::string_view str) {
     if (str.size() < 4)
       return std::nullopt;

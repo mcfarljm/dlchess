@@ -1,7 +1,7 @@
 #include <cassert>
 #include "board.h"
 
-namespace board {
+namespace chess {
 
   static const std::array<int, BOARD_SQ_NUM> CASTLE_PERM = {
     13, 15, 15, 15, 12, 15, 15, 14,

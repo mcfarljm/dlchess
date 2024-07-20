@@ -3,7 +3,7 @@
 
 
 using game_moves::Move;
-using board::Board;
+using chess::Board;
 
 Move RandomAgent::select_move(const Board& b) {
   auto candidates = b.generate_legal_moves();

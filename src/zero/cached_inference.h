@@ -73,7 +73,7 @@ namespace zero {
     }
 
     // Get a neural network result, possibly using the cache.
-    const NetworkOutput& operator() (const board::Board& game_board, bool& cache_hit);
+    const NetworkOutput& operator() (const chess::Board& game_board, bool& cache_hit);
   };
 
 };

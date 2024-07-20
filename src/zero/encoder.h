@@ -12,7 +12,7 @@ namespace zero {
 
   class Encoder {
   public:
-    virtual Tensor<float> encode(const board::Board&) const = 0;
+    virtual Tensor<float> encode(const chess::Board&) const = 0;
     /* virtual Move decode_move_index(int index) const = 0; */
   };
 
@@ -20,12 +20,12 @@ namespace zero {
     bool en_passant_;
   public:
     SimpleEncoder(int version=1) : en_passant_{version>0} {}
-    Tensor<float> encode(const board::Board&) const;
+    Tensor<float> encode(const chess::Board&) const;
     /* Move decode_move_index(int index) const; */
   };
 
   std::unordered_map<game_moves::Move, std::array<int,3>, game_moves::MoveHash>
-  decode_legal_moves(const board::Board&);
+  decode_legal_moves(const chess::Board&);
   extern const std::array<int, 3> PRIOR_SHAPE;
 
 };

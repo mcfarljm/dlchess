@@ -31,7 +31,7 @@ namespace castling {
 
 };
 
-namespace board {
+namespace chess {
 
   using squares::BOARD_SQ_NUM;
 

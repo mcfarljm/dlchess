@@ -33,7 +33,7 @@ namespace movegen {
   }
 };
 
-namespace board {
+namespace chess {
   movegen::MoveList Board::generate_all_moves() const {
     movegen::MoveList move_list;
     move_list.moves.reserve(128);

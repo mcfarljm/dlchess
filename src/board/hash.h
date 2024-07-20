@@ -9,7 +9,7 @@
 #include "../pieces.h"
 
 
-namespace board {
+namespace chess {
 
   using squares::BOARD_SQ_NUM;
 
