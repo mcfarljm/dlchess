@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <optional>
 
-#include "../pieces.h"
+#include "pieces.h"
 #include "../bitboard.h"
 #include "hash.h"
 #include "movegen.h"

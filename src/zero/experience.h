@@ -5,7 +5,7 @@
 #include <iterator>
 
 #include "tensor.h"
-#include "../pieces.h"
+#include "../chess/pieces.h"
 
 namespace zero {
 

@@ -6,7 +6,7 @@
 #include <cstdint>
 
 #include "../squares.h"
-#include "../pieces.h"
+#include "pieces.h"
 
 
 namespace chess {
