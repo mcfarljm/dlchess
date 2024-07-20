@@ -3,7 +3,7 @@
 
 #include "../squares.h"
 
-namespace obs_diff {
+namespace chess {
 
   squares::u64 get_line_attacks(squares::u64 occ, int direction, squares::Square sq);
 

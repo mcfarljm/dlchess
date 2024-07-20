@@ -5,7 +5,7 @@
 
 using squares::u64;
 
-namespace obs_diff {
+namespace chess {
 
   using squares::Square;
   class ObsDiffMask;
