@@ -165,7 +165,7 @@ namespace zero {
     ZeroAgent(const std::shared_ptr<InferenceModel>& model,
               std::shared_ptr<Encoder> encoder,
               SearchInfo info = SearchInfo()) :
-      encoder_(std::move(encoder)), info(info) {
+      encoder_(encoder), info(info) {
       model_ = std::make_shared<CachedInferenceModel>(model, encoder, info.nn_cache_size, info.policy_softmax_temp, info.disable_underpromotion);
     }
 
