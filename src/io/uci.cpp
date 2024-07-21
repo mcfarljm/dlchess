@@ -12,8 +12,6 @@ namespace {
     std::cout << "id name " << version::PROGRAM_NAME << std::endl;
     std::cout << "id author John McFarland" << std::endl;
 
-    // std::cout << std::endl;
-    // std::cout << "option name OwnBook type check default true" << std::endl;
     std::cout << "option name playouts type spin default 800 min 1 max 100000" << std::endl;
     std::cout << "option name noise type check default false" << std::endl;
 

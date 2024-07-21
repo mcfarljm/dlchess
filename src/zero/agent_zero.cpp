@@ -255,8 +255,6 @@ namespace zero {
       std::cout << "info string cache size: " << model_->cache_size() << std::endl;
     }
 
-    // Disable regular score output when debugging, as in xboard this prevents
-    // it from showing the debug output.  Is limiting to debug==0 still needed?
     if (info.game_mode == GameMode::uci) {
       std::cout << "info";
       std::cout << " depth " << static_cast<int>(cumulative_depth / round_number);
