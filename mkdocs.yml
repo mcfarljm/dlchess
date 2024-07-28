@@ -1,0 +1,48 @@
+site_name: dlchess
+repo_url: https://github.com/mcfarljm/dlchess
+repo_name: mcfarljm/dlchess
+copyright: Copyright &copy; 2024 John McFarland
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: teal
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.footer
+    - content.code.copy
+  icon:
+    logo: fontawesome/solid/chess-board
+
+nav:
+  - index.md
+  - Design:
+      - design/index.md
+      - design/chess-framework.md
+      - design/uci.md
+      - design/alpha-zero.md
+      - design/neural-network.md
+  - Training Runs: training-runs.md
+  - Sample Games: sample-games.md
+
+markdown_extensions:
+  - def_list
+  - md_in_html
+  - footnotes
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
