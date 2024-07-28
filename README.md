@@ -2,7 +2,7 @@
 
 DLChess is a small project that was used to test and investigate deep reinforcement learning for chess.  It implements an [AlphaZero](https://arxiv.org/abs/1712.01815)-style model that combines Monte Carlo Tree Search (MCTS) with a neural network for policy and value prediction.  The primary goal was to explore how strong the program could become using a relatively small neural network together with selfplay and training on modest hardware.
 
-The main training run involved 48,000 total self-play games, with training updates performed every 3,200 games.  The base of the neural network used four convolution blocks with 64 channels.  The resulting model plays at a strength just above beginner, probably in the 1000-1200 ELO range with 5,000 playouts (about 1 second per move).
+Refer to the [Documentation](https://mcfarljm.github.io/dlchess/) for more details about the [Design](https://mcfarljm.github.io/dlchess/design/), information about [Training Runs](https://mcfarljm.github.io/dlchess/training-runs/), as well as [Sample Games](https://mcfarljm.github.io/dlchess/sample-games/) played against the networks.
 
 The design and implementation of the algorithm follows the sister project [DLGo](https://github.com/mcfarljm/dlgo), which itself largely followed the book [Deep Learning and the Game of Go](https://www.manning.com/books/deep-learning-and-the-game-of-go).  The implementation of the chess board structure, rules, and move generation follows [Chareth](https://github.com/mcfarljm/chareth).
 
@@ -14,6 +14,7 @@ The code is written in C++.  The neural networks are defined in PyTorch and expo
   * Dirichlet random noise added to move priors at the root node of each search.
   * Accommodates both greedy and proportional move selection based on visit counts.
   * Monte Carlo Tree Search is done in serial, dynamic memory is used for tree expansion, and the search tree is reset for each move.
+  * Neural network results are cached using a fixed-size map with a first-in, first-out eviction policy.
 * Support for UCI communication protocol.
 * Complete framework for self-play and training.  The [`run_training.sh`](scripts/run_training.sh) Bash script is provided as an example for fully-automated and parallelized self-play and training updates.
 
