@@ -29,15 +29,3 @@ CMake and ONNX Runtime are required to build and run the engine using an existin
 * To run self-play training iterations, see the [`run_training.sh`](scripts/run_training.sh) example script, which provides a starting point.
 
 Refer also to the provided [`Dockerfile`](Dockerfile), which prepares a container with all tools necessary for training, selfplay, and evaluation using cutechess-cli.
-
-## Design
-
-The neural network is implemented using PyTorch.  During training, two versions of the network data are retained: (1) the network weights for use in subsequent training updates, and (2) an ONNX export for use in the C++ code.
-
-The experience data generated during self-play are stored in a simple raw binary format with accompanying metadata in json.  This makes it possible to efficiently load and take subsets of the data in Python during training using [`numpy.memmap`](https://numpy.org/doc/stable/reference/generated/numpy.memmap.html).
-
-For each game, the experience data include:
-
-* A tensor describing the input state before each move.
-* A tensor describing the MCTS visit counts associated with each move (used as the target for the policy network).
-* A tensor describing the reward (game outcome) associated with each move.

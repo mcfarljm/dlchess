@@ -101,21 +101,11 @@ The details of how the function works are a little bit involved and can be seen 
 reading the code in
 [encoder.cpp](https://github.com/mcfarljm/dlchess/blob/main/src/zero/encoder.cpp).
 
-## Training
-
-Training updates follow the approach outlined in the original AlphaZero work: the
-network weights are updated using gradient descent based on a loss function that sums
-over mean-squared error and cross-entropy losses.  In other words, the network's value
-output is trained to predict the game outcome measure, which is defined as -1 for a
-loss, 0 for a draw, and 1 for a win.  The network's policy output is trained to predict
-the Monte Carlo tree search visit probabilities.  The training code is found here:
-[train.py](https://github.com/mcfarljm/dlchess/blob/main/train/train.py).
-
 ## Inference Backend
 
-The design of `dlchess` is such that the neural network architecture and training code are
-written in Python using PyTorch, but the search is written in C++.  Thus, we need to be able to run
-network inference from C++.  The original version of `dlchess` used
+The design of `dlchess` is such that the neural network architecture and training code
+are written in Python using PyTorch, but the search is written in C++.  Thus, we need to
+be able to run network inference from C++.  The original version of `dlchess` used
 [TorchScript](https://pytorch.org/docs/stable/jit.html) to run inference from C++.
 However, the current version uses [ONNX Runtime](https://onnxruntime.ai/), which
 resulted in a roughly 2.5x total speedup in search throughput using CPUs.
@@ -163,3 +153,32 @@ significant.  For a trained network, the proportion of positions that can be fou
 the cache (even when using a modest cache size) may be 25% or more.  This value tends to
 be higher for trained networks, as untrained networks tend to have a less structured,
 more random search.
+
+## Experience Data
+
+The experience data generated during selfplay are stored in a simple raw binary format
+with accompanying metadata in json.  This makes it possible to efficiently load and take
+subsets of the data in Python during training using
+[`numpy.memmap`](https://numpy.org/doc/stable/reference/generated/numpy.memmap.html).
+
+For each game, the experience data include:
+
+* A tensor describing the input state before each move.
+* A tensor describing the MCTS visit counts associated with each move (used as the
+  target for the policy network).
+* A tensor describing the reward (game outcome) associated with each move.
+
+## Training
+
+Training updates follow the approach outlined in the original AlphaZero work: the
+network weights are updated using gradient descent based on a loss function that sums
+over mean-squared error and cross-entropy losses.  In other words, the network's value
+output is trained to predict the game outcome measure, which is defined as -1 for a
+loss, 0 for a draw, and 1 for a win.  The network's policy output is trained to predict
+the Monte Carlo tree search visit probabilities.  The training code is found here:
+[train.py](https://github.com/mcfarljm/dlchess/blob/main/train/train.py).
+
+Because training updates are implemented using PyTorch, training run sequences that
+iterate between selfplay and training updates retain two versions of the network data:
+(1) a PyTorch model state dict for use in subsequent training updates, and (2) an ONNX
+export for use in the C++ code.
