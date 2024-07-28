@@ -528,15 +528,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#training" class="md-nav__link">
-    <span class="md-ellipsis">
-      Training
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#inference-backend" class="md-nav__link">
     <span class="md-ellipsis">
       Inference Backend
@@ -549,6 +540,24 @@
   <a href="#caching" class="md-nav__link">
     <span class="md-ellipsis">
       Caching
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experience-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Experience Data
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#training" class="md-nav__link">
+    <span class="md-ellipsis">
+      Training
     </span>
   </a>
   
@@ -664,15 +673,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#training" class="md-nav__link">
-    <span class="md-ellipsis">
-      Training
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#inference-backend" class="md-nav__link">
     <span class="md-ellipsis">
       Inference Backend
@@ -685,6 +685,24 @@
   <a href="#caching" class="md-nav__link">
     <span class="md-ellipsis">
       Caching
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experience-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Experience Data
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#training" class="md-nav__link">
+    <span class="md-ellipsis">
+      Training
     </span>
   </a>
   
@@ -790,18 +808,10 @@ to look up and extract the corresponding network policy.</p>
 <p>The details of how the function works are a little bit involved and can be seen by
 reading the code in
 <a href="https://github.com/mcfarljm/dlchess/blob/main/src/zero/encoder.cpp">encoder.cpp</a>.</p>
-<h2 id="training">Training</h2>
-<p>Training updates follow the approach outlined in the original AlphaZero work: the
-network weights are updated using gradient descent based on a loss function that sums
-over mean-squared error and cross-entropy losses.  In other words, the network's value
-output is trained to predict the game outcome measure, which is defined as -1 for a
-loss, 0 for a draw, and 1 for a win.  The network's policy output is trained to predict
-the Monte Carlo tree search visit probabilities.  The training code is found here:
-<a href="https://github.com/mcfarljm/dlchess/blob/main/train/train.py">train.py</a>.</p>
 <h2 id="inference-backend">Inference Backend</h2>
-<p>The design of <code>dlchess</code> is such that the neural network architecture and training code are
-written in Python using PyTorch, but the search is written in C++.  Thus, we need to be able to run
-network inference from C++.  The original version of <code>dlchess</code> used
+<p>The design of <code>dlchess</code> is such that the neural network architecture and training code
+are written in Python using PyTorch, but the search is written in C++.  Thus, we need to
+be able to run network inference from C++.  The original version of <code>dlchess</code> used
 <a href="https://pytorch.org/docs/stable/jit.html">TorchScript</a> to run inference from C++.
 However, the current version uses <a href="https://onnxruntime.ai/">ONNX Runtime</a>, which
 resulted in a roughly 2.5x total speedup in search throughput using CPUs.</p>
@@ -844,6 +854,30 @@ significant.  For a trained network, the proportion of positions that can be fou
 the cache (even when using a modest cache size) may be 25% or more.  This value tends to
 be higher for trained networks, as untrained networks tend to have a less structured,
 more random search.</p>
+<h2 id="experience-data">Experience Data</h2>
+<p>The experience data generated during selfplay are stored in a simple raw binary format
+with accompanying metadata in json.  This makes it possible to efficiently load and take
+subsets of the data in Python during training using
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.memmap.html"><code>numpy.memmap</code></a>.</p>
+<p>For each game, the experience data include:</p>
+<ul>
+<li>A tensor describing the input state before each move.</li>
+<li>A tensor describing the MCTS visit counts associated with each move (used as the
+  target for the policy network).</li>
+<li>A tensor describing the reward (game outcome) associated with each move.</li>
+</ul>
+<h2 id="training">Training</h2>
+<p>Training updates follow the approach outlined in the original AlphaZero work: the
+network weights are updated using gradient descent based on a loss function that sums
+over mean-squared error and cross-entropy losses.  In other words, the network's value
+output is trained to predict the game outcome measure, which is defined as -1 for a
+loss, 0 for a draw, and 1 for a win.  The network's policy output is trained to predict
+the Monte Carlo tree search visit probabilities.  The training code is found here:
+<a href="https://github.com/mcfarljm/dlchess/blob/main/train/train.py">train.py</a>.</p>
+<p>Because training updates are implemented using PyTorch, training run sequences that
+iterate between selfplay and training updates retain two versions of the network data:
+(1) a PyTorch model state dict for use in subsequent training updates, and (2) an ONNX
+export for use in the C++ code.</p>
 <div class="footnote">
 <hr />
 <ol>
