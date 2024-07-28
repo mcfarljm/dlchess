@@ -1,0 +1,952 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../alpha-zero/">
+      
+      
+        <link rel="next" href="../../training-runs/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.30">
+    
+    
+      
+        <title>Neural Network - dlchess</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.3cba04c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#neural-network" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="dlchess" class="md-header__button md-logo" aria-label="dlchess" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm64 64v64h64V96h64v64h64V96h64v64h-64v64h64v64h-64v64h64v64h-64v-64h-64v64h-64v-64h-64v64H64v-64h64v-64H64v-64h64v-64H64V96h64zm64 128h64v-64h-64v64zm0 64v-64h-64v64h64zm64 0h-64v64h64v-64zm0 0h64v-64h-64v64z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            dlchess
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Neural Network
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/mcfarljm/dlchess" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mcfarljm/dlchess
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  dlchess
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+    
+  
+  Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../training-runs/" class="md-tabs__link">
+        
+  
+    
+  
+  Training Runs
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../sample-games/" class="md-tabs__link">
+        
+  
+    
+  
+  Sample Games
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="dlchess" class="md-nav__button md-logo" aria-label="dlchess" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm64 64v64h64V96h64v64h64V96h64v64h-64v64h64v64h-64v64h64v64h-64v-64h-64v64h-64v-64h-64v64H64v-64h64v-64H64v-64h64v-64H64V96h64zm64 128h64v-64h-64v64zm0 64v-64h-64v64h64zm64 0h-64v64h64v-64zm0 0h64v-64h-64v64z"/></svg>
+
+    </a>
+    dlchess
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/mcfarljm/dlchess" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mcfarljm/dlchess
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dlchess
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Design
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Design
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chess-framework/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chess Framework
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uci/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    UCI (Universal Chess Interface)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alpha-zero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AlphaZero Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Neural Network
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Neural Network
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Input Encoding
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output Decoding
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#training" class="md-nav__link">
+    <span class="md-ellipsis">
+      Training
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inference-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inference Backend
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Caching
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training-runs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Training Runs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sample-games/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sample Games
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Input Encoding
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output Decoding
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#training" class="md-nav__link">
+    <span class="md-ellipsis">
+      Training
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inference-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inference Backend
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Caching
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="neural-network">Neural Network</h1>
+<h2 id="architecture">Architecture</h2>
+<p>The neural network architecture follows that of the original AlphaZero work, as shown
+below.  The architecture is made up of a "base/tower" of residual blocks, which is
+shared by both the policy and value outputs.  Following the base, there is a "policy
+head" and "value head".  The network is parameterized in terms of the number of blocks
+in the base, and the number of filters.  The original AlphaZero work used something like
+19 residual blocks and 256 filters.  See <a href="../../training-runs/">Training Runs</a> for
+information about the architecture settings that have been tried with <code>dlchess</code>.
+Details of the implementation, which uses PyTorch, can be seen in the source for
+<a href="https://github.com/mcfarljm/dlchess/blob/main/nn/resid_net.py">resid_net.py</a>.</p>
+<pre class="mermaid"><code>graph TB
+  Input{Input} --&gt; |22 x 8 x 8|b1[Residual Block 1]
+  b1 --&gt; |filters x 8 x 8|bn[Residual Block n]
+  bn --&gt; pc1[Convolution]
+  pc1 --&gt; |filters x 8 x 8|pc2[Convolution]
+  pc2 --&gt; |73x 8 x 8|policy{Policy}
+  bn --&gt; vc1[Convolution, 1x1]
+  vc1 --&gt; |1 x 8 x 8|vl1[Linear]
+  vl1 --&gt; |256|vl2[Linear]
+  vl2 --&gt; |1|tanh[Tanh]
+  tanh --&gt; Value{Value}</code></pre>
+<p>The above diagram shows the use of residual blocks to construct the base; earlier
+versions of <code>dlchess</code> used simple convolution blocks instead, which results in a more
+compact network.</p>
+<h2 id="input-encoding">Input Encoding</h2>
+<p>The game state must be represented in a form that the neural network can process.  This
+is done by <em>encoding</em> the game state into a tensor, which can be fed into the network.
+dlchess uses a simple encoding that is based on the original AlphaZero work, but without
+the use of history.</p>
+<p>The building block of the input encoding is the concept of a <em>plane</em>.  A plane is an 8
+by 8 array that represents some particular feature of the game.  The elements of the
+plane correspond to the squares on the chess board.  dlchess uses 22 input planes<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>12 planes that encode piece occupation.  For each piece type, the corresponding plane
+  is set to 1 where a piece exists and 0 otherwise.</li>
+<li>2 planes that encode the repetition count (which is relevant for the three-fold
+  repetition rule).  The first plane is set to all ones if the repetition count is one
+  or greater, and zeros otherwise.  The second plane is set to all ones if the
+  repetition count is two or greater, and zeros otherwise.</li>
+<li>1 plane for color of side to move: set to all ones if black is to move, zeros
+  otherwise.</li>
+<li>4 planes for castling permissions, each set to all ones if the associated castling
+  permission is available.</li>
+<li>1 plane that encodes the no-progress count (relevant for the fifty-move rule).  This
+  plane is filled with the numerical value of the number half-moves that count towards
+  the fifty-move rule.</li>
+<li>1 plane that encodes the en passant square, if any.</li>
+<li>1 constant plane that is set to all ones, presumably to help with edge detection.</li>
+</ul>
+<p>The input encoder is designed against the following interface, where <code>Tensor</code> is a simple user-defined template that wraps <code>std::vector</code> with shape and stride information.</p>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Encoder</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">public</span><span class="o">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">Tensor</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">encode</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">chess</span><span class="o">::</span><span class="n">Board</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">};</span>
+</span></code></pre></div>
+<h2 id="output-decoding">Output Decoding</h2>
+<p>A convention is required for how to map the neural network policy output, which is a
+tensor, to moves.  The challenge is that the space of legal moves in chess varies
+depending on the game state, and the different pieces move in different ways, including
+special moves such as castling, promotion, and en passant.  The idea is that the network
+policy output encompasses all possible moves in any position, and then we can filter on
+position-specific legal moves later.</p>
+<p>dlchess uses the same approach as AlphaZero, where the space of possible moves is
+represented by an 73x8x8 tensor, where only a subset of the elements correspond to
+possible moves.  To work with this mapping, we define a function that takes a game state
+as input and returns the indices of the legal moves, within the network output tensor.
+The interface for this function is:</p>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">chess</span><span class="o">::</span><span class="n">Move</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">chess</span><span class="o">::</span><span class="n">MoveHash</span><span class="o">&gt;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">decode_legal_moves</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">chess</span><span class="o">::</span><span class="n">Board</span><span class="o">&amp;</span><span class="p">);</span>
+</span></code></pre></div>
+<p>The output of this function is a mapping from a <code>Move</code> to a length-3 array of indices,
+which indexes into the 73x8x8 policy tensor.  The length of the mapping that the
+function returns is the number of legal moves for the given game state.  For example,
+suppose that there is a particular position with only two legal moves.  Calling
+<code>decode_legal_moves</code> would return a map with two items: the keys define the <code>Move</code>
+objects for the two moves, and the values are index arrays that tell us the
+corresponding locations within the policy tensor.  For each move, we can use the indices
+to look up and extract the corresponding network policy.</p>
+<p>The details of how the function works are a little bit involved and can be seen by
+reading the code in
+<a href="https://github.com/mcfarljm/dlchess/blob/main/src/zero/encoder.cpp">encoder.cpp</a>.</p>
+<h2 id="training">Training</h2>
+<p>Training updates follow the approach outlined in the original AlphaZero work: the
+network weights are updated using gradient descent based on a loss function that sums
+over mean-squared error and cross-entropy losses.  In other words, the network's value
+output is trained to predict the game outcome measure, which is defined as -1 for a
+loss, 0 for a draw, and 1 for a win.  The network's policy output is trained to predict
+the Monte Carlo tree search visit probabilities.  The training code is found here:
+<a href="https://github.com/mcfarljm/dlchess/blob/main/train/train.py">train.py</a>.</p>
+<h2 id="inference-backend">Inference Backend</h2>
+<p>The design of <code>dlchess</code> is such that the neural network architecture and training code are
+written in Python using PyTorch, but the search is written in C++.  Thus, we need to be able to run
+network inference from C++.  The original version of <code>dlchess</code> used
+<a href="https://pytorch.org/docs/stable/jit.html">TorchScript</a> to run inference from C++.
+However, the current version uses <a href="https://onnxruntime.ai/">ONNX Runtime</a>, which
+resulted in a roughly 2.5x total speedup in search throughput using CPUs.</p>
+<p>The implementation of neural network inference using ONNX Runtime in <code>dlchess</code> can be
+seen here:
+<a href="https://github.com/mcfarljm/dlchess/blob/main/src/zero/inference.h">inference.h</a>.  This
+largely follows the structure of the ONNX Runtime C++ tutorials.  The <code>InferenceModel</code>
+class is instantiated from a path to the saved ONNX model file, and inference is wrapped
+using the <code>operator()</code> method, which accepts an input tensor and returns two output
+tensors.</p>
+<h2 id="caching">Caching</h2>
+<p>Other than switching from TorchScript to ONNX Runtime for inference, the biggest
+performance improvement for search throughput (which governs how long it takes to
+generate selfplay data) was the implementation of a cache for the neural network output.
+The idea is that we keep a record of previously evaluated positions, so that we can
+avoid running the same network inference again in the future.  There are a couple of
+reasons that we might see the same network inputs occur during search:</p>
+<ol>
+<li>Transpositions: The same position can be reached via different move orders.</li>
+<li>Selfplay: During selfplay, the same network is playing both sides of the match, which
+   means that positions searched by one side will frequently appear when the other side
+   is searching on the next move.  Similarly, since <code>dlchess</code> does not try to re-use the
+   search tree, previously evaluated positions may appear in later searches even if the
+   agent is only playing one side.</li>
+</ol>
+<p><code>dlchess</code> uses a fixed-size, first-in first-out hash map to store the network inference
+cache.  This is implemented using a class that contains a <code>std::unordered_map&lt;uint64_t,
+NetworkOutput&gt;</code> and a <code>std::queue&lt;uint64_t&gt;</code>.  The map stores previously computed
+network outputs based on a hash key of the input.  The queue keeps track of which keys
+(positions) should be evicted once the maximum size is reached.</p>
+<p>There is a small subtlety in defining the keys.  Nominally, the network input is an
+encoding of a game position.  One might think of using the standard Zobrist position hash key
+(which is already available in the <code>chess::Board</code> structure) as the network
+input hash key.  However, this is not correct because the Zobrist hash does not account
+for the repetition count or the fifty-move count, both of which are part of the network
+input encoding.  As such, these two values are hashed and concatenated together with the
+Zobrist position hash to produce the hash key for the network input.</p>
+<p>The degree to which this reduces the need to query the neural network can be
+significant.  For a trained network, the proportion of positions that can be found in
+the cache (even when using a modest cache size) may be 25% or more.  This value tends to
+be higher for trained networks, as untrained networks tend to have a less structured,
+more random search.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Earlier versions of dlchess used an encoding with 21 input planes, which did not include an en passant plane.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../alpha-zero/" class="md-footer__link md-footer__link--prev" aria-label="Previous: AlphaZero Search">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                AlphaZero Search
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../training-runs/" class="md-footer__link md-footer__link--next" aria-label="Next: Training Runs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Training Runs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024 John McFarland
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.footer", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      
+    
+  </body>
+</html>
