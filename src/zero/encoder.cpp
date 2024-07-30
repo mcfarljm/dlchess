@@ -6,7 +6,6 @@ using chess::GRID_SIZE;
 
 namespace {
   enum {
-    no_transform,
     // Horizontal mirror, reverse_bits_in_bytes
     flip_transform,
     // Vertical mirror, reverse_bytes_in_bytes
@@ -30,6 +29,32 @@ namespace {
     v = (v & 0x00FF00FF00FF00FF) << 8 | (v & 0xFF00FF00FF00FF00) >> 8;
     return v;
   }
+
+  using Transform = std::bitset<3>;
+
+  Transform choose_transform(const chess::Board& b) {
+    Transform transform;
+    if (b.side == chess::Color::black) {
+      // Orient board towards side to move by performing vertical and horizontal flip.
+      transform.set(flip_transform);
+      transform.set(mirror_transform);
+    }
+    return transform;
+  }
+
+  chess::Bitboard transform_bitboard(chess::Bitboard bb, Transform transform) {
+    if (! transform.any() || ! bb.any())
+      return bb;
+
+    auto new_bb_ul = bb.to_ullong();
+    if (transform[flip_transform])
+      new_bb_ul = reverse_bits_in_bytes(new_bb_ul);
+    if (transform[mirror_transform])
+      new_bb_ul = reverse_bytes_in_bytes(new_bb_ul);
+
+    return chess::Bitboard {new_bb_ul};
+  }
+
 };
 
 
@@ -40,9 +65,17 @@ namespace zero {
     const std::vector<int64_t> board_tensor_shape = {1, num_planes, GRID_SIZE, GRID_SIZE};
     auto board_tensor = Tensor<float>(board_tensor_shape);
 
+    Transform transform;
+    if (orient_board_)
+      transform = choose_transform(b);
+    bool have_transform = transform.any();
+
     // First 12 planes encode piece occupation
     for (int piece_idx=0; piece_idx<chess::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
-      for (auto sq : b.bitboards[static_cast<int>(piece_idx)]) {
+      auto bb = b.bitboards[static_cast<int>(piece_idx)];
+      if (have_transform)
+        bb = transform_bitboard(bb, transform);
+      for (auto sq : bb) {
         auto coords = chess::sq_to_rf(sq);
         board_tensor.at({0, piece_idx, coords[0], coords[1]}) = 1.0;
       }

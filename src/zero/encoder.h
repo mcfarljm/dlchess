@@ -18,8 +18,9 @@ namespace zero {
 
   class SimpleEncoder : public Encoder {
     bool en_passant_;
+    bool orient_board_;
   public:
-    SimpleEncoder(int version=1) : en_passant_{version>0} {}
+    SimpleEncoder(int version=1) : en_passant_{version>0}, orient_board_{version>1} {}
     Tensor<float> encode(const chess::Board&) const override;
     /* Move decode_move_index(int index) const; */
   };
