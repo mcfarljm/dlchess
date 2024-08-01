@@ -117,8 +117,6 @@ namespace uci {
 
       if (input[0] == '\n')
         continue;
-      else if (input.starts_with("uci"))
-        uci_ok();
       else if (input.starts_with("isready"))
         std::cout << "readyok" << std::endl;
       else if (input.starts_with("position"))
