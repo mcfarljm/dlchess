@@ -16,7 +16,7 @@ computationally demanding (the original work on AlphaZero by DeepMind employed t
 of GPUs).  However, this project shows that using smaller networks, training an
 intermediate strength model is possible even using just one, consumer-grade CPU.
 
-See the [Design](design) section for more information about the design and
-implementation of dlchess.  See [Training Runs](training-runs) for information about the
+See the [Design](design/index.md) section for more information about the design and
+implementation of dlchess.  See [Training Runs](training-runs.md) for information about the
 runs that have been performed so far to train networks.  There is also a page of [Sample
-Games](sample-games) that gives a sense of how the networks play versus a human.
+Games](sample-games.md) that gives a sense of how the networks play versus a human.
