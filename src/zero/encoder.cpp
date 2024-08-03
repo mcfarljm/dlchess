@@ -86,7 +86,7 @@ namespace zero {
   // Given the board state, construct a map from legal moves to coordinates
   // associated with the tensor encoding.
   std::unordered_map<chess::Move, std::array<int,3>, chess::MoveHash>
-  decode_legal_moves(const chess::Board& b) {
+  SimpleEncoder::decode_legal_moves(const chess::Board& b) const {
     constexpr int KNIGHT_BASE_PLANE = 56;
     constexpr int UNDERPROMOTION_BASE_PLANE = KNIGHT_BASE_PLANE + 8;
 

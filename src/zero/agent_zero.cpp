@@ -209,7 +209,7 @@ namespace zero {
         else
           return 0;
       };
-      auto move_coord_map = decode_legal_moves(game_board);
+      auto move_coord_map = encoder_->decode_legal_moves(game_board);
       for (const auto &[mv, coords] : move_coord_map) {
         visit_counts.at({0, coords[0], coords[1], coords[2]}) =
           static_cast<float>(get_visit_count(mv));
