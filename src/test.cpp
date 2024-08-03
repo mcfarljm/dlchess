@@ -11,6 +11,7 @@
 #include "chess/board.h"
 #include "chess/piece_moves.h"
 #include "chess/game_moves.h"
+#include "chess/transform.h"
 #include "utils.h"
 #include "zero/encoder.h"
 
@@ -106,6 +107,81 @@ TEST_CASE( "bb iter", "[bitboard]" ) {
   std::sort(vec.begin(), vec.end());
   REQUIRE( vec == expected );
 }
+
+TEST_CASE( "Test bb transforms", "[bitboard]" ) {
+  auto bb = Bitboard();
+  bb.set_bit(9);
+  bb.set_bit(44);
+
+// --------
+// --------
+// ----x---
+// --------
+// --------
+// --------
+// -x------
+// --------
+
+  // Horizontal
+  Transform transform;
+  transform.set(static_cast<int>(TransformType::flip_transform));
+  auto bb_horiz = transform_bitboard(bb, transform);
+
+  std::stringstream ss;
+  ss << std::endl << bb_horiz;
+
+  auto s = R"(
+--------
+--------
+---x----
+--------
+--------
+--------
+------x-
+--------
+)";
+
+  REQUIRE( ss.str() == s );
+
+  // Vertical
+  transform.reset();
+  transform.set(static_cast<int>(TransformType::mirror_transform));
+  auto bb_vertical = transform_bitboard(bb, transform);
+  ss.str(std::string());
+  ss << std::endl << bb_vertical;
+  s = R"(
+--------
+-x------
+--------
+--------
+--------
+----x---
+--------
+--------
+)";
+
+  REQUIRE( ss.str() == s );
+
+  // Horizontal and vertical
+  transform.set(static_cast<int>(TransformType::flip_transform));
+  auto bb_swap = transform_bitboard(bb, transform);
+  ss.str(std::string());
+  ss << std::endl << bb_swap;
+  s = R"(
+--------
+------x-
+--------
+--------
+--------
+---x----
+--------
+--------
+)";
+
+  REQUIRE( ss.str() == s );
+
+}
+
 
 TEST_CASE( "Init board", "[board]" ) {
   auto b = Board();
