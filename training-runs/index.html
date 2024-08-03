@@ -782,7 +782,7 @@
 
 
 <h1 id="training-runs">Training Runs</h1>
-<p>A training run is an iterative proces that alternates between using the model in
+<p>A training run is an iterative process that alternates between using the model in
 selfplay mode to generate game data, followed by a training update of the neural network
 weights.  All training runs were conducted using modest hardware with between 4 and 8
 CPU cores.  Each training run begins by randomly initializing the weights of the
@@ -810,13 +810,13 @@ relative to rapid ratings on chess.com.  This is based on playing against the en
 </thead>
 <tbody>
 <tr>
-<td>v4.15</td>
+<td>v9.20</td>
 <td>64</td>
 <td>4</td>
-<td>Convolution</td>
-<td>48,000</td>
-<td>1100</td>
-<td>First successful training run</td>
+<td>Residual</td>
+<td>64,000</td>
+<td>1300</td>
+<td>First run with residual blocks</td>
 </tr>
 <tr>
 <td>v8.15</td>
@@ -827,6 +827,15 @@ relative to rapid ratings on chess.com.  This is based on playing against the en
 <td>1175</td>
 <td>Added en passant square to network input; updated parameters</td>
 </tr>
+<tr>
+<td>v4.15</td>
+<td>64</td>
+<td>4</td>
+<td>Convolution</td>
+<td>48,000</td>
+<td>1100</td>
+<td>First successful training run</td>
+</tr>
 </tbody>
 </table>
 <p>The below plots show estimated strength as a function of training history.  Note that
@@ -836,17 +845,24 @@ between the new network and the previous version.  In this tournament, both mode
 each side from 100 different standard opening positions.  Search is fixed at 800
 playouts.</p>
 <figure>
-  <img alt="v4.15 ELO" src="../img/v4.15_elo.png" width="480" />
-  <figcaption>Training history for network v4.15</figcaption>
+  <img alt="v9.20 ELO" src="../img/v9.20_elo.png" width="480" />
+  <figcaption>Training history for network v9.20</figcaption>
 </figure>
-<p>For network v8.15, we see that the final relative ELO is about 250 points above what is
-reached by v4.15.  However, these two models were played against each other, and based
-on 200 games v8.15 is estimated to only be about 80 points stronger.  The discrepancy
-might be based on accumulated statistical error in how relative ELO is being computed, or
-some difference in the initial strengths.</p>
+<p>Training history for earlier network versions are shown below.  Comparing the final
+relative ELO scores across different training runs might be misleading for a couple of
+reasons: (1) statistical error in the individual ELO comparisons accumulates over these
+graphs, and (2) the relative ELOs are based on a small number of playouts (800), whereas
+at larger playouts, the ELO differences might be less pronounced.</p>
+<p>Some reference comparisons were also made (again using 800 playouts), indicating a
+strength difference of about 80 ELO between v8.15 and v4.15, and a difference of about
+350 ELO between v9.20 and v4.15.</p>
 <figure>
   <img alt="v8.15 ELO" src="../img/v8.15_elo.png" width="480" />
   <figcaption>Training history for network v8.15</figcaption>
+</figure>
+<figure>
+  <img alt="v4.15 ELO" src="../img/v4.15_elo.png" width="480" />
+  <figcaption>Training history for network v4.15</figcaption>
 </figure>
 <h2 id="settings">Settings</h2>
 <h3 id="move-selection">Move selection</h3>
@@ -892,7 +908,7 @@ by limiting the clock speed to 2.7 GHz.  Selfplay was done using the serial MCTS
 implementation with 4 self-play processes running concurrently, each using a single
 thread for network inference.  Due to the use of a cache for network inference,
 throughput increases over the course of model training.  At iteration v9.5, throughput
-was about 2.83 moves per second per proces, for a total of approximately 11.32 moves per
+was about 2.83 moves per second per process, for a total of approximately 11.32 moves per
 second.  A typical self-play iteration consisting of 800 games per worker (3,200 total)
 took about 10 hours, followed by an hour or so for the training update and strength
 evaluation.</p>
