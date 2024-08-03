@@ -8,7 +8,6 @@ using chess::GRID_SIZE;
 namespace {
 
   using chess::Transform;
-  using chess::TransformType;
 
   Transform choose_transform(const chess::Board& b) {
     Transform transform;
@@ -90,13 +89,20 @@ namespace zero {
     constexpr int KNIGHT_BASE_PLANE = 56;
     constexpr int UNDERPROMOTION_BASE_PLANE = KNIGHT_BASE_PLANE + 8;
 
+    Transform transform;
+    if (orient_board_)
+      transform = choose_transform(b);
+
     std::unordered_map<chess::Move, std::array<int,3>, chess::MoveHash> move_map;
 
     auto moves = b.generate_legal_moves();
     for (auto& mv : moves) {
-      auto from_rank_file = chess::sq_to_rf(mv.from);
+      auto from_oriented = chess::transform_square(mv.from, transform);
+      auto to_oriented = chess::transform_square(mv.to, transform);
+
+      auto from_rank_file = chess::sq_to_rf(from_oriented);
       int plane;
-      auto delta = mv.to - mv.from;
+      auto delta = to_oriented - from_oriented;
       if (b.pieces[mv.from].is_knight()) {
         switch (delta) {
         case 17:
