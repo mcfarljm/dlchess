@@ -217,6 +217,25 @@ namespace zero {
       collector->record_decision(std::move(root_state_tensor), std::move(visit_counts), game_board.side);
     }
 
+    if (info.debug > 0) {
+      auto fpu = info.get_fpu(*root);
+      for (const auto& [m, b] : root->branches) {
+        std::cout << "info string " << m << " N: " << b.visit_count;
+        std::cout << " (P: " << b.prior * 100 << "%)";
+        std::cout << " (Q: " << b.expected_value(fpu) << ")";
+        auto child_it = root->children.find(m);
+        if (child_it != root->children.end())
+          std::cout << " (V: " << -child_it->second->value << ")";
+        else
+          std::cout << " (V:  -.----)";
+        std::cout << "\n";
+      }
+      std::cout << "info string node (" << root->branches.size() << ")";
+      std::cout << " N: " << round_number;
+      std::cout << " (P: " << root->get_visited_policy() * 100 << "%)";
+      std::cout << "\n";
+    }
+
     auto best_move = [&](){
       if (game_board.total_moves >= info.num_randomized_moves) {
         // Select the move with the highest visit count
@@ -224,12 +243,6 @@ namespace zero {
                                        [](const auto& p1, const auto& p2) {
                                          return p1.second.visit_count < p2.second.visit_count;
                                        });
-
-        if (info.debug > 0) {
-          auto fpu = info.get_fpu(*root);
-          for (const auto& [m, b] : root->branches)
-            std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value(fpu) << std::endl;
-        }
         // // Depth-2 debugging:
         // for (const auto& [m, b] : root->children.at(max_it->first)->branches)
         //   std::cout << "info string visits:   " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
@@ -250,7 +263,7 @@ namespace zero {
       }
     }();
 
-    if (info.debug > 0) {
+    if (info.debug >= 2) {
       std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
       std::cout << "info string cache size: " << model_->cache_size() << std::endl;
     }
