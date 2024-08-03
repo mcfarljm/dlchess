@@ -108,7 +108,7 @@ TEST_CASE( "bb iter", "[bitboard]" ) {
   REQUIRE( vec == expected );
 }
 
-TEST_CASE( "Test bb transforms", "[bitboard]" ) {
+TEST_CASE( "Test bb transforms", "[transform]" ) {
   auto bb = Bitboard();
   bb.set_bit(9);
   bb.set_bit(44);
@@ -180,6 +180,29 @@ TEST_CASE( "Test bb transforms", "[bitboard]" ) {
 
   REQUIRE( ss.str() == s );
 
+}
+
+
+TEST_CASE( "Test square transforms", "[transform]" ) {
+  Transform horiz_transform;
+  Transform vert_transform;
+  Transform swap_transform;
+  horiz_transform.set(static_cast<int>(TransformType::flip_transform));
+  swap_transform.set(static_cast<int>(TransformType::flip_transform));
+  vert_transform.set(static_cast<int>(TransformType::mirror_transform));
+  swap_transform.set(static_cast<int>(TransformType::mirror_transform));
+
+  REQUIRE( transform_square(Position::A1, horiz_transform) == Position::H1 );
+  REQUIRE( transform_square(Position::A1, vert_transform) == Position::A8 );
+  REQUIRE( transform_square(Position::A1, swap_transform) == Position::H8 );
+
+  REQUIRE( transform_square(Position::H1, horiz_transform) == Position::A1 );
+  REQUIRE( transform_square(Position::H1, vert_transform) == Position::H8 );
+  REQUIRE( transform_square(Position::H1, swap_transform) == Position::A8 );
+
+  REQUIRE( transform_square(Position::C3, horiz_transform) == Position::F3 );
+  REQUIRE( transform_square(Position::C3, vert_transform) == Position::C6 );
+  REQUIRE( transform_square(Position::C3, swap_transform) == Position::F6 );
 }
 
 

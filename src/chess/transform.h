@@ -50,6 +50,18 @@ namespace chess {
     return Bitboard {new_bb_ul};
   }
 
+  Square transform_square(Square sq, Transform transform) {
+    if (! transform.any())
+      return sq;
+    auto [rank, file] = sq_to_rf(sq);
+    if (transform[static_cast<int>(TransformType::flip_transform)])
+      // Reverse the file (RANKS_REVERSED=FILES_REVERSED)
+      file = RANKS_REVERSED[file];
+    if (transform[static_cast<int>(TransformType::mirror_transform)])
+      rank = RANKS_REVERSED[rank];
+    return fr_to_sq(file, rank);
+  }
+
 };
 
 #endif //TRANSFORM_BOARD_
