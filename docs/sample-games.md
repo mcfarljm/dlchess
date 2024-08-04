@@ -7,6 +7,58 @@
 href="https://c1a.chesstempo.com/fonts/MaterialIcons-Regular.woff2"
 rel="stylesheet" crossorigin>
 
+## Win vs v9.20
+
+In this game I won as black vs network v9.20.  `dlchess` played a relatively solid game,
+but seemed to mis-evaluate a somewhat complicated position that occurred in the
+middlegame.
+
+<ct-pgn-viewer>
+[Date "2024.08.04"]
+[White "dlchess"]
+[Black "mcfarljm"]
+[Result "0-1"]
+1. e4 {EV: 55.9%, N: 58.41% of 20.0k} c6 2. d4 {EV: 57.9%, N: 34.23% of 20.0k}
+d5 3. c4 {EV: 58.7%, N: 45.63% of 20.0k} dxe4 4. Nc3 {EV: 57.9%, N: 31.50% of
+20.0k} Nf6 5. f3 {EV: 58.0%, N: 56.45% of 20.0k} exf3 6. Nxf3 {EV: 58.4%, N:
+82.56% of 20.0k} Bf5 7. h3 {EV: 62.1%, N: 56.92% of 20.0k} h6 8. g4 {EV: 63.8%,
+N: 64.63% of 20.0k} Bg6 9. Qe2 {EV: 65.2%, N: 18.54% of 20.0k} e6 10. Ne5 {EV:
+64.6%, N: 43.58% of 20.0k} Bh7 11. Nf3 {EV: 64.7%, N: 65.73% of 20.0k} Be7 12.
+b3 {EV: 66.6%, N: 46.62% of 20.0k} c5 13. dxc5 {EV: 67.7%, N: 33.48% of 20.0k}
+Bxc5 14. Bb2 {EV: 66.7%, N: 51.76% of 20.0k} O-O 15. a3 {EV: 69.3%, N: 18.30% of
+20.0k} Re8 16. Qd1 {EV: 69.3%, N: 29.11% of 20.0k} Nc6 17. b4 {EV: 67.7%, N:
+46.23% of 20.0k} Bd6 18. Rc1 {EV: 66.9%, N: 22.77% of 20.0k} Bg3+ 19. Ke2 {EV:
+60.2%, N: 100.00% of 20.0k} Rc8 20. Qd2 {EV: 68.3%, N: 28.64% of 20.0k} Ne7 21.
+Ba1 {EV: 69.3%, N: 35.08% of 20.0k} Rxc4 22. Qxd8 {EV: 57.8%, N: 11.28% of
+20.0k} Rxd8 23. Nd2 {EV: 53.5%, N: 41.77% of 20.0k} Bf4 24. Rd1 {EV: 55.9%, N:
+47.95% of 20.0k} Rcc8 25. Bb2 {EV: 55.3%, N: 16.59% of 20.0k} Nfd5 26. Kf3 {EV:
+50.9%, N: 26.59% of 20.0k} Nxc3 27. Bxc3 {EV: 38.2%, N: 92.77% of 20.0k} Ng6 28.
+Bb2 {EV: 43.9%, N: 20.45% of 20.0k} Bxd2 29. Rh2 {EV: 35.1%, N: 24.53% of 20.0k}
+Bf4 30. Rc2 {EV: 34.6%, N: 59.62% of 20.0k} Nh4+ 31. Kxf4 {EV: 30.7%, N: 97.30%
+of 20.0k} Bxc2 32. Rxd8+ {EV: 30.2%, N: 60.67% of 20.0k} Rxd8 33. Ke3 {EV:
+29.6%, N: 53.29% of 20.0k} f5 34. Be5 {EV: 28.1%, N: 29.34% of 20.0k} Ng6 35.
+Bc7 {EV: 25.9%, N: 31.00% of 20.0k} Rd7 36. Bb8 {EV: 30.0%, N: 75.31% of 20.0k}
+a6 37. Be2 {EV: 29.4%, N: 25.18% of 20.0k} Bd1 38. gxf5 {EV: 30.0%, N: 32.44% of
+20.0k} exf5 39. Bc4+ {EV: 29.1%, N: 56.22% of 20.0k} Kh7 40. b5 {EV: 28.9%, N:
+26.82% of 20.0k} axb5 41. Bxb5 {EV: 28.1%, N: 90.01% of 20.0k} Rd5 42. Bc4 {EV:
+27.4%, N: 34.33% of 20.0k} Ra5 43. Bd6 {EV: 25.7%, N: 32.59% of 20.0k} b5 44.
+Bd3 {EV: 28.5%, N: 56.98% of 20.0k} Nh4 45. Bb4 {EV: 30.4%, N: 82.54% of 20.0k}
+Ra8 46. Bxb5 {EV: 29.5%, N: 34.38% of 20.0k} g5 47. Bc6 {EV: 31.7%, N: 20.38% of
+20.0k} Rb8 48. Kd2 {EV: 30.8%, N: 31.39% of 20.0k} Rd8+ 49. Ke1 {EV: 28.6%, N:
+50.22% of 20.0k} Bc2 50. Be7 {EV: 29.1%, N: 65.19% of 20.0k} Rd3 51. Ke2 {EV:
+28.6%, N: 29.02% of 20.0k} Rxh3 52. Bd7 {EV: 27.0%, N: 36.65% of 20.0k} Rh2+ 53. Ke3
+{EV: 17.7%, N: 58.00% of 20.0k} f4+ 54. Kd4 {EV: 14.8%, N:
+100.00% of 20.0k} f3 55. Bf8 {EV: 19.8%, N: 14.99% of 20.0k} f2 56. Bb5 {EV:
+18.4%, N: 78.03% of 20.0k} Nf3+ 57. Ke3 {EV: 23.4%, N: 86.31% of 20.0k} Ne5 58.
+Bf1 {EV: 23.4%, N: 32.91% of 20.0k} Bd3 59. Bxd3+ {EV: 18.5%, N: 64.85% of
+20.0k} Nxd3 60. Ke2 {EV: 15.7%, N: 75.19% of 20.0k} Rh1 61. Kxd3 {EV: 9.2%, N:
+22.64% of 20.0k} f1=Q+ 62. Ke3 {EV: 7.0%, N: 24.07% of 20.0k} Qxf8 63. a4 {EV:
+5.4%, N: 49.37% of 20.0k} Qb4 64. a5 {EV: 5.6%, N: 29.75% of 20.0k} Qxa5 65. Kf3
+{EV: 6.0%, N: 38.81% of 20.0k} Qb4 66. Kg2 {EV: 6.9%, N: 51.46% of 20.0k} Ra1
+67. Kg3 {EV: 6.4%, N: 24.77% of 20.0k} Ra3+ 68. Kg2 {EV: 4.5%, N: 37.48% of
+20.0k} Qb2+ 69. Kf1 {EV: 1.3%, N: 34.03% of 20.0k} Ra1# *
+</ct-pgn-viewer>
+
 ## Wild draw vs v9.10
 
 Below is a game that I played as white vs network v9.10.  `dlchess` sacks a knight early
@@ -14,7 +66,8 @@ on and then makes it back up later by winning two pieces with a double pawn-fork
 missed what should have been an easy conversion in the end with two pawns, after
 `dlchess` again gave up another knight for seemingly no reason on move 38.
 
-<ct-pgn-viewer>[Event "Computer Chess Game"]
+<ct-pgn-viewer>
+[Event "Computer Chess Game"]
 [Date "2024.07.28"]
 [White "mcfarljm"]
 [Black "dlchess"]
