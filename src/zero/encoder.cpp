@@ -35,13 +35,24 @@ namespace zero {
     bool have_transform = transform.any();
 
     // First 12 planes encode piece occupation
-    for (int piece_idx=0; piece_idx<chess::NUM_PIECE_TYPES_BOTH; ++piece_idx) {
+    for (int plane=0; plane<chess::NUM_PIECE_TYPES_BOTH; ++plane) {
+      auto piece_idx = [&](){
+        // Note: this check may need to be updated if choose_transform is updated.
+        if (have_transform) {
+          // Arrange so that planes 0-5 have "our pieces" and 6-11 have "their pieces".
+          if (plane < 6)
+            return plane + 6;  // Swap white -> black pieces
+          return plane - 6; // Swap black -> white pieces
+        }
+        return plane;
+      }();
+
       auto bb = b.bitboards[static_cast<int>(piece_idx)];
       if (have_transform)
         bb = chess::transform_bitboard(bb, transform);
       for (auto sq : bb) {
         auto coords = chess::sq_to_rf(sq);
-        board_tensor.at({0, piece_idx, coords[0], coords[1]}) = 1.0;
+        board_tensor.at({0, plane, coords[0], coords[1]}) = 1.0;
       }
     }
 
