@@ -254,12 +254,14 @@ namespace zero {
     }
 
     if (info.game_mode == GameMode::uci) {
+      auto node_count = root->get_children_visits();
       std::cout << "info";
       std::cout << " depth " << static_cast<int>(cumulative_depth / round_number);
       std::cout << " seldepth " << max_depth;
       std::cout << " time " << static_cast<int>(timer.elapsed() * 1000);
-      std::cout << " nodes " << root->get_children_visits();
+      std::cout << " nodes " << node_count;
       std::cout << " score cp " << root->branches.at(best_move).value_in_centipawns(0.0);
+      std::cout << " nps " << static_cast<int>(node_count / timer.elapsed());
       std::cout << " pv " << best_move;
       std::cout << std::endl;
     }
