@@ -218,22 +218,7 @@ namespace zero {
     }
 
     if (info.debug > 0) {
-      auto fpu = info.get_fpu(*root);
-      for (const auto& [m, b] : root->branches) {
-        std::cout << "info string " << m << " N: " << b.visit_count;
-        std::cout << " (P: " << b.prior * 100 << "%)";
-        std::cout << " (Q: " << b.expected_value(fpu) << ")";
-        auto child_it = root->children.find(m);
-        if (child_it != root->children.end())
-          std::cout << " (V: " << -child_it->second->value << ")";
-        else
-          std::cout << " (V:  -.----)";
-        std::cout << "\n";
-      }
-      std::cout << "info string node (" << root->branches.size() << ")";
-      std::cout << " N: " << round_number;
-      std::cout << " (P: " << root->get_visited_policy() * 100 << "%)";
-      std::cout << "\n";
+      root->output_move_stats(info.get_fpu(*root), round_number);
     }
 
     auto best_move = [&](){
@@ -280,6 +265,24 @@ namespace zero {
     }
 
     return best_move;
+  }
+
+  void ZeroNode::output_move_stats(float fpu, int playouts) const {
+    for (const auto& [m, b] : branches) {
+      std::cout << "info string " << m << " N: " << b.visit_count;
+      std::cout << " (P: " << b.prior * 100 << "%)";
+      std::cout << " (Q: " << b.expected_value(fpu) << ")";
+      auto child_it = children.find(m);
+      if (child_it != children.end())
+        std::cout << " (V: " << -child_it->second->value << ")";
+      else
+        std::cout << " (V:  -.----)";
+      std::cout << "\n";
+    }
+    std::cout << "info string node (" << branches.size() << ")";
+    std::cout << " N: " << playouts;
+    std::cout << " (P: " << get_visited_policy() * 100 << "%)";
+    std::cout << "\n";
   }
 
 
