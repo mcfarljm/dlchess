@@ -269,14 +269,10 @@ namespace zero {
 
   void ZeroNode::output_move_stats(float fpu, int playouts) const {
     // Sort the moves in descending order.
-    std::vector<Move> moves;
-    for (const auto& [move, branch] : branches) {
-      moves.push_back(move);
-    }
-    std::sort(moves.begin(), moves.end(), [this](Move m1, Move m2) {
-      return branches.find(m1)->second.visit_count < branches.find(m2)->second.visit_count; });
-    for (const auto& m : moves) {
-      auto b = branches.find(m)->second;
+    std::vector<std::pair<Move, Branch>> pairs(branches.begin(), branches.end());
+    std::sort(pairs.begin(), pairs.end(), [](auto p1, auto p2) {
+      return p1.second.visit_count < p2.second.visit_count; });
+    for (const auto& [m, b] : pairs) {
       std::cout << "info string " << m << " N: " << b.visit_count;
       std::cout << " (P: " << b.prior * 100 << "%)";
       std::cout << " (Q: " << b.expected_value(fpu) << ")";
