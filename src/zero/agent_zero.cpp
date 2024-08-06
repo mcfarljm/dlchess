@@ -217,10 +217,6 @@ namespace zero {
       collector->record_decision(std::move(root_state_tensor), std::move(visit_counts), game_board.side);
     }
 
-    if (info.debug > 0) {
-      root->output_move_stats(info.get_fpu(*root), round_number);
-    }
-
     auto best_move = [&](){
       if (game_board.total_moves >= info.num_randomized_moves) {
         // Select the move with the highest visit count
@@ -248,11 +244,6 @@ namespace zero {
       }
     }();
 
-    if (info.debug >= 2) {
-      std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
-      std::cout << "info string cache size: " << model_->cache_size() << std::endl;
-    }
-
     if (info.game_mode == GameMode::uci) {
       auto node_count = root->get_children_visits();
       std::cout << "info";
@@ -264,6 +255,15 @@ namespace zero {
       std::cout << " nps " << static_cast<int>(node_count / timer.elapsed());
       std::cout << " pv " << best_move;
       std::cout << std::endl;
+    }
+
+    if (info.debug >= 2) {
+      std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
+      std::cout << "info string cache size: " << model_->cache_size() << std::endl;
+    }
+
+    if (info.debug > 0) {
+      root->output_move_stats(info.get_fpu(*root), round_number);
     }
 
     return best_move;
