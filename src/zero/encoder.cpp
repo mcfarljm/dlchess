@@ -56,9 +56,7 @@ namespace zero {
       }
     }
 
-    // Next two planes are flags for one and two repetitions (this is my
-    // understanding of the AlphaZero paper, Table S1; instead of coding as a
-    // numerical constant, they show two planes for this).
+    // Next two planes are flags for one and two repetitions.
     auto repetitions = b.repetition_count();
     if (repetitions >= 1)
       board_tensor.fill_channel(0, 12, 1.0);
@@ -74,10 +72,19 @@ namespace zero {
     board_tensor.fill_channel(0, 15, 1.0);
 
     // Castling
-    board_tensor.fill_channel(0, 16, b.castle_perm[castling::WK]);
-    board_tensor.fill_channel(0, 17, b.castle_perm[castling::WQ]);
-    board_tensor.fill_channel(0, 18, b.castle_perm[castling::BK]);
-    board_tensor.fill_channel(0, 19, b.castle_perm[castling::BQ]);
+    if (b.side == chess::Color::white || ! orient_board_) {
+      board_tensor.fill_channel(0, 16, b.castle_perm[castling::WK]);
+      board_tensor.fill_channel(0, 17, b.castle_perm[castling::WQ]);
+      board_tensor.fill_channel(0, 18, b.castle_perm[castling::BK]);
+      board_tensor.fill_channel(0, 19, b.castle_perm[castling::BQ]);
+    }
+    else {
+      // Orient permissions for black to move
+      board_tensor.fill_channel(0, 16, b.castle_perm[castling::BK]);
+      board_tensor.fill_channel(0, 17, b.castle_perm[castling::BQ]);
+      board_tensor.fill_channel(0, 18, b.castle_perm[castling::WK]);
+      board_tensor.fill_channel(0, 19, b.castle_perm[castling::WQ]);
+    }
 
     // No progress count
     board_tensor.fill_channel(0, 20, static_cast<float>(b.fifty_move));
