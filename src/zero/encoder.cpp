@@ -84,7 +84,7 @@ namespace zero {
 
     // En passant
     if (en_passant_ && b.en_pas != chess::Position::none) {
-      auto coords = chess::sq_to_rf(b.en_pas);
+      auto coords = chess::sq_to_rf(chess::transform_square(b.en_pas, transform));
       board_tensor.at({0, 21, coords[0], coords[1]}) = 1.0;
     }
 
