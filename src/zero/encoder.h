@@ -18,8 +18,9 @@ namespace zero {
 
   class SimpleEncoder : public Encoder {
     bool en_passant_;
+    bool scale_move_count_;
   public:
-    SimpleEncoder(int version=1) : en_passant_{version>0} {}
+    SimpleEncoder(int version=1) : en_passant_{version>0}, scale_move_count_{version>1} {}
     Tensor<float> encode(const chess::Board&) const override;
     /* Move decode_move_index(int index) const; */
   };
