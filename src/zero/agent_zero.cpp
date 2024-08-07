@@ -224,12 +224,6 @@ namespace zero {
                                        [](const auto& p1, const auto& p2) {
                                          return p1.second.visit_count < p2.second.visit_count;
                                        });
-
-        if (info.debug > 0) {
-          auto fpu = info.get_fpu(*root);
-          for (const auto& [m, b] : root->branches)
-            std::cout << "info string visits: " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value(fpu) << std::endl;
-        }
         // // Depth-2 debugging:
         // for (const auto& [m, b] : root->children.at(max_it->first)->branches)
         //   std::cout << "info string visits:   " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
@@ -250,23 +244,51 @@ namespace zero {
       }
     }();
 
-    if (info.debug > 0) {
-      std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
-      std::cout << "info string cache size: " << model_->cache_size() << std::endl;
-    }
-
     if (info.game_mode == GameMode::uci) {
+      auto node_count = root->get_children_visits();
       std::cout << "info";
       std::cout << " depth " << static_cast<int>(cumulative_depth / round_number);
       std::cout << " seldepth " << max_depth;
       std::cout << " time " << static_cast<int>(timer.elapsed() * 1000);
-      std::cout << " nodes " << root->get_children_visits();
+      std::cout << " nodes " << node_count;
       std::cout << " score cp " << root->branches.at(best_move).value_in_centipawns(0.0);
+      std::cout << " nps " << static_cast<int>(node_count / timer.elapsed());
       std::cout << " pv " << best_move;
       std::cout << std::endl;
     }
 
+    if (info.debug >= 2) {
+      std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
+      std::cout << "info string cache size: " << model_->cache_size() << std::endl;
+    }
+
+    if (info.debug > 0) {
+      root->output_move_stats(info.get_fpu(*root), round_number);
+    }
+
     return best_move;
+  }
+
+  void ZeroNode::output_move_stats(float fpu, int playouts) const {
+    // Sort the moves in descending order.
+    std::vector<std::pair<Move, Branch>> pairs(branches.begin(), branches.end());
+    std::sort(pairs.begin(), pairs.end(), [](auto p1, auto p2) {
+      return p1.second.visit_count < p2.second.visit_count; });
+    for (const auto& [m, b] : pairs) {
+      std::cout << "info string " << m << " N: " << b.visit_count;
+      std::cout << " (P: " << b.prior * 100 << "%)";
+      std::cout << " (Q: " << b.expected_value(fpu) << ")";
+      auto child_it = children.find(m);
+      if (child_it != children.end())
+        std::cout << " (V: " << -child_it->second->value << ")";
+      else
+        std::cout << " (V:  -.----)";
+      std::cout << "\n";
+    }
+    std::cout << "info string node (" << branches.size() << ")";
+    std::cout << " N: " << playouts;
+    std::cout << " (P: " << get_visited_policy() * 100 << "%)";
+    std::cout << "\n";
   }
 
 

@@ -87,6 +87,8 @@ namespace zero {
       return total_visit_count - 1;
     }
 
+    void output_move_stats(float fpu, int playouts) const;
+
   };
 
   enum class GameMode {
