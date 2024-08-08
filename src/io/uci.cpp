@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 
 #include "uci.h"
 #include "../version.h"
@@ -8,6 +9,18 @@
 using chess::Color;
 
 namespace {
+
+  void input_loop(utils::SyncQueue<std::string>& sync_queue) {
+    std::string input;
+
+    while (true) {
+      std::getline(std::cin, input);
+      sync_queue.put(input);
+      if (input.starts_with("quit"))
+        break;
+    }
+  }
+
   void uci_ok() {
     std::cout << "id name " << version::PROGRAM_NAME << std::endl;
     std::cout << "id author John McFarland" << std::endl;
@@ -106,14 +119,17 @@ namespace uci {
 
     agent->info.game_mode = zero::GameMode::uci;
 
-    uci_ok();
+    utils::SyncQueue<std::string> sync_queue;
+    std::thread input_thread {input_loop, std::ref(sync_queue)};
 
     std::string input;
+
+    uci_ok();
 
     while (true) {
       std::cout << std::flush;
 
-      std::getline(std::cin, input);
+      sync_queue.get(input);
 
       if (input[0] == '\n')
         continue;
@@ -130,6 +146,7 @@ namespace uci {
       else if (input.starts_with("quit"))
         break;
     }
+    input_thread.join();
   };
   
 };

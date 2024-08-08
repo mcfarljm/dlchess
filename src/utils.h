@@ -6,6 +6,9 @@
 #include <vector>
 #include <iterator>
 #include <chrono>
+#include <list>
+#include <mutex>
+#include <condition_variable>
 
 namespace utils {
 
@@ -36,6 +39,26 @@ namespace utils {
   };
 
   std::string format_seconds(double);
+
+  template <typename T>
+  class SyncQueue {
+  public:
+    void put(const T& val) {
+      std::lock_guard<std::mutex> lock(mtx_);
+      values_.push_back(val);
+      cv_.notify_one();
+    }
+    void get(T& val) {
+      std::unique_lock<std::mutex> lock(mtx_);
+      cv_.wait(lock, [this]{ return ! values_.empty(); });
+      val = values_.front();
+      values_.pop_front();
+    }
+  private:
+    std::mutex mtx_;
+    std::condition_variable cv_;
+    std::list<T> values_;
+  };
 
 };
 
