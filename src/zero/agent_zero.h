@@ -5,6 +5,7 @@
 #include <optional>
 #include <unordered_map>
 #include <algorithm>
+#include <atomic>
 
 #include "encoder.h"
 #include "experience.h"
@@ -129,6 +130,8 @@ namespace zero {
     float time_limit_ms;
 
     int nn_cache_size = 100000;
+
+    std::shared_ptr<std::atomic<bool>> stop_flag_ptr_;
 
     /// Set search time and start counting.
     void set_search_time(std::optional<int> move_time_ms,

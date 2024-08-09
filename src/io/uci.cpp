@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <atomic>
 
 #include "uci.h"
 #include "../version.h"
@@ -10,14 +11,18 @@ using chess::Color;
 
 namespace {
 
-  void input_loop(utils::SyncQueue<std::string>& sync_queue) {
+  void input_loop(utils::SyncQueue<std::string>& sync_queue, std::atomic<bool>& stop_flag) {
     std::string input;
 
     while (true) {
       std::getline(std::cin, input);
       sync_queue.put(input);
-      if (input.starts_with("quit"))
+      if (input.starts_with("stop"))
+        stop_flag = true;
+      else if (input.starts_with("quit")) {
+        stop_flag = true;
         break;
+      }
     }
   }
 
@@ -117,16 +122,19 @@ namespace uci {
   void uci_loop(zero::ZeroAgent* agent) {
     auto b = chess::Board();
 
-    agent->info.game_mode = zero::GameMode::uci;
-
     utils::SyncQueue<std::string> sync_queue;
-    std::thread input_thread {input_loop, std::ref(sync_queue)};
+    auto stop_flag_ptr = std::make_shared<std::atomic<bool>>();
+    std::thread input_thread {input_loop, std::ref(sync_queue), std::ref(*stop_flag_ptr)};
 
     std::string input;
+
+    agent->info.game_mode = zero::GameMode::uci;
+    agent->info.stop_flag_ptr_ = stop_flag_ptr;
 
     uci_ok();
 
     while (true) {
+      *stop_flag_ptr = false;
       std::cout << std::flush;
 
       sync_queue.get(input);
