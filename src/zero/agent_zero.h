@@ -181,6 +181,10 @@ namespace zero {
       info.set_search_time(move_time_ms, time_left_ms, inc_ms, b);
     }
 
+    void set_search_nodes(std::optional<int> nodes) override {
+      info.num_rounds = nodes.value_or(-1);
+    }
+
     void set_collector(std::shared_ptr<ExperienceCollector> c) {
       collector = std::move(c);
     }

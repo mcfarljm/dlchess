@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 
   options.add_options()
     ("network", "Path to network file", cxxopts::value<std::string>())
-    ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("800"))
+    ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("-1"))
     ("num-random-moves", "Number of randomized moves", cxxopts::value<int>()->default_value("0"))
     ("noise", "Include Dirichlet noise")
     // ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))

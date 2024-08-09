@@ -40,6 +40,7 @@ namespace {
     std::optional<int> move_time_ms;
     std::optional<int> time_left_ms;
     std::optional<int> inc_ms;
+    std::optional<int> nodes;
 
     auto words = utils::split_string(line, ' ');
     for (auto i=0; i<words.size(); ++i) {
@@ -57,10 +58,13 @@ namespace {
       else if (words[i] == "movetime") {
         move_time_ms = std::stoi(words[i+1]);
       }
+      else if (words[i] == "nodes")
+        nodes = std::stoi(words[i+1]);
       // else if (words[i] == "depth") {
       // }
     }
     agent->set_search_time(move_time_ms, time_left_ms, inc_ms, b);
+    agent->set_search_nodes(nodes);
     auto mv = agent->select_move(b);
     std::cout << "bestmove " << mv << std::endl;
   }
