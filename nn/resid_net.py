@@ -7,6 +7,15 @@ import click
 
 
 class ResidualBlock(nn.Module):
+    """Residual block with two convolution layers and a skip connection.
+
+    This structure follows the original AlphaGoZero work.  In subsequent work by
+    McGrath (2022; supplement), they explicitly show the residual block having a ReLU
+    after each convolution in addition to after the sum.  This differs from the
+    architecture outlined in the AlphaGoZero paper and also the architecture proposed by
+    He et al. (2015); we stick to the original formulation that does not include a ReLU
+    immediately after the second convolution.
+    """
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv1 = nn.Conv2d(
