@@ -61,10 +61,10 @@ class ChessNet(nn.Module):
         self.base = nn.Sequential(conv1, *blocks)
 
         self.policy_stack = nn.Sequential(
-            nn.Conv2d(num_filters, num_filters, 3, padding=1, bias=False),
+            nn.Conv2d(num_filters, num_filters, 1, bias=False),
             nn.BatchNorm2d(num_filters),
             nn.ReLU(),
-            nn.Conv2d(num_filters, 73, 3, padding=1),
+            nn.Conv2d(num_filters, 73, 1),
         )
 
         self.value_stack = nn.Sequential(
