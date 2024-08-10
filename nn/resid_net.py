@@ -82,7 +82,7 @@ def count_parameters(model):
 #     print('default threads:', torch.get_num_threads())
 #     # torch.set_num_threads(1)
 #     grid_size = 8
-#     encoder_channels = 21
+#     encoder_channels = 22
 #     model = ChessNet(in_channels=encoder_channels, grid_size=grid_size)
 #     print('num params:', count_parameters(model))
 #     model.eval()
