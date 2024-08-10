@@ -40,11 +40,16 @@ class ChessNet(nn.Module):
         self.grid_size = grid_size
         super().__init__()
 
-        blocks = [ResidualBlock(in_channels, num_filters)] + [
-            ResidualBlock(num_filters, num_filters) for _ in range(num_blocks - 1)
-        ]
+        # First convolution, goes from in_channels to num_filters channels
+        conv1 = nn.Sequential(
+            nn.Conv2d(in_channels, num_filters, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(num_filters),
+            nn.ReLU(),
+        )
 
-        self.base = nn.Sequential(*blocks)
+        blocks = [ResidualBlock(num_filters, num_filters) for _ in range(num_blocks)]
+
+        self.base = nn.Sequential(conv1, *blocks)
 
         self.policy_stack = nn.Sequential(
             nn.Conv2d(num_filters, num_filters, 3, padding=1, bias=False),
