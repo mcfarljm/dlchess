@@ -197,6 +197,12 @@ namespace zero {
         break;
       if (info.game_mode == GameMode::uci && info.stop_flag_ptr_ && *info.stop_flag_ptr_)
         break;
+
+      if (info.game_mode == GameMode::uci && round_number % 1000 == 0) {
+        root->output_uci_info(cumulative_depth, max_depth, timer.elapsed());
+        if (info.debug > 0)
+          root->output_move_stats(info.get_fpu(*root), round_number);
+      }
     }
 
     if (collector) {
@@ -221,16 +227,7 @@ namespace zero {
     auto best_move = [&](){
       if (game_board.total_moves >= info.num_randomized_moves) {
         // Select the move with the highest visit count
-        auto max_it = std::max_element(root->branches.begin(), root->branches.end(),
-                                       [](const auto& p1, const auto& p2) {
-                                         return p1.second.visit_count < p2.second.visit_count;
-                                       });
-        // // Depth-2 debugging:
-        // for (const auto& [m, b] : root->children.at(max_it->first)->branches)
-        //   std::cout << "info string visits:   " << m << " " << b.visit_count << " " << b.prior << " " << b.expected_value() << std::endl;
-
-        // std::cout << "info string move " << game_board.total_moves/2 + 1 << ": E[V] = " << max_it->second.total_value / max_it->second.visit_count << ", visits = " << max_it->second.visit_count << std::endl;
-        return max_it->first;
+        return root->get_best_move();
       }
       else {
         // Select move randomly in proportion to visit counts
@@ -245,18 +242,8 @@ namespace zero {
       }
     }();
 
-    if (info.game_mode == GameMode::uci) {
-      auto node_count = root->get_children_visits();
-      std::cout << "info";
-      std::cout << " depth " << static_cast<int>(cumulative_depth / round_number);
-      std::cout << " seldepth " << max_depth;
-      std::cout << " time " << static_cast<int>(timer.elapsed() * 1000);
-      std::cout << " nodes " << node_count;
-      std::cout << " score cp " << root->branches.at(best_move).value_in_centipawns(0.0);
-      std::cout << " nps " << static_cast<int>(node_count / timer.elapsed());
-      std::cout << " pv " << best_move;
-      std::cout << std::endl;
-    }
+    if (info.game_mode == GameMode::uci)
+      root->output_uci_info(cumulative_depth, max_depth, timer.elapsed(), best_move);
 
     if (info.debug >= 2) {
       std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
@@ -268,6 +255,31 @@ namespace zero {
     }
 
     return best_move;
+  }
+
+  Move ZeroNode::get_best_move() const {
+    auto max_it = std::max_element(branches.begin(), branches.end(),
+                                   [](const auto& p1, const auto& p2) {
+                                     return p1.second.visit_count < p2.second.visit_count;
+                                   });
+    return max_it->first;
+  }
+
+  void ZeroNode::output_uci_info(int cumulative_depth, int max_depth, double
+                                 time_seconds, std::optional<Move> best_move_opt) const {
+
+    auto best_move = best_move_opt.value_or(get_best_move());
+
+    auto node_count = get_children_visits();
+    std::cout << "info";
+    std::cout << " depth " << static_cast<int>(cumulative_depth / node_count);
+    std::cout << " seldepth " << max_depth;
+    std::cout << " time " << static_cast<int>(time_seconds * 1000);
+    std::cout << " nodes " << node_count;
+    std::cout << " score cp " << branches.at(best_move).value_in_centipawns(0.0);
+    std::cout << " nps " << static_cast<int>(node_count / time_seconds);
+    std::cout << " pv " << best_move;
+    std::cout << std::endl;
   }
 
   void ZeroNode::output_move_stats(float fpu, int playouts) const {

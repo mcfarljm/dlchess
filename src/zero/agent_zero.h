@@ -88,7 +88,10 @@ namespace zero {
       return total_visit_count - 1;
     }
 
+    chess::Move get_best_move() const;
     void output_move_stats(float fpu, int playouts) const;
+    void output_uci_info(int cumulative_depth, int max_depth, double time_seconds,
+                         std::optional<chess::Move> best_move=std::nullopt) const;
 
   };
 
