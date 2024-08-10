@@ -30,7 +30,7 @@ namespace zero {
     const float value = values->at({0, 0});
 
     priors_type move_priors;
-    auto move_coord_map = decode_legal_moves(game_board);
+    auto move_coord_map = encoder_->decode_legal_moves(game_board);
     for (const auto &[mv, coords] : move_coord_map) {
       // std::cout << "move prior coords: " << mv << ": " << coords << std::endl;
       if (disable_underpromotion_ && mv.is_underpromotion())
