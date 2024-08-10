@@ -7,7 +7,34 @@
 href="https://c1a.chesstempo.com/fonts/MaterialIcons-Regular.woff2"
 rel="stylesheet" crossorigin>
 
-## Win vs v9.20
+## v9.20 wins as black
+
+In this game I lost as white to network v9.20.  `dlchess` plays the odd King move `Kf7`
+early on, but there didn't seem to be an obvious way to attack it.  `dlchess` delivered
+a nice mate at the end.
+
+<ct-pgn-viewer>
+[Date "2024.08.08"]
+[White "mcfarljm"]
+[Black "dlchess"]
+[Result "0-1"]
+[TimeControl "600"]
+[Annotator "1... -0.16"]
+1. d4 d5 {-0.16/5 4} 2. Nf3 e6 {-0.11/5 5} 3. Bf4 Nc6 {-0.01/5 5} 4. e3 f6
+{-0.05/5 5} 5. h3 g5 {-0.05/6 5} 6. Bh2 h5 {-0.09/5 5} 7. c4 Kf7
+{-0.13/5 6} 8. cxd5 exd5 {-0.04/5 6} 9. Nc3 Nh6 {-0.03/5 6} 10. Nb5 Qd7
+{+0.03/5 6} 11. Nxc7 Rb8 {-0.02/6 6} 12. Rc1 g4 {+0.08/6 6} 13. hxg4 hxg4
+{+0.08/6 6} 14. Nd2 Nf5 {+0.00/5 6} 15. Nb5 g3 {+0.34/7 6} 16. fxg3 Nxe3
+{+0.31/8 6} 17. Qf3 Ng4 {+0.31/7 6} 18. Nc3 Rh5 {+0.25/8 7} 19. Qf4 Bd6
+{+0.56/10 7} 20. Qf3 Nxd4 {+0.60/10 7} 21. Qd3 Qe6+ {+0.55/9 6} 22. Be2
+Nxe2 {+0.52/8 7} 23. Nxe2 Rxh2 {+0.52/7 7} 24. Rxh2 Nxh2 {+0.73/6 6} 25.
+Qh7+ Ke8 {+0.59/7 6} 26. Qxh2 Bd7 {+0.43/5 6} 27. Kd1 b5 {+0.32/6 6} 28.
+Nf4 Qg4+ {+0.25/7 6} 29. Kc2 Rc8+ {+1.41/8 6} 30. Kb1 Qf5+ {+2.80/9 6} 31.
+Ka1 Rxc1+ {+28.10/3 5} 32. Nb1 Rxb1# {+128.00/1 5}
+{Xboard adjudication: Checkmate} 0-1
+</ct-pgn-viewer>
+
+## v9.20 loses as white
 
 In this game I won as black vs network v9.20.  `dlchess` played a relatively solid game,
 but seemed to mis-evaluate a somewhat complicated position that occurred in the
@@ -61,9 +88,9 @@ Bf1 {EV: 23.4%, N: 32.91% of 20.0k} Bd3 59. Bxd3+ {EV: 18.5%, N: 64.85% of
 
 ## Wild draw vs v9.10
 
-Below is a game that I played as white vs network v9.10.  `dlchess` sacks a knight early
-on and then makes it back up later by winning two pieces with a double pawn-fork.  I
-missed what should have been an easy conversion in the end with two pawns, after
+Below is a game that I played as white vs network v9.10.  `dlchess` sacrifices a knight
+early on and then makes it back up later by winning two pieces with a double pawn-fork.
+I missed what should have been an easy conversion in the end with two pawns, after
 `dlchess` again gave up another knight for seemingly no reason on move 38.
 
 <ct-pgn-viewer>
@@ -103,7 +130,7 @@ Kg6 Kg8 {-0.08/8 1.3} 64. Kh5 Kh7 {-0.06/7 1.2} 65. Kg5 Kh8 {-0.06/7 1.1}
 
 
 
-## Loss to network v9.9
+## v9.9 wins with black
 
 Below is a sample game vs network v9.9, where I lost with White.  This one is a little
 embarassing, as `dlchess` sacked a Knight for a Pawn early in the game and still won.
