@@ -87,7 +87,10 @@ namespace zero {
     }
 
     // No progress count
-    board_tensor.fill_channel(0, 20, static_cast<float>(b.fifty_move));
+    if (scale_move_count_)
+      board_tensor.fill_channel(0, 20, static_cast<float>(b.fifty_move) / 100.0);
+    else
+      board_tensor.fill_channel(0, 20, static_cast<float>(b.fifty_move));
 
     // En passant
     if (en_passant_ && b.en_pas != chess::Position::none) {

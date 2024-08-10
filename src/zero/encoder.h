@@ -20,8 +20,11 @@ namespace zero {
   class SimpleEncoder : public Encoder {
     bool en_passant_;
     bool orient_board_;
+    bool scale_move_count_;
   public:
-    SimpleEncoder(int version=1) : en_passant_{version>0}, orient_board_{version>1} {}
+    SimpleEncoder(int version=1) : en_passant_{version >= 1},
+                                   orient_board_{version >= 2},
+                                   scale_move_count_{version >= 2} {}
     Tensor<float> encode(const chess::Board&) const override;
     std::unordered_map<chess::Move, std::array<int,3>, chess::MoveHash>
     decode_legal_moves(const chess::Board&) const override;
