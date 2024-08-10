@@ -103,6 +103,10 @@ namespace zero {
   struct SearchInfo {
     // Limit on number of playouts.  Negative number means no limit.
     int num_rounds = 800;
+    // If set, prevent the UCI "go infinite" command from overriding num_rounds.  This
+    // makes it possible to fix the number of rounds when using a chess GUI in infinite
+    // time control (i.e., for tournaments with cutechess).
+    bool sticky_num_rounds = false;
     // Specify number of initial moves for which move selection is done randomly
     // baesd on visit count proportion.  Beyond this threshold, moves are
     // selected greedily.
@@ -185,6 +189,8 @@ namespace zero {
     }
 
     void set_search_nodes(std::optional<int> nodes) override {
+      if (info.sticky_num_rounds && !nodes)
+        return;
       info.num_rounds = nodes.value_or(-1);
     }
 

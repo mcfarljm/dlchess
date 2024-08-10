@@ -12,7 +12,9 @@ int main(int argc, char* argv[]) {
 
   options.add_options()
     ("network", "Path to network file", cxxopts::value<std::string>())
-    ("r,rounds", "Number of rounds", cxxopts::value<int>()->default_value("-1"))
+    // When set, this enables the "sticky_num_rounds" flag and overrides "go infinite"
+    // commands.
+    ("r,rounds", "Number of rounds (overrides \"go infinite\")", cxxopts::value<int>()->default_value("-1"))
     ("num-random-moves", "Number of randomized moves", cxxopts::value<int>()->default_value("0"))
     ("noise", "Include Dirichlet noise")
     // ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
@@ -79,6 +81,8 @@ int main(int argc, char* argv[]) {
   auto encoder = std::make_shared<zero::SimpleEncoder>(encoding_version);
   zero::SearchInfo info;
   info.num_rounds = num_rounds;
+  if (num_rounds > 0)
+    info.sticky_num_rounds = true;
   info.num_randomized_moves = num_randomized_moves;
   info.add_noise = noise;
   info.policy_softmax_temp = policy_softmax_temp;
