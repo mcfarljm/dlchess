@@ -59,6 +59,7 @@ set(sources
   src/chess/makemove.cpp
   src/chess/perft.cpp
   src/chess/io.cpp
+  src/chess/transform.cpp
 
   src/agent_random.cpp
   src/simulation.cpp
