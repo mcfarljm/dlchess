@@ -5,7 +5,7 @@ import click
 import matplotlib.pyplot as plt
 
 
-def parse_eval_file(path, inf_val=600.0):
+def parse_eval_file(path, inf_val=750.0):
     """Parse chutechess output and return elo difference.
 
     Parameters
