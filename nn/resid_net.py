@@ -68,13 +68,13 @@ class ChessNet(nn.Module):
         )
 
         self.value_stack = nn.Sequential(
-            nn.Conv2d(num_filters, 1, 1, bias=False),
-            nn.BatchNorm2d(1),
+            nn.Conv2d(num_filters, 32, 1, bias=False),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(grid_size**2, 256),
+            nn.Linear(32 * grid_size**2, 128),
             nn.ReLU(),
-            nn.Linear(256, 1),
+            nn.Linear(128, 1),
             nn.Tanh(),
         )
 
@@ -112,7 +112,8 @@ def count_parameters(model):
 
 #     toc = time.perf_counter()
 #     print('policy, value shape:', policy.shape, value.shape)
-#     print('delta:', toc-tic, (toc - tic) / n)
+#     print('delta:', toc-tic)
+#     print('eval / s:', n / (toc - tic))
 
 
 @click.command()
