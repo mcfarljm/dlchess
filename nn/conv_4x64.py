@@ -63,30 +63,30 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad) 
 
 
-# with torch.no_grad():
-#     def chunker(seq, size):
-#         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+def benchmark_model(model):
+    def chunker(seq, size):
+        return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-#     print('default threads:', torch.get_num_threads())
-#     # torch.set_num_threads(1)
-#     grid_size = 8
-#     encoder_channels = 21
-#     model = ChessNet(in_channels=encoder_channels, grid_size=grid_size)
-#     print('num params:', count_parameters(model))
-#     model.eval()
-#     n = 5000
-#     batch_size = 1
-#     X = torch.rand(n, encoder_channels, grid_size, grid_size, device=device)
-#     print('shape:', X.shape)
-#     tic = time.perf_counter()
+    with torch.no_grad():
+        print('default threads:', torch.get_num_threads())
+        # torch.set_num_threads(1)
+        grid_size = 8
+        print('num params:', count_parameters(model))
+        model.eval()
+        n = 5000
+        batch_size = 1
+        X = torch.rand(n, model.in_channels, grid_size, grid_size)
+        print('shape:', X.shape)
+        tic = time.perf_counter()
 
-#     # Chunked:
-#     for x in chunker(X, batch_size):
-#         (policy, value) = model(x)
+        # Chunked:
+        for x in chunker(X, batch_size):
+            (policy, value) = model(x)
 
-#     toc = time.perf_counter()
-#     print('policy, value shape:', policy.shape, value.shape)
-#     print('delta:', toc-tic, (toc - tic) / n)
+        toc = time.perf_counter()
+        print('policy, value shape:', policy.shape, value.shape)
+        print('delta:', toc-tic)
+        print('eval / s:', n / (toc - tic))
 
 
 @click.command()
@@ -96,13 +96,18 @@ def count_parameters(model):
 @click.option('-v', '--encoding-version', default=1, show_default=True)
 @click.option("-n", "--num-parameters", is_flag=True,
               help="print number of model parameters and exit")
-def main(output, force, input, encoding_version, num_parameters):
+@click.option("-b", "--benchmark", is_flag=True)
+def main(output, force, input, encoding_version, num_parameters, benchmark):
     grid_size = 8
     encoder_channels = 21 if encoding_version == 0 else 22
     model = ChessNet(in_channels=encoder_channels)
 
     if num_parameters:
         print(count_parameters(model))
+        return
+
+    if benchmark:
+        benchmark_model(model)
         return
 
     if not output.endswith('.pt'):
