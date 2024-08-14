@@ -68,11 +68,11 @@ class ChessNet(nn.Module):
         )
 
         self.value_stack = nn.Sequential(
-            nn.Conv2d(num_filters, 32, 1, bias=False),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(num_filters, 4, 1, bias=False),
+            nn.BatchNorm2d(4),
             nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(32 * grid_size**2, 128),
+            nn.Linear(4 * grid_size**2, 128),
             nn.ReLU(),
             nn.Linear(128, 1),
             nn.Tanh(),
