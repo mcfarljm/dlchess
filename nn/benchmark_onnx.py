@@ -19,13 +19,14 @@ def chunker(seq, size):
 @click.option('-b', '--batch-size', default=1, show_default=True)
 @click.option('-t', '--num-threads', default=0, show_default=True)
 @click.option('--network')
-def main(num_samples, num_warmup, batch_size, num_threads, network):
+@click.option('-v', '--encoding-version', default=1, show_default=True)
+def main(num_samples, num_warmup, batch_size, num_threads, network, encoding_version):
 
     if network is None:
         network = os.path.join(THIS_DIR, 'conv_4x64.onnx')
 
     grid_size = 8
-    encoder_channels = 21
+    encoder_channels = 21 if encoding_version == 0 else 22
 
     sess_opt = onnxruntime.SessionOptions()
     sess_opt.intra_op_num_threads = num_threads
