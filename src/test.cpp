@@ -277,6 +277,24 @@ TEST_CASE( "Move string", "[moves]" ) {
   REQUIRE( ss.str() == "c1c3r" );
 }
 
+TEST_CASE( "Parse FEN move counts", "[fen]" ) {
+  auto b = Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  REQUIRE( b.fifty_move == 0 );
+  REQUIRE( b.total_moves == 0 );
+  b = Board("rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1");
+  REQUIRE( b.fifty_move == 1 );
+  REQUIRE( b.total_moves == 1 );
+  b = Board("rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2");
+  REQUIRE( b.fifty_move == 2 );
+  REQUIRE( b.total_moves == 2 );
+  b = Board("rnbqkb1r/pppppppp/5n2/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 3 2");
+  REQUIRE( b.fifty_move == 3 );
+  REQUIRE( b.total_moves == 3 );
+  b = Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 4 3");
+  REQUIRE( b.fifty_move == 4 );
+  REQUIRE( b.total_moves == 4 );
+}
+
 /// Utility function to check move count for a given FEN string.
 void check_move_count(std::string_view fen, long num_moves) {
   auto b = Board(fen);

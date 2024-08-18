@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <iostream>
+#include <charconv>
 
 #include "board.h"
 #include "piece_moves.h"
@@ -114,6 +115,22 @@ namespace chess {
       assert(file >= FILE_A && file <= FILE_H);
       assert(rank >= RANK_1 && rank <= RANK_8);
       en_pas = fr_to_sq(file, rank);
+    }
+
+    // Fifty-move count
+    ++it;
+    int int_val {};
+    auto chars_result = std::from_chars(it, fen.data() + fen.size(), int_val);
+    if (chars_result.ec == std::errc())
+      fifty_move = int_val;
+
+    // Move count
+    chars_result = std::from_chars(chars_result.ptr + 1, fen.data() + fen.size(), int_val);
+    if (chars_result.ec == std::errc()) {
+      if (side == Color::white)
+        total_moves = int_val * 2 - 2;
+      else
+        total_moves = int_val * 2 - 1;
     }
 
     hash = get_position_hash();
