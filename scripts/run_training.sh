@@ -67,8 +67,8 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
 
     # Evaluation:
 
-    cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.onnx arg=-t arg=1 name=v$new_version \
-                  -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$version.onnx arg=-t arg=1 name=v$version \
+    cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.onnx arg=-t arg=1 arg="--rounds=800" name=v$new_version \
+                  -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$version.onnx arg=-t arg=1 arg="--rounds=800" name=v$version \
                   -each proto=uci tc=inf \
                   -concurrency $num_tasks \
                   -rounds 100 -games 2 -maxmoves 150 \

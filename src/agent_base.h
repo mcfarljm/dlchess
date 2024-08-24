@@ -10,6 +10,7 @@ class Agent {
                                std::optional<int> time_left_ms,
                                std::optional<int> inc_ms,
                                const chess::Board& b) {}
+  virtual void set_search_nodes(std::optional<int> nodes) {}
 };
 
 #endif // AGENT_BASE_H

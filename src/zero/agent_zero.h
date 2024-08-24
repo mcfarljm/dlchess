@@ -5,6 +5,7 @@
 #include <optional>
 #include <unordered_map>
 #include <algorithm>
+#include <atomic>
 
 #include "encoder.h"
 #include "experience.h"
@@ -87,7 +88,10 @@ namespace zero {
       return total_visit_count - 1;
     }
 
+    chess::Move get_best_move() const;
     void output_move_stats(float fpu, int playouts) const;
+    void output_uci_info(int cumulative_depth, int max_depth, double time_seconds,
+                         std::optional<chess::Move> best_move=std::nullopt) const;
 
   };
 
@@ -97,10 +101,12 @@ namespace zero {
   };
 
   struct SearchInfo {
-    // Limit on number of playouts, regardless of tree re-use.  Negative number means no limit.
+    // Limit on number of playouts.  Negative number means no limit.
     int num_rounds = 800;
-    // Limit on number of visits, which does include tree re-use.  Negative number means no limit.
-    int num_visits = -1;
+    // If set, prevent the UCI "go infinite" command from overriding num_rounds.  This
+    // makes it possible to fix the number of rounds when using a chess GUI in infinite
+    // time control (i.e., for tournaments with cutechess).
+    bool sticky_num_rounds = false;
     // Specify number of initial moves for which move selection is done randomly
     // baesd on visit count proportion.  Beyond this threshold, moves are
     // selected greedily.
@@ -129,6 +135,8 @@ namespace zero {
     float time_limit_ms;
 
     int nn_cache_size = 100000;
+
+    std::shared_ptr<std::atomic<bool>> stop_flag_ptr_;
 
     /// Set search time and start counting.
     void set_search_time(std::optional<int> move_time_ms,
@@ -178,6 +186,12 @@ namespace zero {
                          std::optional<int> inc_ms,
                          const chess::Board& b) override {
       info.set_search_time(move_time_ms, time_left_ms, inc_ms, b);
+    }
+
+    void set_search_nodes(std::optional<int> nodes) override {
+      if (info.sticky_num_rounds && !nodes)
+        return;
+      info.num_rounds = nodes.value_or(-1);
     }
 
     void set_collector(std::shared_ptr<ExperienceCollector> c) {
