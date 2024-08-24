@@ -141,7 +141,7 @@ namespace zero {
     auto root = create_node(game_board);
 
     int max_depth = 0;
-    long long cumulative_depth = 0;
+    int cumulative_depth = 0;
     int round_number = 0;
     num_cache_hits_ = 0;
     for (;;) {
