@@ -13,7 +13,7 @@ public:
 
 class AlphaZeroTimeManager : public TimeManager {
   float percentage_ = 5.0;
-  float move_overhead_ms_ = 100.0;
+  float move_overhead_ms_ = 250.0;
 
 public:
   AlphaZeroTimeManager() = default;
@@ -26,7 +26,7 @@ public:
 
 // Based on LC0 simple time manager.
 class SimpleTimeManager : public TimeManager {
-  float move_overhead_ms_ = 100.0;
+  float move_overhead_ms_ = 250.0;
   float base_pct_ = 1.4;
   float ply_pct_ = 0.049;
   float time_factor_ = 1.5;
