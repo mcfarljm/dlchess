@@ -17,7 +17,8 @@ int main(int argc, char* argv[]) {
     ("r,rounds", "Number of rounds (overrides \"go infinite\")", cxxopts::value<int>()->default_value("-1"))
     ("num-random-moves", "Number of randomized moves", cxxopts::value<int>()->default_value("0"))
     ("noise", "Include Dirichlet noise")
-    // ("v,verbosity", "Verbosity level", cxxopts::value<int>()->default_value("0"))
+    ("v,verbose-move-stats", "Output verbose move stats")
+    ("live-move-stats", "Regularly output verbose move stats")
     ("policy-softmax-temp", "Policy softmax temperature", cxxopts::value<float>()->default_value("1.359"))
     ("cpuct", "c_puct constant for UCT search", cxxopts::value<float>()->default_value("1.745"))
     ("cpuct-base", "c_puct base for growth", cxxopts::value<float>()->default_value("38739.0"))
@@ -59,7 +60,8 @@ int main(int argc, char* argv[]) {
   auto num_rounds = args["rounds"].as<int>();
   auto num_randomized_moves = args["num-random-moves"].as<int>();
   auto noise = args["noise"].as<bool>();
-  // auto verbosity = args["verbosity"].as<int>();
+  auto verbose_move_stats = args["verbose-move-stats"].as<bool>();
+  auto live_move_stats = args["live-move-stats"].as<bool>();
   auto policy_softmax_temp = args["policy-softmax-temp"].as<float>();
   auto cpuct = args["cpuct"].as<float>();
   auto cpuct_base = args["cpuct-base"].as<float>();
@@ -92,6 +94,8 @@ int main(int argc, char* argv[]) {
   info.fpu_value = fpu_value;
   info.fpu_absolute = fpu_absolute;
   info.debug = debug;
+  info.verbose_move_stats = verbose_move_stats;
+  info.live_move_stats = live_move_stats;
   if (time_manager) {
     // auto the_time_manager = std::make_shared<AlphaZeroTimeManager>();
     auto the_time_manager = std::make_shared<SimpleTimeManager>();

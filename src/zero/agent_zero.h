@@ -123,6 +123,8 @@ namespace zero {
 
     bool disable_underpromotion = true;
     int debug = 0;
+    bool verbose_move_stats = false;
+    bool live_move_stats = false;
 
     GameMode game_mode = GameMode::none;
 

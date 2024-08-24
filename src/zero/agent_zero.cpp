@@ -199,7 +199,7 @@ namespace zero {
 
       if (info.game_mode == GameMode::uci && round_number % 1000 == 0) {
         root->output_uci_info(cumulative_depth, max_depth, timer.elapsed());
-        if (info.debug > 0)
+        if (info.live_move_stats)
           root->output_move_stats(info.get_fpu(*root), round_number);
       }
     }
@@ -244,12 +244,12 @@ namespace zero {
     if (info.game_mode == GameMode::uci)
       root->output_uci_info(cumulative_depth, max_depth, timer.elapsed(), best_move);
 
-    if (info.debug >= 2) {
+    if (info.debug >= 1) {
       std::cout << "info string cache hits: " << num_cache_hits_ << std::endl;;
       std::cout << "info string cache size: " << model_->cache_size() << std::endl;
     }
 
-    if (info.debug > 0) {
+    if (info.verbose_move_stats) {
       root->output_move_stats(info.get_fpu(*root), round_number);
     }
 
