@@ -64,7 +64,8 @@ def train(dataloader, model, optimizer, output_interval):
 @click.option("-f", "--force", is_flag=True, help="overwrite existing output files")
 # Todo: Parse encoding version based on experience data shape or model
 @click.option("-v", "--encoding-version", default=1, show_default=True)
-@click.option("--resid-net", is_flag=True, help="use residual network")
+@click.option("--network", type=click.Choice(["plain", "residual", "se"]),
+              default="residual", show_default=True)
 def main(
     experience,
     query,
@@ -76,15 +77,17 @@ def main(
     interval,
     force,
     encoding_version,
-    resid_net,
+    network,
 ):
     THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 
     import sys
 
     sys.path.append(os.path.join(THIS_DIR, "../nn"))
-    if resid_net:
+    if network == "residual":
         from resid_net import ChessNet
+    elif network == "se":
+        from squeeze_net import ChessNet
     else:
         from conv_4x64 import ChessNet
 
