@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     // Note: Disabling bool must be done via --opt=false
     ("time-manager", "Use time manager", cxxopts::value<bool>()->default_value("true"))
     // Todo: should be able to parse input shape from onnx model and determine this automatically.
-    ("encoding-version", "Version of network input encoding", cxxopts::value<int>()->default_value("1"))
+    ("encoding-version", "Version of network input encoding", cxxopts::value<int>()->default_value("2"))
     ("t,num-threads", "Number of pytorch threads", cxxopts::value<int>())
     ("d,debug", "Debug level", cxxopts::value<int>()->default_value("0"))
     ("h,help", "Print usage")

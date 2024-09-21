@@ -49,7 +49,6 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             -e 50 \
             --cache-size 1600000 \
             -t 1 \
-            --encoding-version 2 \
             -o $output_dir/experience \
             -l "${timestamp}_$i" \
             > "$output_dir/sim_${i}.out" &
