@@ -590,30 +590,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Hardware">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#network-v9" class="md-nav__link">
-    <span class="md-ellipsis">
-      Network v9
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#network-v4" class="md-nav__link">
-    <span class="md-ellipsis">
-      Network v4
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -737,30 +713,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Hardware">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#network-v9" class="md-nav__link">
-    <span class="md-ellipsis">
-      Network v9
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#network-v4" class="md-nav__link">
-    <span class="md-ellipsis">
-      Network v4
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -810,12 +762,30 @@ relative to rapid ratings on chess.com.  This is based on playing against the en
 </thead>
 <tbody>
 <tr>
+<td>v12.25</td>
+<td>64</td>
+<td>4</td>
+<td>Squeeze Excitation</td>
+<td>80,000</td>
+<td>1350</td>
+<td>Added squeeze-excitation layer to residual blocks</td>
+</tr>
+<tr>
+<td>v11.25</td>
+<td>64</td>
+<td>4</td>
+<td>Residual</td>
+<td>80,000</td>
+<td>1350</td>
+<td>Board oriented towards side to move</td>
+</tr>
+<tr>
 <td>v9.20</td>
 <td>64</td>
 <td>4</td>
 <td>Residual</td>
 <td>64,000</td>
-<td>1300</td>
+<td>1250</td>
 <td>First run with residual blocks</td>
 </tr>
 <tr>
@@ -845,17 +815,26 @@ between the new network and the previous version.  In this tournament, both mode
 each side from 100 different standard opening positions.  Search is fixed at 800
 playouts.</p>
 <figure>
-  <img alt="v9.20 ELO" src="../img/v9.20_elo.png" width="480" />
-  <figcaption>Training history for network v9.20</figcaption>
+  <img alt="v12.25 ELO" src="../img/v12.25_elo.png" width="480" />
+  <figcaption>Training history for network v12.25</figcaption>
+</figure>
+<figure>
+  <img alt="v11.25 ELO" src="../img/v11.25_elo.png" width="480" />
+  <figcaption>Training history for network v11.25</figcaption>
 </figure>
 <p>Training history for earlier network versions are shown below.  Comparing the final
 relative ELO scores across different training runs might be misleading for a couple of
 reasons: (1) statistical error in the individual ELO comparisons accumulates over these
 graphs, and (2) the relative ELOs are based on a small number of playouts (800), whereas
 at larger playouts, the ELO differences might be less pronounced.</p>
-<p>Some reference comparisons were also made (again using 800 playouts), indicating a
-strength difference of about 80 ELO between v8.15 and v4.15, and a difference of about
-350 ELO between v9.20 and v4.15.</p>
+<p>Reference comparisons were also made (again using 800 playouts), indicating no
+difference between v12.25 and v11.25, a strength difference of about 260 ELO between
+v11.20 and v9.20, a difference of about 350 ELO between v9.20 and v4.15, and a
+difference of about 80 ELO between v8.15 and v4.15</p>
+<figure>
+  <img alt="v9.20 ELO" src="../img/v9.20_elo.png" width="480" />
+  <figcaption>Training history for network v9.20</figcaption>
+</figure>
 <figure>
   <img alt="v8.15 ELO" src="../img/v8.15_elo.png" width="480" />
   <figcaption>Training history for network v8.15</figcaption>
@@ -901,26 +880,24 @@ strength difference of about 80 ELO between v8.15 and v4.15, and a difference of
 <li>Evaluation was performed using cutechess-cli.</li>
 </ul>
 <h2 id="hardware">Hardware</h2>
-<h3 id="network-v9">Network v9</h3>
-<p>This run was done using a refurbished Lenovo ThinkCentre mini pc with an Intel Core i7
-having 4 cores and 8 threads.  Some initial issues with overheating had to be resolved
-by limiting the clock speed to 2.7 GHz.  Selfplay was done using the serial MCTS
-implementation with 4 self-play processes running concurrently, each using a single
-thread for network inference.  Due to the use of a cache for network inference,
-throughput increases over the course of model training.  At iteration v9.5, throughput
-was about 2.83 moves per second per process, for a total of approximately 11.32 moves per
-second.  A typical self-play iteration consisting of 800 games per worker (3,200 total)
-took about 10 hours, followed by an hour or so for the training update and strength
-evaluation.</p>
-<h3 id="network-v4">Network v4</h3>
-<p>This run was done on an Amazon EC2 instance with 8 virtual CPUs.  To obtain the best
-self-play throughput with the serial MCTS implementation, 8 self-play processes were run
-concurrently, and neural network model evaluation for each process was configured to use
-one thread.  Typical throughput was approximately 2.35 moves per second per process, for
-a total of approximately 18.8 moves per second (this was before network caching was
-implemented in dlchess).  A typical self-play iteration consisting of 400 games per
-worker (3,200 total) took about 7 hours.  After generating self-play data, the training
-update was fast, taking on the order of minutes.</p>
+<p>Training runs beginning with v9 were done using a refurbished Lenovo ThinkCentre mini pc
+with an Intel Core i7 having 4 cores and 8 threads.  Some initial issues with
+overheating had to be resolved by limiting the clock speed to 2.7 GHz.  Selfplay was
+done using the serial MCTS implementation with 4 self-play processes running
+concurrently, each using a single thread for network inference.  Due to the use of a
+cache for network inference, throughput increases over the course of model training.  At
+iteration v9.5, throughput was about 2.83 moves per second per process, for a total of
+approximately 11.32 moves per second.  A typical self-play iteration consisting of 800
+games per worker (3,200 total) took about 10 hours, followed by an hour or so for the
+training update and strength evaluation.</p>
+<p>Earlier training runs were done on an Amazon EC2 instance with 8 virtual CPUs.  To
+obtain the best self-play throughput with the serial MCTS implementation, 8 self-play
+processes were run concurrently, and neural network model evaluation for each process
+was configured to use one thread.  Typical throughput was approximately 2.35 moves per
+second per process, for a total of approximately 18.8 moves per second (this was before
+network caching was implemented in dlchess).  A typical self-play iteration consisting
+of 400 games per worker (3,200 total) took about 7 hours.  After generating self-play
+data, the training update was fast, taking on the order of minutes.</p>
 
 
 
