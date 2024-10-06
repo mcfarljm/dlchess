@@ -57,7 +57,11 @@ plane correspond to the squares on the chess board.  dlchess uses 22 input plane
 - 1 plane that encodes the en passant square, if any.
 - 1 constant plane that is set to all ones, presumably to help with edge detection.
 
-The input encoder is designed against the following interface, where `Tensor` is a simple user-defined template that wraps `std::vector` with shape and stride information.
+Prior to encoding, the board is oriented towards the side to move (i.e., so that pawns
+for the side to move always move in the positive direction).
+
+The input encoder is designed against the following interface, where `Tensor` is a
+simple user-defined template that wraps `std::vector` with shape and stride information.
 
 ```c++
 class Encoder {
