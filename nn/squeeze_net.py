@@ -46,16 +46,34 @@ class ChessNet(nn.Module):
         num_blocks=4,
         squeeze_channels=4,
         grid_size=8,
+        pre_conv=False,
     ):
         self.in_channels = in_channels
         self.grid_size = grid_size
         super().__init__()
 
-        blocks = [ResidSEBlock(in_channels, num_filters, squeeze_channels)] + [
-            ResidSEBlock(num_filters, num_filters, squeeze_channels)
-            for _ in range(num_blocks - 1)
-        ]
+        if pre_conv:
+            # First convolution, goes from in_channels to num_filters channels
+            conv1 = nn.Sequential(
+                nn.Conv2d(
+                    in_channels, num_filters, kernel_size=3, padding=1, bias=False
+                ),
+                nn.BatchNorm2d(num_filters),
+                nn.ReLU(),
+            )
 
+            blocks = [conv1]
+
+        else:
+            blocks = [ResidSEBlock(in_channels, num_filters, squeeze_channels)]
+            num_blocks -= 1
+
+        blocks.extend(
+            [
+                ResidSEBlock(num_filters, num_filters, squeeze_channels)
+                for _ in range(num_blocks)
+            ]
+        )
         self.base = nn.Sequential(*blocks)
 
         self.policy_stack = nn.Sequential(
@@ -125,10 +143,11 @@ def benchmark_model(model):
     help="print number of model parameters and exit",
 )
 @click.option("-b", "--benchmark", is_flag=True)
-def main(output, force, input, encoding_version, num_parameters, benchmark):
+@click.option("--pre-conv", is_flag=True, help="include convolution before blocks")
+def main(output, force, input, encoding_version, num_parameters, benchmark, pre_conv):
     grid_size = 8
     encoder_channels = 21 if encoding_version == 0 else 22
-    model = ChessNet(in_channels=encoder_channels)
+    model = ChessNet(in_channels=encoder_channels, pre_conv=pre_conv)
 
     if num_parameters:
         print(count_parameters(model))
