@@ -77,18 +77,18 @@ def count_parameters(model):
 
 def benchmark_model(model):
     def chunker(seq, size):
-        return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+        return (seq[pos : pos + size] for pos in range(0, len(seq), size))
 
     with torch.no_grad():
-        print('default threads:', torch.get_num_threads())
+        print("default threads:", torch.get_num_threads())
         # torch.set_num_threads(1)
         grid_size = 8
-        print('num params:', count_parameters(model))
+        print("num params:", count_parameters(model))
         model.eval()
         n = 5000
         batch_size = 1
         X = torch.rand(n, model.in_channels, grid_size, grid_size)
-        print('shape:', X.shape)
+        print("shape:", X.shape)
         tic = time.perf_counter()
 
         # Chunked:
@@ -96,18 +96,22 @@ def benchmark_model(model):
             (policy, value) = model(x)
 
         toc = time.perf_counter()
-        print('policy, value shape:', policy.shape, value.shape)
-        print('delta:', toc-tic)
-        print('eval / s:', n / (toc - tic))
+        print("policy, value shape:", policy.shape, value.shape)
+        print("delta:", toc - tic)
+        print("eval / s:", n / (toc - tic))
 
 
 @click.command()
 @click.option("-o", "--output", default="resid_4x64.pt")
 @click.option("-f", "--force", is_flag=True, help="overwrite")
 @click.option("-i", "--input", help="input file with model state")
-@click.option('-v', '--encoding-version', default=1, show_default=True)
-@click.option("-n", "--num-parameters", is_flag=True,
-              help="print number of model parameters and exit")
+@click.option("-v", "--encoding-version", default=1, show_default=True)
+@click.option(
+    "-n",
+    "--num-parameters",
+    is_flag=True,
+    help="print number of model parameters and exit",
+)
 @click.option("-b", "--benchmark", is_flag=True)
 def main(output, force, input, encoding_version, num_parameters, benchmark):
     grid_size = 8
