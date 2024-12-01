@@ -1,30 +1,32 @@
 # Training Runs
 
-A training run is an iterative process that alternates between using the model in
-selfplay mode to generate game data, followed by a training update of the neural network
-weights.  All training runs were conducted using modest hardware with between 4 and 8
-CPU cores.  Each training run begins by randomly initializing the weights of the
-neural network.
+This page documents and compares different neural networks that have been trained
+through reinforcement learning.  Each *training run* starts from a randomly initialized
+neural network and iterates between selfplay and training updates.  All training runs
+were conducted using modest hardware with between 4 and 8 CPU cores.
 
 ## Results
 
-The naming scheme is as `v{MAJOR_VER}.{INCREMENT}`, where `MAJOR_VERSION` indicates the
-training run number, and `{INCREMENT}` denotes the number of training updates that have
-been made within that training run.  For example, `v4.0` corresponds to the randomly
-initialized network for training run 4, and `v4.5` corresponds to the network in
-training run 4 after 5 updates.
+The following summarizes results for different training runs.  The naming scheme is
+`v{MAJOR_VER}.{INCREMENT}`, where `MAJOR_VERSION` indicates the training run number, and
+`{INCREMENT}` denotes the number of training updates that have been made within that
+training run.  For example, `v4.0` corresponds to the randomly initialized network for
+training run 4, and `v4.5` corresponds to the network in training run 4 after 5 updates.
 
-In the table below, "Estimated ELO" is just a very rough estimate of the engine strength
-relative to rapid ratings on chess.com.  This is based on playing against the engine in
-5 minute time controls.
+The table below gives a summary for a selected set of training runs.  "Size" specifies
+the size of the neural network architecture in terms of number of blocks and number of
+filters (e.g., 4 blocks with 64 filters).  "Games" refers to the total number of
+selfplay games used for training.  "Estimated ELO" is just a very rough estimate of the
+engine strength relative to rapid ratings on chess.com.  This is based on playing
+against the engine in 5 minute time controls.
 
-| Network | Filters | Blocks | Block Type         | Games  | Estimated ELO | Comments                                                     |
-|---------|---------|--------|--------------------|--------|---------------|--------------------------------------------------------------|
-| v12.25  | 64      | 4      | Squeeze Excitation | 80,000 | 1350          | Added squeeze-excitation layer to residual blocks            |
-| v11.25  | 64      | 4      | Residual           | 80,000 | 1350          | Board oriented towards side to move                          |
-| v9.20   | 64      | 4      | Residual           | 64,000 | 1250          | First run with residual blocks                               |
-| v8.15   | 64      | 4      | Convolution        | 48,000 | 1175          | Added en passant square to network input; updated parameters |
-| v4.15   | 64      | 4      | Convolution        | 48,000 | 1100          | First successful training run                                |
+| Network | Size | Block Type         | Games  | Estimated ELO | Comments                                                     |
+|---------|------|--------------------|--------|---------------|--------------------------------------------------------------|
+| v12.25  | 4x64 | Squeeze Excitation | 80,000 | 1350          | Added squeeze-excitation layer to residual blocks            |
+| v11.25  | 4x64 | Residual           | 80,000 | 1350          | Board oriented towards side to move                          |
+| v9.20   | 4x64 | Residual           | 64,000 | 1250          | First run with residual blocks                               |
+| v8.15   | 4x64 | Convolution        | 48,000 | 1175          | Added en passant square to network input; updated parameters |
+| v4.15   | 4x64 | Convolution        | 48,000 | 1100          | First successful training run                                |
 
 The below plots show estimated strength as a function of training history.  Note that
 the y-axis is a relative ELO, which is set to 0 for the randomly initialized network.
