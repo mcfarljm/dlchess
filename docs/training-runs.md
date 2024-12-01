@@ -16,17 +16,17 @@ training run 4, and `v4.5` corresponds to the network in training run 4 after 5 
 The table below gives a summary for a selected set of training runs.  "Size" specifies
 the size of the neural network architecture in terms of number of blocks and number of
 filters (e.g., 4 blocks with 64 filters).  "Games" refers to the total number of
-selfplay games used for training.  "Estimated ELO" is just a very rough estimate of the
-engine strength relative to rapid ratings on chess.com.  This is based on playing
-against the engine in 5 minute time controls.
+selfplay games used for training.  "ELO" is based on comparison against other
+engines with similar strength from the [CCRL blitz
+ratings](https://computerchess.org.uk/ccrl/404/).
 
-| Network | Size | Block Type         | Games  | Estimated ELO | Comments                                                     |
-|---------|------|--------------------|--------|---------------|--------------------------------------------------------------|
-| v12.25  | 4x64 | Squeeze Excitation | 80,000 | 1350          | Added squeeze-excitation layer to residual blocks            |
-| v11.25  | 4x64 | Residual           | 80,000 | 1350          | Board oriented towards side to move                          |
-| v9.20   | 4x64 | Residual           | 64,000 | 1250          | First run with residual blocks                               |
-| v8.15   | 4x64 | Convolution        | 48,000 | 1175          | Added en passant square to network input; updated parameters |
-| v4.15   | 4x64 | Convolution        | 48,000 | 1100          | First successful training run                                |
+| Network | Size   | Block Type         | Games  | ELO  | Comments                                                     |
+|---------|--------|--------------------|--------|------|--------------------------------------------------------------|
+| v12.25  | 4 x 64 | Squeeze Excitation | 80,000 |      | Added squeeze-excitation layer to residual blocks            |
+| v11.25  | 4 x 64 | Residual           | 80,000 | 1192 | Board oriented towards side to move                          |
+| v9.20   | 4 x 64 | Residual           | 64,000 | 1042 | First run with residual blocks                               |
+| v8.15   | 4 x 64 | Convolution        | 48,000 |      | Added en passant square to network input; updated parameters |
+| v4.15   | 4 x 64 | Convolution        | 48,000 |      | First successful training run                                |
 
 The below plots show estimated strength as a function of training history.  Note that
 the y-axis is a relative ELO, which is set to 0 for the randomly initialized network.
@@ -44,18 +44,6 @@ playouts.
   ![v11.25 ELO](img/v11.25_elo.png){ width=480 }
   <figcaption>Training history for network v11.25</figcaption>
 </figure>
-
-
-Training history for earlier network versions are shown below.  Comparing the final
-relative ELO scores across different training runs might be misleading for a couple of
-reasons: (1) statistical error in the individual ELO comparisons accumulates over these
-graphs, and (2) the relative ELOs are based on a small number of playouts (800), whereas
-at larger playouts, the ELO differences might be less pronounced.
-
-Reference comparisons were also made (again using 800 playouts), indicating no
-difference between v12.25 and v11.25, a strength difference of about 260 ELO between
-v11.20 and v9.20, a difference of about 350 ELO between v9.20 and v4.15, and a
-difference of about 80 ELO between v8.15 and v4.15
 
 <figure markdown="span">
   ![v9.20 ELO](img/v9.20_elo.png){ width=480 }
