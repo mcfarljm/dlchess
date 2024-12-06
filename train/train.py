@@ -71,6 +71,8 @@ def train(dataloader, model, optimizer, output_interval):
     show_default=True,
 )
 @click.option("--input-conv", is_flag=True, help="include convolution before blocks")
+@click.option("--num-filters", default=64, show_default=True)
+@click.option("--num-blocks", default=4, show_default=True)
 def main(
     experience,
     query,
@@ -84,6 +86,8 @@ def main(
     encoding_version,
     network,
     input_conv,
+    num_filters,
+    num_blocks,
 ):
     THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -109,7 +113,12 @@ def main(
         return
 
     encoder_channels = 21 if encoding_version == 0 else 22
-    model = ChessNet(in_channels=encoder_channels, input_conv=input_conv)
+    model = ChessNet(
+        in_channels=encoder_channels,
+        num_filters=num_filters,
+        num_blocks=num_blocks,
+        input_conv=input_conv,
+    )
     model.load_state_dict(torch.load(input_path))
 
     optimizer = torch.optim.SGD(

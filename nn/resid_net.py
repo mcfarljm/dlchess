@@ -36,7 +36,12 @@ class ResidualBlock(nn.Module):
 
 class ChessNet(nn.Module):
     def __init__(
-        self, in_channels=21, num_filters=64, num_blocks=4, grid_size=8, input_conv=False
+        self,
+        in_channels=21,
+        num_filters=64,
+        num_blocks=4,
+        grid_size=8,
+        input_conv=False,
     ):
         self.in_channels = in_channels
         self.grid_size = grid_size
@@ -131,10 +136,27 @@ def benchmark_model(model):
 )
 @click.option("-b", "--benchmark", is_flag=True)
 @click.option("--input-conv", is_flag=True, help="include convolution before blocks")
-def main(output, force, input, encoding_version, num_parameters, benchmark, input_conv):
+@click.option("--num-filters", default=64, show_default=True)
+@click.option("--num-blocks", default=4, show_default=True)
+def main(
+    output,
+    force,
+    input,
+    encoding_version,
+    num_parameters,
+    benchmark,
+    input_conv,
+    num_filters,
+    num_blocks,
+):
     grid_size = 8
     encoder_channels = 21 if encoding_version == 0 else 22
-    model = ChessNet(in_channels=encoder_channels, input_conv=input_conv)
+    model = ChessNet(
+        in_channels=encoder_channels,
+        num_filters=num_filters,
+        num_blocks=num_blocks,
+        input_conv=input_conv,
+    )
 
     if num_parameters:
         print(count_parameters(model))
