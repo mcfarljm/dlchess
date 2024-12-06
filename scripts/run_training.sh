@@ -4,18 +4,18 @@
 # detached mode (-d).
 
 BUILD_DIR=/app/build
-MAJOR_VERSION=11
+MAJOR_VERSION=14
 RESULTS_DIR=results
 # Flag for whether to retain experience data
 KEEP_EXPERIENCE=1
 
-initial_version=20
-num_iterations=5
+initial_version=0
+num_iterations=10
 num_tasks=4
 cooldown_seconds=1800
 
 # reference_version=8.5
-reference_major_version=9
+reference_major_version=12
 
 timestamp=`date +%Y%m%dT%H%M`
 
@@ -24,8 +24,8 @@ mkdir -p $RESULTS_DIR
 if [ "$initial_version" -eq 0 ]; then
     # Create initial random model:
     # python3 nn/conv_4x64.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
-    python3 nn/resid_net.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
-    # python3 nn/squeeze_net.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
+    # python3 nn/resid_net.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
+    python3 nn/squeeze_net.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
 fi
 
 # Main iteration loop:
@@ -63,7 +63,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             -e $output_dir/experience \
             -i $RESULTS_DIR/v$version.pt \
             -o $RESULTS_DIR/v$new_version.pt \
-            --network residual \
+            --network se \
             -b 256 \
             --interval 4 \
             --lr 5e-3 \
@@ -71,7 +71,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
 
     if [ $? -eq 0 ]; then
         if [ $KEEP_EXPERIENCE -eq 1 ]; then
-            tar -czf $output_dir/experience.tar.gz $output_dir/experience
+            tar -czf $output_dir/experience.tar.gz -C $output_dir experience
         fi
         if [ $? -eq 0 ]; then
             rm -rf $output_dir/experience
