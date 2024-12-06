@@ -64,8 +64,13 @@ def train(dataloader, model, optimizer, output_interval):
 @click.option("-f", "--force", is_flag=True, help="overwrite existing output files")
 # Todo: Parse encoding version based on experience data shape or model
 @click.option("-v", "--encoding-version", default=1, show_default=True)
-@click.option("--network", type=click.Choice(["plain", "residual", "se"]),
-              default="residual", show_default=True)
+@click.option(
+    "--network",
+    type=click.Choice(["plain", "residual", "se"]),
+    default="residual",
+    show_default=True,
+)
+@click.option("--pre-conv", is_flag=True, help="include convolution before blocks")
 def main(
     experience,
     query,
@@ -78,6 +83,7 @@ def main(
     force,
     encoding_version,
     network,
+    pre_conv,
 ):
     THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -101,9 +107,9 @@ def main(
     dataloader = DataLoader(dataset, batch_size)
     if query:
         return
-    
+
     encoder_channels = 21 if encoding_version == 0 else 22
-    model = ChessNet(in_channels=encoder_channels)
+    model = ChessNet(in_channels=encoder_channels, pre_conv=pre_conv)
     model.load_state_dict(torch.load(input_path))
 
     optimizer = torch.optim.SGD(

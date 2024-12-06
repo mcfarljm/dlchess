@@ -35,14 +35,31 @@ class ResidualBlock(nn.Module):
 
 
 class ChessNet(nn.Module):
-    def __init__(self, in_channels=21, num_filters=64, num_blocks=4, grid_size=8):
+    def __init__(
+        self, in_channels=21, num_filters=64, num_blocks=4, grid_size=8, input_conv=False
+    ):
         self.in_channels = in_channels
         self.grid_size = grid_size
         super().__init__()
 
-        blocks = [ResidualBlock(in_channels, num_filters)] + [
-            ResidualBlock(num_filters, num_filters) for _ in range(num_blocks - 1)
-        ]
+        if input_conv:
+            # First convolution, goes from in_channels to num_filters channels
+            conv1 = nn.Sequential(
+                nn.Conv2d(
+                    in_channels, num_filters, kernel_size=3, padding=1, bias=False
+                ),
+                nn.BatchNorm2d(num_filters),
+                nn.ReLU(),
+            )
+
+            blocks = [conv1]
+        else:
+            blocks = [ResidualBlock(in_channels, num_filters)]
+            num_blocks -= 1
+
+        blocks.extend(
+            [ResidualBlock(num_filters, num_filters) for _ in range(num_blocks)]
+        )
 
         self.base = nn.Sequential(*blocks)
 
@@ -77,18 +94,18 @@ def count_parameters(model):
 
 def benchmark_model(model):
     def chunker(seq, size):
-        return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+        return (seq[pos : pos + size] for pos in range(0, len(seq), size))
 
     with torch.no_grad():
-        print('default threads:', torch.get_num_threads())
+        print("default threads:", torch.get_num_threads())
         # torch.set_num_threads(1)
         grid_size = 8
-        print('num params:', count_parameters(model))
+        print("num params:", count_parameters(model))
         model.eval()
         n = 5000
         batch_size = 1
         X = torch.rand(n, model.in_channels, grid_size, grid_size)
-        print('shape:', X.shape)
+        print("shape:", X.shape)
         tic = time.perf_counter()
 
         # Chunked:
@@ -96,23 +113,28 @@ def benchmark_model(model):
             (policy, value) = model(x)
 
         toc = time.perf_counter()
-        print('policy, value shape:', policy.shape, value.shape)
-        print('delta:', toc-tic)
-        print('eval / s:', n / (toc - tic))
+        print("policy, value shape:", policy.shape, value.shape)
+        print("delta:", toc - tic)
+        print("eval / s:", n / (toc - tic))
 
 
 @click.command()
 @click.option("-o", "--output", default="resid_4x64.pt")
 @click.option("-f", "--force", is_flag=True, help="overwrite")
 @click.option("-i", "--input", help="input file with model state")
-@click.option('-v', '--encoding-version', default=1, show_default=True)
-@click.option("-n", "--num-parameters", is_flag=True,
-              help="print number of model parameters and exit")
+@click.option("-v", "--encoding-version", default=1, show_default=True)
+@click.option(
+    "-n",
+    "--num-parameters",
+    is_flag=True,
+    help="print number of model parameters and exit",
+)
 @click.option("-b", "--benchmark", is_flag=True)
-def main(output, force, input, encoding_version, num_parameters, benchmark):
+@click.option("--input-conv", is_flag=True, help="include convolution before blocks")
+def main(output, force, input, encoding_version, num_parameters, benchmark, input_conv):
     grid_size = 8
     encoder_channels = 21 if encoding_version == 0 else 22
-    model = ChessNet(in_channels=encoder_channels)
+    model = ChessNet(in_channels=encoder_channels, input_conv=input_conv)
 
     if num_parameters:
         print(count_parameters(model))
