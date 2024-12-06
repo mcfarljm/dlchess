@@ -22,11 +22,11 @@ ratings](https://computerchess.org.uk/ccrl/404/).
 
 | Network | Size   | Block Type         | Games  | ELO  | Comments                                                     |
 |---------|--------|--------------------|--------|------|--------------------------------------------------------------|
-| v12.25  | 4 x 64 | Squeeze Excitation | 80,000 |      | Added squeeze-excitation layer to residual blocks            |
+| v12.25  | 4 x 64 | Squeeze Excitation | 80,000 | 1263 | Added squeeze-excitation layer to residual blocks            |
 | v11.25  | 4 x 64 | Residual           | 80,000 | 1192 | Board oriented towards side to move                          |
 | v9.20   | 4 x 64 | Residual           | 64,000 | 1042 | First run with residual blocks                               |
-| v8.15   | 4 x 64 | Convolution        | 48,000 |      | Added en passant square to network input; updated parameters |
-| v4.15   | 4 x 64 | Convolution        | 48,000 |      | First successful training run                                |
+| v8.15   | 4 x 64 | Convolution        | 48,000 | 820  | Added en passant square to network input; updated parameters |
+| v4.15   | 4 x 64 | Convolution        | 48,000 | 789  | First successful training run                                |
 
 The below plots show estimated strength as a function of training history.  Note that
 the y-axis is a relative ELO, which is set to 0 for the randomly initialized network.
