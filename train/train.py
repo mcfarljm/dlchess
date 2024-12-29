@@ -1,10 +1,9 @@
 import os
 
-import torch
-from torch.utils.data import DataLoader
 import click
-
+import torch
 from data import ExperienceSubset
+from torch.utils.data import DataLoader
 
 
 def cross_entropy_loss_fn(policies, visit_counts):
@@ -40,13 +39,14 @@ def train(dataloader, model, optimizer, output_interval):
         optimizer.zero_grad()
 
         if batch_num % output_interval == 0:
-            # The win rate (in moves) provides a baseline loss for value prediction for a
-            # naive estimator that always predicts value=0.
+            # The win rate (in moves) provides a baseline loss for value prediction for
+            # a naive estimator that always predicts value=0.
             win_rate = rewards.count_nonzero() / rewards.numel()
             loss, current = loss.item(), (batch_num + 1) * len(states)
             mse_loss, ce_loss = mse_loss.item(), cross_entropy_loss.item()
             print(
-                f"loss: {loss:>7f} ({mse_loss:>3f} : {win_rate:>3f}, {ce_loss:>3f})  [{current:>5d}/{size:>5d}] [{batch_num + 1}/{num_batches}]"
+                f"loss: {loss:>7f} ({mse_loss:>3f} : {win_rate:>3f}, {ce_loss:>3f})  "
+                f"[{current:>5d}/{size:>5d}] [{batch_num + 1}/{num_batches}]"
             )
 
 
