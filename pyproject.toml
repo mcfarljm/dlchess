@@ -26,7 +26,27 @@ explicit = true
 [dependency-groups]
 dev = [
     "mkdocs-material>=9.5.49",
+    "ruff>=0.8.4",
 ]
 bench = [
     "onnxruntime>=1.20.1",
+]
+
+[tool.ruff]
+include = ["nn/*.py", "train/*.py", "**/pyproject.toml"]
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
 ]
