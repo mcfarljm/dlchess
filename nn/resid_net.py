@@ -1,9 +1,9 @@
 import os
 import time
 
+import click
 import torch
 from torch import nn
-import click
 
 
 class ResidualBlock(nn.Module):
