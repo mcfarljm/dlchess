@@ -1,12 +1,13 @@
-# dlchess
+# DLChess
 
-Welcome to the documentation for the dlchess (deep learning for chess) project.
+Welcome to the documentation for the DLChess (deep learning for chess) project.
 
-dlchess is a small, efficient implementation of the AlphaZero reinforcement learning
-method for chess, written from scratch in C++.  The goals of the project are to explore
-and learn about the method, while seeking to produce an intermediate strength chess
-engine through training on modest consumer hardware in practical time-scales
-(days-weeks).
+DLChess is a UCI-compatible chess engine and reinforcement learning system.  It
+implements an [AlphaZero](https://arxiv.org/abs/1712.01815)-style model that combines
+Monte Carlo Tree Search (MCTS) with a neural network for policy and value prediction.
+The primary goal of the project is to explore how strong the program could become using
+a relatively small neural network together with selfplay and training on modest
+hardware.
 
 Note that the AlphaZero method uses self-play and reinforcement learning to train a
 neural network, without any domain knowledge or hand-crafted evaluation functions (e.g.,

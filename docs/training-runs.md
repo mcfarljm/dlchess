@@ -18,15 +18,16 @@ the size of the neural network architecture in terms of number of blocks and num
 filters (e.g., 4 blocks with 64 filters).  "Games" refers to the total number of
 selfplay games used for training.  "ELO" is based on comparison against other
 engines with similar strength from the [CCRL blitz
-ratings](https://computerchess.org.uk/ccrl/404/).
+ratings](https://computerchess.org.uk/ccrl/404/) in 2+1 blitz matches.
 
-| Network | Size   | Block Type         | Games  | ELO  | Comments                                                     |
-|---------|--------|--------------------|--------|------|--------------------------------------------------------------|
-| v12.25  | 4 x 64 | Squeeze Excitation | 80,000 | 1263 | Added squeeze-excitation layer to residual blocks            |
-| v11.25  | 4 x 64 | Residual           | 80,000 | 1192 | Board oriented towards side to move                          |
-| v9.20   | 4 x 64 | Residual           | 64,000 | 1042 | First run with residual blocks                               |
-| v8.15   | 4 x 64 | Convolution        | 48,000 | 820  | Added en passant square to network input; updated parameters |
-| v4.15   | 4 x 64 | Convolution        | 48,000 | 789  | First successful training run                                |
+| Network | Size   | Block Type         | Games   | ELO  | Comments                                                     |
+|---------|--------|--------------------|---------|------|--------------------------------------------------------------|
+| v14.40  | 5 x 64 | Squeeze Excitation | 128,000 | 1380 | Increased number of blocks                                   |
+| v12.25  | 4 x 64 | Squeeze Excitation | 80,000  | 1263 | Added squeeze-excitation layer to residual blocks            |
+| v11.25  | 4 x 64 | Residual           | 80,000  | 1192 | Board oriented towards side to move                          |
+| v9.20   | 4 x 64 | Residual           | 64,000  | 1042 | First run with residual blocks                               |
+| v8.15   | 4 x 64 | Convolution        | 48,000  | 820  | Added en passant square to network input; updated parameters |
+| v4.15   | 4 x 64 | Convolution        | 48,000  | 789  | First successful training run                                |
 
 The below plots show estimated strength as a function of training history.  Note that
 the y-axis is a relative ELO, which is set to 0 for the randomly initialized network.
@@ -34,6 +35,12 @@ Relative ELO is calculated after each training update by running a 200-game tour
 between the new network and the previous version.  In this tournament, both models play
 each side from 100 different standard opening positions.  Search is fixed at 800
 playouts.
+
+<figure markdown="span">
+  ![v12.25 ELO](img/v14.40_elo.png){ width=480 }
+  <figcaption>Training history for network v14.40</figcaption>
+</figure>
+
 
 <figure markdown="span">
   ![v12.25 ELO](img/v12.25_elo.png){ width=480 }

@@ -1,3 +1,4 @@
 # Design
 
-For more information about the design and implementation of the AlphaZero algorithm in `dlchess`, see [AlphaZero](alpha-zero.md) and [Neural Network](neural-network.md).
+This section provides information about the design and implementation of DLChess,
+including othe search algorithm and neural network architecture.
