@@ -92,14 +92,17 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
                   > $RESULTS_DIR/eval_$new_version.out
 
     # Compare against reference version:
-    # reference_version="$reference_major_version.$(( iter + 1 ))"
-    # cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.onnx arg=-t arg=1 arg="--rounds=800" name=v$new_version \
-    #               -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$reference_version.onnx arg=-t arg=1 arg="--rounds=800 "name=v$reference_version \
-    #               -each proto=uci tc=inf \
-    #               -concurrency $num_tasks \
-    #               -rounds 100 -games 2 -maxmoves 150 \
-    #               -openings file=openings/openings-6ply-1000.pgn policy=round -repeat \
-    #               > $RESULTS_DIR/ref_eval_$new_version.out
+    reference_version="$reference_major_version.$(( iter + 1 ))"
+    if [ -f $RESULTS_DIR/v$reference_version.onnx ]; then
+
+        cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.onnx arg=-t arg=1 arg="--rounds=800" name=v$new_version \
+                      -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$reference_version.onnx arg=-t arg=1 arg="--rounds=800" name=v$reference_version \
+                      -each proto=uci tc=inf \
+                      -concurrency $num_tasks \
+                      -rounds 100 -games 2 -maxmoves 150 \
+                      -openings file=openings/openings-6ply-1000.pgn policy=round -repeat \
+                      > $RESULTS_DIR/ref_eval_$new_version.out
+    fi
 
 done
 
