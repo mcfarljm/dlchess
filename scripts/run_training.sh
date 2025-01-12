@@ -14,6 +14,8 @@ num_iterations=10
 num_tasks=4
 cooldown_seconds=1800
 
+num_blocks=5
+
 # reference_version=8.5
 reference_major_version=12
 # Comment or set to empty to skip:
@@ -27,7 +29,7 @@ if [ "$initial_version" -eq 0 ]; then
     # Create initial random model:
     # python3 nn/conv_4x64.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
     # python3 nn/resid_net.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
-    python3 nn/squeeze_net.py -o $RESULTS_DIR/v$MAJOR_VERSION.0
+    python3 nn/squeeze_net.py -o $RESULTS_DIR/v$MAJOR_VERSION.0 --num-blocks $num_blocks
 fi
 
 # Main iteration loop:
@@ -66,6 +68,7 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
             -i $RESULTS_DIR/v$version.pt \
             -o $RESULTS_DIR/v$new_version.pt \
             --network se \
+            --num-blocks $num_blocks \
             -b 256 \
             --interval 4 \
             --lr 5e-3 \
