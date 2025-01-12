@@ -16,6 +16,8 @@ cooldown_seconds=1800
 
 # reference_version=8.5
 reference_major_version=12
+# Comment or set to empty to skip:
+cross_reference_version=12.25
 
 timestamp=`date +%Y%m%dT%H%M`
 
@@ -105,6 +107,19 @@ for iter in $(seq $initial_version $(( num_iterations + $initial_version - 1 )))
     fi
 
 done
+
+# Cross-reference evaluation:
+
+if [ -z "$cross_reference_version" ]; then
+
+    cutechess-cli -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$new_version.onnx arg=-t arg=1 arg="--rounds=800" name=v$new_version \
+                  -engine dir=. cmd=$BUILD_DIR/dlchess arg=$RESULTS_DIR/v$cross_reference_version.onnx arg=-t arg=1 arg="--rounds=800" name=v$cross_reference_version \
+                  -each proto=uci tc=inf \
+                  -concurrency $num_tasks \
+                  -rounds 100 -games 2 -maxmoves 150 \
+                  -openings file=openings/openings-6ply-1000.pgn policy=round -repeat \
+                  > $RESULTS_DIR/cross_ref_eval_${new_version}_${cross_reference_version}.out
+fi
 
 echo `date`
 echo "Finished"
